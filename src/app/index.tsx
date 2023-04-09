@@ -1,20 +1,16 @@
-import './App.scss';
-import Playground from '@/playground';
-import { createSignal } from 'solid-js';
-import type { AppProps } from './types.d';
-import { Logo, Version } from '@/components';
+import '@/app/App.scss';
+import Scene from '@/scene';
+import { onMount } from 'solid-js';
+import { Config } from '@/scene/Config';
 
-export const App = ({ root }: AppProps) =>
+export const App = () =>
 {
-  const [visibleLogo, setVisibleLogo] = createSignal(true);
-  const scene = new Playground().domElement;
+  let canvas!: HTMLCanvasElement;
+  onMount(() => new Scene(canvas));
 
-  setTimeout(setVisibleLogo, 2500);
-  root.appendChild(scene);
-  scene.focus();
-
-  return <>
-    {visibleLogo() && <Logo />}
-    {import.meta.env.DEV && <Version />}
-  </>;
+  return <canvas
+    height={Config.Scene.height}
+    width={Config.Scene.width}
+    ref={canvas}
+  />;
 };

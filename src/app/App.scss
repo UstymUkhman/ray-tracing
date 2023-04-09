@@ -1,4 +1,5 @@
-/* stylelint-disable-next-line selector-class-pattern */
-body > .lil-gui.autoPlace {
-  right: 0;
+canvas {
+  position: absolute;
+  margin: auto;
+  inset: 0;
 }

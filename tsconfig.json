@@ -10,25 +10,26 @@
     "noUnusedParameters": false,
     "noImplicitOverride": true,
     "moduleResolution": "node",
-    
+
     "noImplicitReturns": true,
     "resolveJsonModule": true,
     "strictNullChecks": true,
     "lib": ["esnext", "dom"],
-    
     "esModuleInterop": true,
+
     "noUnusedLocals": true,
     "importHelpers": true,
     "noImplicitAny": true,
     "skipLibCheck": true,
-    
+
     "module": "ESNext",
     "target": "ESNext",
-    "sourceMap": true,
     "jsx": "preserve",
 
+    "sourceMap": true,
     "checkJs": true,
     "allowJs": true,
+
     "baseUrl": ".",
     "strict": true,
     "noEmit": true,
@@ -45,12 +46,7 @@
     "src/**/*.ts",
     "src/**/*.jsx",
     "src/**/*.tsx",
-    "src/**/*.d.ts",
-
-    "tests/**/*.js",
-    "tests/**/*.ts",
-    "tests/**/*.jsx",
-    "tests/**/*.tsx"
+    "src/**/*.d.ts"
   ],
 
   "exclude": [

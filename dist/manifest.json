@@ -6,9 +6,9 @@
   "author": "Ustym Ukhman",
   "orientation": "portrait",
 
-  "name": "Three.js Boilerplate",
-  "short_name": "Three.js Boilerplate",
-  "description": "Three.js + TypeScript + SolidJS + Vite + Vitest",
+  "name": "Ray Tracing",
+  "short_name": "Ray Tracing",
+  "description": "Ray Tracing in One Weekend [TypeScript]",
 
   "prefer_related_applications": false,
   "background_color": "#222222",

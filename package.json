@@ -1,19 +1,19 @@
 {
-  "name": "threejs-boilerplate",
-  "description": "Three.js + TypeScript + SolidJS + Vite + Vitest",
-  "homepage": "https://github.com/UstymUkhman/threejs-boilerplate#readme",
-  "packageManager": "^pnpm@7.30.3",
-  "main": "src/main.tsx",
-  "version": "3.0.0",
+  "name": "ray-tracing",
+  "description": "Ray Tracing in One Weekend [TypeScript]",
+  "homepage": "https://github.com/UstymUkhman/ray-tracing#readme",
+  "packageManager": "^pnpm@8.1.1",
+  "main": "src/main.ts",
+  "version": "0.0.0",
   "license": "MIT",
-  "private": false,
+  "private": true,
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "https://github.com/UstymUkhman/threejs-boilerplate.git"
+    "url": "https://github.com/UstymUkhman/ray-tracing.git"
   },
   "bugs": {
-    "url": "https://github.com/UstymUkhman/threejs-boilerplate/issues",
+    "url": "https://github.com/UstymUkhman/ray-tracing/issues",
     "email": "ustym.ukhman@gmail.com"
   },
   "author": {
@@ -22,56 +22,41 @@
     "url": "https://github.com/UstymUkhman/"
   },
   "keywords": [
+    "gpu",
     "vite",
     "webgl",
     "webgl2",
-    "threejs",
     "solidjs",
-    "template",
-    "boilerplate",
     "typescript",
-    "vitest",
-    "pnpm"
+    "ray-tracer",
+    "ray-tracing",
+    "path-tracer",
+    "path-tracing"
   ],
   "scripts": {
     "start": "vite",
     "build": "vite build",
     "serve": "vite preview",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:cover": "vitest run --coverage",
     "lint:css": "stylelint **/*.{css,scss}",
     "lint:js": "eslint src/**/*.{ts,tsx,js,jsx}"
   },
   "dependencies": {
-    "animejs": "^3.2.1",
-    "solid-js": "^1.6.15",
-    "three": "^0.150.1"
+    "solid-js": "^1.7.3"
   },
   "devDependencies": {
-    "@solidjs/testing-library": "^0.7.0",
-    "@types/animejs": "^3.1.7",
-    "@types/node": "^18.15.10",
-    "@types/three": "^0.149.0",
-    "@typescript-eslint/eslint-plugin": "^5.56.0",
-    "@typescript-eslint/parser": "^5.56.0",
-    "@vitest/coverage-c8": "^0.28.4",
-    "@vitest/web-worker": "^0.28.4",
-    "c8": "^7.13.0",
-    "eslint": "^8.36.0",
-    "jest-canvas-mock": "^2.5.0",
-    "jsdom": "^21.1.1",
-    "lil-gui": "^0.18.1",
+    "@types/node": "^18.15.11",
+    "@typescript-eslint/eslint-plugin": "^5.57.1",
+    "@typescript-eslint/parser": "^5.57.1",
+    "eslint": "^8.38.0",
     "postcss": "^8.4.21",
     "postcss-scss": "^4.0.6",
-    "sass": "^1.60.0",
-    "stylelint": "^15.3.0",
-    "stylelint-config-standard": "^31.0.0",
-    "typescript": "^5.0.2",
+    "sass": "^1.61.0",
+    "stylelint": "^15.4.0",
+    "stylelint-config-standard": "^32.0.0",
+    "typescript": "^5.0.4",
     "vite": "^4.2.1",
     "vite-plugin-glsl": "^1.1.2",
-    "vite-plugin-solid": "^2.6.1",
-    "vitest": "^0.28.4"
+    "vite-plugin-solid": "^2.7.0"
   },
   "engines": {
     "node": ">= 18.12.1",
