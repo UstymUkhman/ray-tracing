@@ -18,6 +18,12 @@ export default class Worker
     this.events.set(event, { callback, params });
   }
 
+  public transfer (canvas: Transferable, params?: EventParams): void {
+    this.worker.postMessage({ event: 'Transfer',
+      params: { canvas, ...params }
+    }, [canvas]);
+  }
+
   public get (event: string, params?: EventParams): void {
     const eventParams = this.events.get(event)?.params;
 
