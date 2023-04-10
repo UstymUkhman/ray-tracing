@@ -8,11 +8,11 @@ export default class Canvas
   // private static scene!: Scene;
   private readonly worker = new Worker();
 
-  private readonly offscreen = false; /* !DEBUG && (
+  private readonly offscreen = !DEBUG && (
     typeof HTMLCanvasElement !== 'undefined' && !!(
       HTMLCanvasElement.prototype as OffscreenCanvas
     ).transferControlToOffscreen
-  ); */
+  );
 
   public constructor (canvas: HTMLCanvasElement) {
     const pixelRatio = Config.Scene.pixelRatio ?? devicePixelRatio;

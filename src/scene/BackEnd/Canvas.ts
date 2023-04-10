@@ -36,8 +36,9 @@ export default abstract class Canvas
         alpha: false
       }
       : {
-        willReadFrequently: true,
-        desynchronized: false,
+        // Should be `true` when "on screen":
+        willReadFrequently: false,
+        desynchronized: true,
         colorSpace: 'srgb',
         alpha: false
       };

@@ -24,7 +24,7 @@ export default class Worker
     }, [canvas]);
   }
 
-  public get (event: string, params?: EventParams): void {
+  public post (event: string, params?: EventParams): void {
     const eventParams = this.events.get(event)?.params;
 
     this.worker.postMessage({ event, params: {
