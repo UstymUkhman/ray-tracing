@@ -1,3 +1,4 @@
+export type BackEndContext = '2d' | 'webgl' | 'webgl2' | 'webgpu';
 type SceneCanvas = HTMLCanvasElement | OffscreenCanvas;
 
 export type OffscreenCanvas = HTMLCanvasElement & {
@@ -5,6 +6,7 @@ export type OffscreenCanvas = HTMLCanvasElement & {
 };
 
 export type SceneParams = {
+  backEnd: BackEndContext,
   canvas: SceneCanvas,
   pixelRatio: number
 };

@@ -15,13 +15,13 @@ export default class Canvas
   );
 
   public constructor (canvas: HTMLCanvasElement) {
-    const pixelRatio = Config.Scene.pixelRatio ?? devicePixelRatio;
+    const { backEnd, pixelRatio = devicePixelRatio } = Config.Scene;
 
     this.offscreen
       ? this.worker.transfer((canvas as OffscreenCanvas)
-        .transferControlToOffscreen(), { pixelRatio }
+        .transferControlToOffscreen(), { backEnd, pixelRatio }
       )
-      : Canvas.createScene({ canvas, pixelRatio });
+      : Canvas.createScene({ canvas, backEnd, pixelRatio });
   }
 
   public static createScene (params: SceneParams): void {
