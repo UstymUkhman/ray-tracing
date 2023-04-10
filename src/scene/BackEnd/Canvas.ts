@@ -6,6 +6,7 @@ import type { BackEndContext } from '@/scene/types';
 export default abstract class Canvas
 {
   public abstract draw (x: number, y: number, color: number): void;
+  protected readonly BYTES_PER_ELEMENT: number;
   protected readonly context: RenderingContext;
   public readonly backEnd: BackEndContext;
 
@@ -13,6 +14,7 @@ export default abstract class Canvas
   protected readonly height: number;
   protected readonly width: number;
   public abstract clear (): void;
+  private readonly side: number;
 
   public constructor(
     canvas: HTMLCanvasElement,
@@ -22,8 +24,12 @@ export default abstract class Canvas
     this.width = canvas.width;
     this.height = canvas.height;
 
-    const options = this.getOptions(context);
-    this.context = canvas.getContext(context, options) as RenderingContext;
+    this.context = canvas.getContext(
+      context, this.getOptions(context)
+    ) as RenderingContext;
+
+    this.BYTES_PER_ELEMENT = +(context === '2d') + 3.0;
+    this.side = this.width * this.BYTES_PER_ELEMENT;
   }
 
   private getOptions (context: BackEndContext): Options {
@@ -54,5 +60,9 @@ export default abstract class Canvas
           alpha: false
         };
     }
+  }
+
+  protected getPixel (x: number, y: number): number {
+    return y * this.side + x * this.BYTES_PER_ELEMENT;
   }
 }

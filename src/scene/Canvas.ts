@@ -5,7 +5,6 @@ import Scene from '@/scene/Scene';
 
 export default class Canvas
 {
-  // private static scene!: Scene;
   private readonly worker = new Worker();
 
   private readonly offscreen = !DEBUG && (
@@ -25,6 +24,6 @@ export default class Canvas
   }
 
   public static createScene (params: SceneParams): void {
-    /* this.scene = */ new Scene(params);
+    new Scene(params);
   }
 }

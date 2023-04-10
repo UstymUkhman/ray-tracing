@@ -11,7 +11,6 @@ type ShaderType =
 export default class CanvasWebGL extends Canvas
 {
   protected declare readonly context: WebGLRenderingContext;
-  private readonly side = this.width * 3.0;
 
   private textureData!: Uint8Array;
   private texture!: WebGLTexture;
@@ -122,8 +121,8 @@ export default class CanvasWebGL extends Canvas
     const resolution = this.context.getUniformLocation(this.program, 'resolution');
     this.context.uniform2f(resolution, this.width, this.height);
 
+    this.textureData = new Uint8Array(this.width * this.height * this.BYTES_PER_ELEMENT);
     this.texture = this.context.createTexture() as WebGLTexture;
-    this.textureData = new Uint8Array(this.width * this.height * 3);
 
     this.setBufferData();
     this.updateTexture();
@@ -136,7 +135,7 @@ export default class CanvasWebGL extends Canvas
   }
 
   public override draw (x: number, y: number, color: number): void {
-    const p = y * this.side + x * 3.0;
+    const p = this.getPixel(x, y);
     color = color / 0xffffff * 255.0;
 
     this.textureData[p + 0] = color;
