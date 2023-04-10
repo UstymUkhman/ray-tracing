@@ -4,9 +4,11 @@
   precision highp float;
 #endif
 
-uniform vec4 color;
+uniform sampler2D tex;
+
+varying vec2 uv;
 
 void main (void)
 {
-  gl_FragColor = color;
+  gl_FragColor = texture2D(tex, uv);
 }

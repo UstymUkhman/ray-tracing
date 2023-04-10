@@ -6,11 +6,12 @@
   precision highp float;
 #endif
 
-uniform vec4 color;
+uniform sampler2D tex;
 
+in  vec2 uv;
 out vec4 fragColor;
 
 void main (void)
 {
-  fragColor = color;
+  fragColor = texture(tex, uv);
 }

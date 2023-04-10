@@ -18,7 +18,7 @@ export const blend = (initial: RGB | string | number, target: RGB | string | num
 };
 
 export const getRGB = (color: string | number, format: 255 | 1 = 1): RGB => {
-  color = typeof color === 'string' ? parseInt(color.slice(1), 16) : color;
+  color = typeof color === 'string' ? getInt(color) : color;
 
   return {
     r: (color >> 16) & format,
