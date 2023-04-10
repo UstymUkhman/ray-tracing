@@ -1,7 +1,11 @@
-import Canvas2D from '@/scene/BackEnd/Canvas2D';
-import type Canvas from '@/scene/BackEnd/Canvas';
 import type { SceneParams } from '@/scene/types';
-import CanvasWebGL from '@/scene/BackEnd/CanvasWebGL';
+import type Canvas from '@/scene/BackEnd/Canvas';
+import {
+  Canvas2D,
+  CanvasWebGL,
+  CanvasWebGL2
+  // CanvasWebGPU,
+} from '@/scene/BackEnd';
 
 export default class Scene
 {
@@ -21,8 +25,8 @@ export default class Scene
       // case 'webgpu':
       //   return new CanvasWebGPU(params.canvas);
 
-      // case 'webgl2':
-      //   return new CanvasWebGL2(params.canvas);
+      case 'webgl2':
+        return new CanvasWebGL2(params.canvas);
 
       case 'webgl':
         return new CanvasWebGL(params.canvas);

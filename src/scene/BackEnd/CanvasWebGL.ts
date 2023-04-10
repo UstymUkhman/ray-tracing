@@ -1,7 +1,8 @@
 import { getRGB } from '@/utils/Color';
-import Vertex from '@/shaders/main.vert';
-import Fragment from '@/shaders/main.frag';
 import Canvas from '@/scene/BackEnd/Canvas';
+import Vertex from '@/shaders/webgl/main.vert';
+import Fragment from '@/shaders/webgl/main.frag';
+import type { BackEndContext } from '@/scene/types';
 
 type ShaderType =
   | WebGLRenderingContextBase['FRAGMENT_SHADER']
@@ -14,16 +15,19 @@ export default class CanvasWebGL extends Canvas
 
   protected declare readonly context: WebGLRenderingContext;
 
-  public constructor(canvas: HTMLCanvasElement) {
-    super(canvas, 'webgl2');
-    this.createProgram();
+  public constructor(
+    canvas: HTMLCanvasElement, context = 'webgl',
+    fragment = Fragment, vertex = Vertex
+  ) {
+    super(canvas, context as BackEndContext);
+    this.createProgram(fragment, vertex);
     this.createScene();
   }
 
-  private createProgram(): void {
+  private createProgram(frag: string, vert: string): void {
+    const fragment = this.loadShader(frag, this.context.FRAGMENT_SHADER);
+    const vertex = this.loadShader(vert, this.context.VERTEX_SHADER);
     this.program = this.context.createProgram() as WebGLProgram;
-    const vertex = this.loadShader(Vertex, this.context.VERTEX_SHADER);
-    const fragment = this.loadShader(Fragment, this.context.FRAGMENT_SHADER);
 
     if (vertex && fragment) {
       this.context.attachShader(this.program, fragment);
