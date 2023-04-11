@@ -1,6 +1,5 @@
 import { resolve } from 'path';
 import { defineConfig } from 'vite';
-import glsl from 'vite-plugin-glsl';
 import solid from 'vite-plugin-solid';
 import { version } from './package.json';
 
@@ -10,12 +9,7 @@ export default ({ mode }: { mode: string }) =>
 
     resolve: {
       conditions: ['development', 'browser'],
-
-      alias: {
-        '@assets': resolve('src/assets'),
-        '@scss': resolve('src/scss'),
-        '@': resolve('src')
-      }
+      alias: { '@': resolve('src') }
     },
 
     define: {
@@ -29,16 +23,7 @@ export default ({ mode }: { mode: string }) =>
       }
     },
 
-    plugins: [
-      solid(), glsl({
-      compress: mode === 'production',
-      root: '/src/shaders/'
-    })],
-
-    build: {
-      target: 'esnext',
-      sourcemap: true
-    },
+    plugins: [solid()],
 
     server: {
       host: '0.0.0.0',

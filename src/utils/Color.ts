@@ -1,7 +1,6 @@
 import { clamp, randomInt } from '@/utils/Number';
-import type { Color } from 'three/src/math/Color';
 
-export type RGB = Color | { r: number; g: number; b: number; };
+export type RGB = { r: number; g: number; b: number; };
 
 const getValue = ({ r, g, b }: RGB) =>
   clamp(r * 255, 0, 255) << 16 ^ clamp(g * 255, 0, 255) << 8 ^ clamp(b * 255, 0, 255) << 0;

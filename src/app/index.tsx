@@ -1,12 +1,12 @@
-import '@/app/App.scss';
+import '@/app/app.css';
+import Stage from '@/stage';
 import { onMount } from 'solid-js';
-import Canvas from '@/scene/Canvas';
-import { Config } from '@/scene/Config';
+import { Config } from '@/stage/Config';
 
 export const App = () =>
 {
   let canvas!: HTMLCanvasElement;
-  onMount(() => new Canvas(canvas));
+  onMount(() => new Stage(canvas));
 
   return <canvas
     height={Config.Scene.height}

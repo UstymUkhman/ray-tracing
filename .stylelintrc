@@ -1,6 +1,5 @@
 {
   "root": true,
-  "customSyntax": "postcss-scss",
   "extends": "stylelint-config-standard",
 
   "rules": {
@@ -12,19 +11,6 @@
     "length-zero-no-unit": null,
     "function-name-case": null,
     "color-hex-length": null,
-    "max-nesting-depth": 3,
-
-    "at-rule-no-unknown": [true, {
-      "ignoreAtRules": [
-        "at-root", "content", "each", "else", "for",
-        "function", "if", "mixin", "return", "use"
-      ]
-    }],
-
-    "selector-pseudo-class-no-unknown": [true, {
-      "ignorePseudoClasses": [
-        "global", "export"
-      ]
-    }]
+    "max-nesting-depth": 3
   }
 }

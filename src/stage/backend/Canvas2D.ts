@@ -1,4 +1,4 @@
-import Canvas from '@/scene/BackEnd/Canvas';
+import Canvas from '@/stage/backend/Canvas';
 import { getHex, getRGB } from '@/utils/Color';
 
 export default class Canvas2D extends Canvas

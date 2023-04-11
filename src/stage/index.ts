@@ -1,9 +1,9 @@
-import type { OffscreenCanvas, SceneParams } from '@/scene/types';
-import { Config } from '@/scene/Config';
+import type { OffscreenCanvas } from '@/stage/types';
+import { Config } from '@/stage/Config';
 import Worker from '@/utils/worker';
-import Scene from '@/scene/Scene';
+import Scene from '@/stage/Scene';
 
-export default class Canvas
+export default class Stage
 {
   private readonly worker = new Worker();
 
@@ -16,14 +16,10 @@ export default class Canvas
   public constructor (canvas: HTMLCanvasElement) {
     const { backEnd, pixelRatio = devicePixelRatio } = Config.Scene;
 
-    this.offscreen
-      ? this.worker.transfer((canvas as OffscreenCanvas)
+    !this.offscreen
+      ? new Scene({ canvas, backEnd, pixelRatio })
+      : this.worker.transfer((canvas as OffscreenCanvas)
         .transferControlToOffscreen(), { backEnd, pixelRatio }
-      )
-      : Canvas.createScene({ canvas, backEnd, pixelRatio });
-  }
-
-  public static createScene (params: SceneParams): void {
-    new Scene(params);
+      );
   }
 }

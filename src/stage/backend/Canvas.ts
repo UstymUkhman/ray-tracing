@@ -1,7 +1,7 @@
 type RenderingContext = CanvasRenderingContext2D | WebGLRenderingContext;
 type Options = CanvasRenderingContext2DSettings | WebGLContextAttributes;
 
-import type { BackEndContext } from '@/scene/types';
+import type { BackEndContext } from '@/stage/types';
 
 export default abstract class Canvas
 {

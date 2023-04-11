@@ -1,15 +1,14 @@
-import Canvas from '@/scene/Canvas';
-export const worker: Worker = self as never;
+import Scene from '@/stage/Scene';
 
-worker.onerror = error => console.error(error);
+self.onerror = error => console.error(error);
 
-worker.onmessage = message => {
+self.onmessage = (message): Scene | void => {
   const { event, params } = message.data;
 
   if (event === 'Transfer')
-    return Canvas.createScene(params);
+    return new Scene(params);
 
-  worker.postMessage({
+  self.postMessage({
     response: params,
     name: event
   });

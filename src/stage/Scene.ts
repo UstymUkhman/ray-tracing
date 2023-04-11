@@ -1,11 +1,12 @@
-import type { SceneParams } from '@/scene/types';
-import type Canvas from '@/scene/BackEnd/Canvas';
 import {
   Canvas2D,
   CanvasWebGL,
-  CanvasWebGL2
+  CanvasWebGL2,
   // CanvasWebGPU,
-} from '@/scene/BackEnd';
+  type Canvas
+} from '@/stage/backend';
+
+import type { SceneParams } from '@/stage/types';
 
 export default class Scene
 {
