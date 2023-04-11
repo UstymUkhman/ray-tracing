@@ -24,16 +24,16 @@ export default class Scene
     switch (params.backEnd) {
       // TBI
       // case 'webgpu':
-      //   return new CanvasWebGPU(params.canvas);
+      //   return new CanvasWebGPU(params);
 
       case 'webgl2':
-        return new CanvasWebGL2(params.canvas);
+        return new CanvasWebGL2(params);
 
       case 'webgl':
-        return new CanvasWebGL(params.canvas);
+        return new CanvasWebGL(params);
 
       default:
-        return new Canvas2D(params.canvas);
+        return new Canvas2D(params);
     }
   }
 }

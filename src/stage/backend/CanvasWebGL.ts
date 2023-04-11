@@ -1,5 +1,6 @@
 import { getRGB } from '@/utils/Color';
 import Canvas from '@/stage/backend/Canvas';
+import type { SceneParams } from '@/stage/types';
 import Vertex from '@/shaders/webgl/main.vert?raw';
 import type { BackEndContext } from '@/stage/types';
 import Fragment from '@/shaders/webgl/main.frag?raw';
@@ -17,10 +18,10 @@ export default class CanvasWebGL extends Canvas
   private program!: WebGLProgram;
 
   public constructor(
-    canvas: HTMLCanvasElement, context = 'webgl',
+    params: SceneParams, context = 'webgl',
     fragment = Fragment, vertex = Vertex
   ) {
-    super(canvas, context as BackEndContext);
+    super(params, context as BackEndContext);
     this.createProgram(fragment, vertex);
     this.createScene();
   }
@@ -121,7 +122,7 @@ export default class CanvasWebGL extends Canvas
     const resolution = this.context.getUniformLocation(this.program, 'resolution');
     this.context.uniform2f(resolution, this.width, this.height);
 
-    this.textureData = new Uint8Array(this.width * this.height * this.BYTES_PER_ELEMENT);
+    this.textureData = new Uint8Array(this.width * this.height * this.channels);
     this.texture = this.context.createTexture() as WebGLTexture;
 
     this.setBufferData();

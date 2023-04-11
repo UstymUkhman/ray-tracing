@@ -6,7 +6,10 @@ self.onmessage = (message): Scene | void => {
   const { event, params } = message.data;
 
   if (event === 'Transfer')
-    return new Scene(params);
+    return new Scene({
+      offscreen: true,
+      ...params
+    });
 
   self.postMessage({
     response: params,

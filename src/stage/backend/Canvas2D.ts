@@ -1,13 +1,14 @@
 import Canvas from '@/stage/backend/Canvas';
 import { getHex, getRGB } from '@/utils/Color';
+import type { SceneParams } from '@/stage/types';
 
 export default class Canvas2D extends Canvas
 {
   private readonly image: ImageData;
   protected declare readonly context: CanvasRenderingContext2D;
 
-  public constructor(canvas: HTMLCanvasElement) {
-    super(canvas, '2d');
+  public constructor(params: SceneParams) {
+    super(params, '2d');
     this.context.imageSmoothingEnabled = true;
     this.context.imageSmoothingQuality = 'high';
     this.image = this.context.getImageData(0.0, 0.0, this.width, this.height);

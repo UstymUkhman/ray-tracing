@@ -7,6 +7,7 @@ export type OffscreenCanvas = HTMLCanvasElement & {
 
 export type SceneParams = {
   backEnd: BackEndContext,
+  offscreen?: boolean,
   canvas: SceneCanvas,
   pixelRatio: number
 };
