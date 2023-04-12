@@ -1,10 +1,10 @@
-type Callback = (event: Event) => unknown;
+export type Callback = (event: Event) => unknown;
 
-class Event extends CustomEvent<unknown> {
+export class Event extends CustomEvent<unknown> {
   public data?: unknown;
 }
 
-class EventEmitter
+export class Emitter
 {
   private readonly target = new EventTarget();
   private readonly events: Map<string, Event> = new Map();
@@ -55,6 +55,3 @@ class EventEmitter
     this.events.clear();
   }
 }
-
-const Emitter = new EventEmitter();
-export { Event, Emitter };

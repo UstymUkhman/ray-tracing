@@ -1,6 +1,6 @@
 type EventData = { callback: Callback, params?: EventParams };
+export type Callback = (data: unknown) => unknown;
 type EventParams = Record<string, unknown>;
-type Callback = (data: unknown) => void;
 
 import WebWorker from './worker?worker';
 
@@ -19,7 +19,7 @@ export default class Worker
   }
 
   public transfer (canvas: Transferable, params?: EventParams): void {
-    this.worker.postMessage({ event: 'Transfer',
+    this.worker.postMessage({ event: 'Transfer::Offscreen',
       params: { canvas, ...params }
     }, [canvas]);
   }

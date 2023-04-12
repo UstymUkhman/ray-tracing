@@ -5,9 +5,12 @@ export type OffscreenCanvas = HTMLCanvasElement & {
   transferControlToOffscreen: () => Transferable
 };
 
+import type Worker from '@/utils/worker';
+
 export type SceneParams = {
   backEnd: BackEndContext,
   offscreen?: boolean,
   canvas: SceneCanvas,
-  pixelRatio: number
+  pixelRatio: number,
+  worker?: Worker
 };
