@@ -1,3 +1,4 @@
+import Vector3 from '@/utils/Vector3';
 import { clamp, randomInt } from '@/utils/Number';
 
 export type RGB = { r: number; g: number; b: number; };
@@ -37,3 +38,10 @@ export const getInt = (color: RGB | string) => {
 };
 
 export const random = () => randomInt(0, 0xffffff);
+
+export const format = (color: Vector3) =>
+  color.set(
+    255.999 * color.x | 0,
+    255.999 * color.y | 0,
+    255.999 * color.z | 0
+  );
