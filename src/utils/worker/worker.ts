@@ -16,8 +16,8 @@ self.onmessage = (message): Scene | void => {
       });
 
     case 'Create::PPMImage': {
-      const image = tracer.createPPMImage();
-      params = { ...params, image };
+      const pixels = tracer.createPPMImage();
+      params = { ...params, pixels };
       break;
     }
   }

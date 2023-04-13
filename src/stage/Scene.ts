@@ -1,14 +1,14 @@
 import {
   Canvas2D,
   CanvasWebGL,
-  CanvasWebGL2,
+  CanvasWebGL2
   // CanvasWebGPU,
-  type Canvas
 } from '@/stage/backend';
 
 import Tracer from '@/stage/Tracer';
 import Events from '@/stage/Events';
 import type Worker from '@/utils/worker';
+import type { Canvas } from '@/stage/backend';
 import type { SceneParams } from '@/stage/types';
 
 export default class Scene
@@ -24,6 +24,7 @@ export default class Scene
       ? this.tracer = new Tracer()
       : this.createWorkerEvents();
 
+    this.canvas.clear();
     this.createPPMImage();
   }
 
@@ -45,17 +46,27 @@ export default class Scene
   }
 
   private createWorkerEvents (): void {
-    this.worker?.add('Create::PPMImage', this.downloadPPMImage.bind(this));
+    this.worker?.add('Create::PPMImage', this.showPPMImage.bind(this));
   }
 
   private createPPMImage (download = false): void {
-    const image = this.tracer?.createPPMImage();
-    this.worker?.post('Create::PPMImage', { download });
-    download && image && Events.dispatch('Download::PPMImage', { image }, true);
+    this.worker
+      ? this.worker.post('Create::PPMImage', { download })
+      : this.showPPMImage({ download, pixels: this.tracer?.createPPMImage() }, true);
   }
 
-  private downloadPPMImage (data: unknown): void {
-    const { download, image } = data as { download: boolean, image: string };
-    download && Events.dispatch('Download::PPMImage', { image });
+  private showPPMImage (data: unknown, worker?: boolean): void {
+    const { download, pixels } = data as { download: boolean, pixels: Uint8ClampedArray };
+    download && this.downloadPPMImage(pixels, worker);
+    this.canvas.drawImage(pixels);
+  }
+
+  private downloadPPMImage (pixels: Uint8ClampedArray, worker?: boolean): void {
+    let image = `P3\n${this.canvas.width} ${this.canvas.height}\n255\n`;
+
+    for (let p = 0; p < pixels.length; p += 3)
+      image += `${pixels[p]} ${pixels[p + 1]} ${pixels[p + 2]}\n`;
+
+    Events.dispatch('Download::PPMImage', { image }, worker);
   }
 }

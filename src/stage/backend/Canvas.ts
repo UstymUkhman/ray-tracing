@@ -6,16 +6,16 @@ import type { SceneParams } from '@/stage/types';
 
 export default abstract class Canvas
 {
-  public abstract draw (x: number, y: number, color: number): void;
+  public abstract drawImage (image: Uint8ClampedArray): void;
   protected readonly context: RenderingContext;
   public readonly backEnd: BackEndContext;
 
   protected readonly clearColor = 0.0;
   protected readonly channels: number;
-  protected readonly height: number;
-  protected readonly width: number;
-
   public abstract clear (): void;
+
+  public readonly height: number;
+  public readonly width: number;
   private readonly side: number;
 
   public constructor(

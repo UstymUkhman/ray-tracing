@@ -13,7 +13,10 @@ export default class CanvasWebGL extends Canvas
 {
   protected declare readonly context: WebGLRenderingContext;
 
-  private textureData!: Uint8Array;
+  private textureData = new Uint8ClampedArray(
+    this.width * this.height * this.channels
+  );
+
   private texture!: WebGLTexture;
   private program!: WebGLProgram;
 
@@ -122,7 +125,6 @@ export default class CanvasWebGL extends Canvas
     const resolution = this.context.getUniformLocation(this.program, 'resolution');
     this.context.uniform2f(resolution, this.width, this.height);
 
-    this.textureData = new Uint8Array(this.width * this.height * this.channels);
     this.texture = this.context.createTexture() as WebGLTexture;
 
     this.setBufferData();
@@ -135,7 +137,7 @@ export default class CanvasWebGL extends Canvas
     this.context.texParameteri(this.context.TEXTURE_2D, this.context.TEXTURE_MAG_FILTER, this.context.NEAREST);
   }
 
-  public override draw (x: number, y: number, color: number): void {
+  /* private drawPixel (x: number, y: number, color: number): void {
     const p = this.getPixel(x, y);
     color = color / 0xffffff * 255.0;
 
@@ -143,6 +145,12 @@ export default class CanvasWebGL extends Canvas
     this.textureData[p + 1] = color;
     this.textureData[p + 2] = color;
 
+    this.updateTexture();
+    this.context.drawArrays(this.context.TRIANGLES, 0.0, 6.0);
+  } */
+
+  public override drawImage (pixels: Uint8ClampedArray): void {
+    this.textureData = pixels;
     this.updateTexture();
     this.context.drawArrays(this.context.TRIANGLES, 0.0, 6.0);
   }
