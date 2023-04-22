@@ -1,16 +1,16 @@
 /* eslint-disable no-dupe-class-members */
+type Value<V> = V extends undefined ? Vec3 : number;
 type Vec3 = [number, number, number];
+type Arg = number | undefined;
 
 export default class Vector3
 {
   private readonly vec = [0.0, 0.0, 0.0] as Vec3;
 
-  public constructor (x?: number, y?: number, z?: number) {
-    if (x && y && z) {
-      this.vec[0] = x;
-      this.vec[1] = y;
-      this.vec[2] = z;
-    }
+  public constructor (x = 0.0, y?: number, z?: number) {
+    this.vec[0] = x;
+    this.vec[1] = y ?? x;
+    this.vec[2] = z ?? x;
   }
 
   public negate (): Vector3 {
@@ -21,33 +21,32 @@ export default class Vector3
     );
   }
 
-  public get (v: number): number {
-    return this.vec[v];
-  }
-
-  public add (vec: Vector3): this;
-  public add (v1: Vector3, v2: Vector3): Vector3;
-  public add (v1: Vector3, v2?: Vector3): Vector3
-  {
-    if (v2) return new Vector3(
-      v1.x + v2.x,
-      v1.y + v2.y,
-      v1.z + v2.z
-    );
-
-    this.vec[0] += v1.x;
-    this.vec[1] += v1.y;
-    this.vec[2] += v1.z;
+  public add (vec: Vector3): this {
+    this.vec[0] += vec.x;
+    this.vec[1] += vec.y;
+    this.vec[2] += vec.z;
 
     return this;
   }
 
-  public sub (v1: Vector3, v2: Vector3): Vector3 {
+  public static add (v1: Vector3, v2: Vector3): Vector3 {
+    return new Vector3(
+      v1.x + v2.x,
+      v1.y + v2.y,
+      v1.z + v2.z
+    );
+  }
+
+  public static sub (v1: Vector3, v2: Vector3): Vector3 {
     return new Vector3(
       v1.x - v2.x,
       v1.y - v2.y,
       v1.z - v2.z
     );
+  }
+
+  public static divide (vec: Vector3, t: number): Vector3 {
+    return vec.multiply((1 / t), vec as Vector3);
   }
 
   public divide (t: number): this;
@@ -80,12 +79,29 @@ export default class Vector3
     return this;
   }
 
+  public static multiply (vec: Vector3, t: number): Vector3 {
+    return new Vector3(
+      vec.x * t,
+      vec.y * t,
+      vec.x * t
+    );
+  }
+
+  public get<V extends Arg = undefined>(v?: V): Value<V>;
+  public get(v?: number): Vec3 | number {
+    return v === undefined ? this.vec : this.vec[v];
+  }
+
   public set (x: number, y: number, z: number): this {
     this.vec[0] = x;
     this.vec[1] = y;
     this.vec[2] = z;
 
     return this;
+  }
+
+  public static unitVector (vec: Vector3): Vector3 {
+    return vec.divide(vec.length);
   }
 
   public cross (v1: Vector3, v2: Vector3): Vector3 {
@@ -98,10 +114,6 @@ export default class Vector3
 
   public dot (v1: Vector3, v2: Vector3): number {
     return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
-  }
-
-  public unitVector (vec: Vector3): Vector3 {
-    return this.divide(vec, vec.length);
   }
 
   public get lengthSquared (): number {

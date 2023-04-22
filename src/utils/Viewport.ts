@@ -1,3 +1,5 @@
+import { Config } from '@/stage/Config';
+
 type Callback = (
   width: number,
   height: number,
@@ -12,18 +14,10 @@ type Size = {
 
 class Viewport
 {
-  private width = window.innerWidth;
-  private height = window.innerHeight;
+  private width = Config.Scene.width;
+  private height = Config.Scene.height;
   private ratio = this.width / this.height;
-
   private readonly callbacks: Array<Callback> = [];
-  private readonly update = this.updateSize.bind(this);
-  private readonly root = document.documentElement.style;
-
-  public constructor () {
-    window.addEventListener('resize', this.update, false);
-    this.updateSize();
-  }
 
   public addResizeCallback (callback: Callback) {
     const index = this.callbacks.indexOf(callback);
@@ -35,21 +29,20 @@ class Viewport
     index !== -1 && this.callbacks.splice(index, 1);
   }
 
-  private updateSize () {
-    this.width = window.innerWidth;
-    this.height = window.innerHeight;
-    this.ratio = this.width / this.height;
+  public update (
+    width = Config.Scene.width,
+    height = Config.Scene.height
+  ) {
+    this.width = width;
+    this.height = height;
 
-    this.root.setProperty('--ratio', `${this.ratio}`);
-    this.root.setProperty('--width', `${this.width}px`);
-    this.root.setProperty('--height', `${this.height}px`);
+    this.ratio = this.width / this.height;
 
     for (let c = this.callbacks.length; c--;)
       this.callbacks[c](this.width, this.height, this.ratio);
   }
 
   public dispose () {
-    window.removeEventListener('resize', this.update, false);
     this.callbacks.length = 0;
   }
 
