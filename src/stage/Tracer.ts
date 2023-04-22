@@ -1,13 +1,17 @@
-import Vector3 from '@/utils/Vector3';
-import { format } from '@/utils/Color';
-import { Config } from '@/stage/Config';
 import { toFixed } from '@/utils/Number';
+import { Config } from '@/stage/Config';
+import { format } from '@/utils/Color';
+import Vector3 from '@/utils/Vector3';
+import Camera from '@/stage/Camera';
+import Ray from '@/stage/Ray';
 
 export default class Tracer
 {
   public createPPMImage (): Uint8ClampedArray
   {
     const color = new Vector3();
+    const camera = new Camera();
+
     const { width, height } = Config.Scene;
     const pixels = new Uint8ClampedArray(width * height * 3);
 
@@ -17,7 +21,20 @@ export default class Tracer
 
       for (let w = 0; w < width; w++, p += 3)
       {
-        color.set((w / lw), (h / lh), 0.25);
+        const u = w / lw;
+        const v = h / lh;
+
+        const direction = Vector3.sub(
+          Vector3
+            .add(camera.lowerLeftCorner, Vector3.multiply(camera.horizontal, u))
+            .add(Vector3.multiply(camera.vertical, v)),
+          camera.origin
+        );
+
+        const ray = new Ray(camera.origin, direction);
+
+        color.set(...ray.color.get());
+
         const { x, y, z } = format(color);
 
         pixels[p + 0] = x;
