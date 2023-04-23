@@ -60,9 +60,7 @@ export default class Vector3
   }
 
   public get lengthSquared (): number {
-    return this.vec[0] * this.vec[0] +
-      this.vec[1] * this.vec[1] +
-      this.vec[2] * this.vec[2];
+    return this.dot(this);
   }
 
   public cross (vec: Vector3): this {
@@ -74,7 +72,9 @@ export default class Vector3
   }
 
   public dot (vec: Vector3): number {
-    return this.vec[0] * vec.x + this.vec[1] * vec.y + this.vec[2] * vec.z;
+    return this.vec[0] * vec.x +
+      this.vec[1] * vec.y +
+      this.vec[2] * vec.z;
   }
 
   public add (vec: Vector3): this {
