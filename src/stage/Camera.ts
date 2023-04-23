@@ -8,14 +8,18 @@ export default class Camera
   public readonly origin = new Vector3();
 
   private readonly width = Viewport.size.ratio * this.height;
-  public readonly vertical = new Vector3(0.0, this.height, 0.0);
-  public readonly horizontal = new Vector3(this.width, 0.0, 0.0);
+  private readonly vertical = new Vector3(0.0, this.height, 0.0);
+  private readonly horizontal = new Vector3(this.width, 0.0, 0.0);
 
-  public readonly lowerLeftCorner = Vector3.sub(
-    Vector3.sub(
-      Vector3.sub(this.origin, Vector3.divide(this.horizontal, 2.0)),
-      Vector3.divide(this.vertical, 2.0)
-    ),
-    new Vector3(0.0, 0.0, this.focalLength)
-  );
+  private readonly lowerLeftCorner = this.origin.clone
+      .sub(this.horizontal.clone.divide(2.0))
+      .sub(this.vertical.clone.divide(2.0))
+      .sub(new Vector3(0.0, 0.0, this.focalLength));
+
+  public getDirection (u: number, v: number): Vector3 {
+    return this.lowerLeftCorner.clone
+      .add(this.horizontal.clone.multiply(u))
+      .add(this.vertical.clone.multiply(v))
+      .sub(this.origin);
+  }
 }

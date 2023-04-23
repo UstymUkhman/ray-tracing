@@ -13,64 +13,18 @@ export default class Vector3
     this.vec[2] = z ?? x;
   }
 
-  public negate (): Vector3 {
-    return new Vector3(
-      -this.vec[0],
-      -this.vec[1],
-      -this.vec[2]
-    );
-  }
-
-  public add (vec: Vector3): this {
-    this.vec[0] += vec.x;
-    this.vec[1] += vec.y;
-    this.vec[2] += vec.z;
-
-    return this;
-  }
-
-  public static add (v1: Vector3, v2: Vector3): Vector3 {
-    return new Vector3(
-      v1.x + v2.x,
-      v1.y + v2.y,
-      v1.z + v2.z
-    );
-  }
-
-  public static sub (v1: Vector3, v2: Vector3): Vector3 {
-    return new Vector3(
-      v1.x - v2.x,
-      v1.y - v2.y,
-      v1.z - v2.z
-    );
-  }
-
-  public static divide (vec: Vector3, t: number): Vector3 {
-    return vec.multiply((1 / t), vec as Vector3);
-  }
-
-  public divide (t: number): this;
-  public divide (vec: Vector3, t: number): Vector3;
-  public divide (vec: Vector3 | number, t?: number): Vector3
-  {
-    return t
-      ? this.multiply((1 / t), vec as Vector3)
-      : this.multiply(1 / (vec as number));
-  }
-
   public multiply (t: number): this;
-  public multiply (v1: number, v2: Vector3): Vector3;
-  public multiply (v1: Vector3, v2: number): Vector3;
-  public multiply (v1: Vector3, v2: Vector3): Vector3;
-  public multiply (v1: Vector3 | number, v2?: Vector3 | number): Vector3
+  public multiply (v: Vector3): Vector3;
+  public multiply (f: Vector3 | number): Vector3
   {
-    if (v2) return typeof v2 === 'number'
-      ? this.multiply(v2, v1 as Vector3)
-      : typeof v1 === 'number'
-        ? new Vector3(v1 * v2.x, v1 * v2.y, v1 * v2.z)
-        : new Vector3(v1.x * v2.x, v1.y * v2.y, v1.z * v2.z);
+    if (typeof f !== 'number')
+      return this.set(
+        this.vec[0] * f.x,
+        this.vec[1] * f.y,
+        this.vec[2] * f.z
+      );
 
-    const t = v1 as number;
+    const t = f as number;
 
     this.vec[0] *= t;
     this.vec[1] *= t;
@@ -79,12 +33,17 @@ export default class Vector3
     return this;
   }
 
-  public static multiply (vec: Vector3, t: number): Vector3 {
-    return new Vector3(
-      vec.x * t,
-      vec.y * t,
-      vec.x * t
-    );
+  public divide (t: number): this;
+  public divide (v: Vector3): Vector3;
+  public divide (f: Vector3 | number): Vector3
+  {
+    return typeof f === 'number'
+      ? this.multiply((1 / f))
+      : this.set(
+        this.vec[0] / f.x,
+        this.vec[1] / f.y,
+        this.vec[2] / f.z
+      );
   }
 
   public get<V extends Arg = undefined>(v?: V): Value<V>;
@@ -100,30 +59,54 @@ export default class Vector3
     return this;
   }
 
-  public static unitVector (vec: Vector3): Vector3 {
-    return vec.divide(vec.length);
-  }
-
-  public cross (v1: Vector3, v2: Vector3): Vector3 {
-    return new Vector3(
-      v1.y * v2.z - v1.z * v2.y,
-      v1.z * v2.x - v1.x * v2.z,
-      v1.x * v2.y - v1.y * v2.x
-    );
-  }
-
-  public dot (v1: Vector3, v2: Vector3): number {
-    return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
-  }
-
   public get lengthSquared (): number {
     return this.vec[0] * this.vec[0] +
       this.vec[1] * this.vec[1] +
       this.vec[2] * this.vec[2];
   }
 
+  public cross (vec: Vector3): this {
+    return this.set(
+      this.vec[1] * vec.z - this.vec[2] * vec.y,
+      this.vec[2] * vec.x - this.vec[0] * vec.z,
+      this.vec[0] * vec.y - this.vec[1] * vec.x
+    );
+  }
+
+  public dot (vec: Vector3): number {
+    return this.vec[0] * vec.x + this.vec[1] * vec.y + this.vec[2] * vec.z;
+  }
+
+  public add (vec: Vector3): this {
+    this.vec[0] += vec.x;
+    this.vec[1] += vec.y;
+    this.vec[2] += vec.z;
+
+    return this;
+  }
+
+  public sub (vec: Vector3): this {
+    this.vec[0] -= vec.x;
+    this.vec[1] -= vec.y;
+    this.vec[2] -= vec.z;
+
+    return this;
+  }
+
+  public get unitVector (): this {
+    return this.divide(this.length);
+  }
+
   public get length (): number {
     return Math.sqrt(this.lengthSquared);
+  }
+
+  public get clone (): Vector3 {
+    return new Vector3(...this.get());
+  }
+
+  public reset (s = 0.0): this {
+    return this.set(s, s, s);
   }
 
   public get x (): number {
@@ -141,5 +124,13 @@ export default class Vector3
   public print (): string {
     const [x, y, z] = this.vec;
     return `Vector3 { x: ${x}, y: ${y}, z: ${z} }`;
+  }
+
+  public negate (): this {
+    this.vec[0] *= -1;
+    this.vec[1] *= -1;
+    this.vec[2] *= -1;
+
+    return this;
   }
 }

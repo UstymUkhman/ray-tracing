@@ -24,14 +24,10 @@ export default class Tracer
         const u = w / lw;
         const v = h / lh;
 
-        const direction = Vector3.sub(
-          Vector3
-            .add(camera.lowerLeftCorner, Vector3.multiply(camera.horizontal, u))
-            .add(Vector3.multiply(camera.vertical, v)),
-          camera.origin
+        const ray = new Ray(
+          camera.origin /*.clone */,
+          camera.getDirection(u, v)
         );
-
-        const ray = new Ray(camera.origin, direction);
 
         color.set(...ray.color.get());
 
