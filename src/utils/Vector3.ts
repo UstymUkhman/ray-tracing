@@ -77,6 +77,11 @@ export default class Vector3
       this.vec[2] * vec.z;
   }
 
+  public copy (vec: Vector3): this {
+    const { x, y, z } = vec;
+    return this.set(x, y, z);
+  }
+
   public add (vec: Vector3): this {
     this.vec[0] += vec.x;
     this.vec[1] += vec.y;
