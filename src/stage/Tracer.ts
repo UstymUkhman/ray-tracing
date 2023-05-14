@@ -4,7 +4,6 @@ import { Config } from '@/stage/Config';
 import { format } from '@/utils/Color';
 import Vector3 from '@/utils/Vector3';
 import Camera from '@/stage/Camera';
-import Ray from '@/stage/Ray';
 
 export default class Tracer
 {
@@ -14,6 +13,7 @@ export default class Tracer
 
   private readonly width = Config.Scene.width;
   private readonly height = Config.Scene.height;
+  private readonly samples = Config.Scene.samples;
 
   public createPPMImage (): Uint8ClampedArray
   {
@@ -27,17 +27,19 @@ export default class Tracer
 
       for (let w = 0; w < this.width; w++, p += 3)
       {
-        const u = w / lw;
-        const v = h / lh;
+        this.color.reset();
 
-        const ray = new Ray(
-          this.camera.origin /*.clone */,
-          this.camera.getDirection(u, v)
-        );
+        for (let s = 0; s < this.samples; s++)
+        {
+          const u = (w + Math.random()) / lw;
+          const v = (h + Math.random()) / lh;
 
-        this.color.set(...ray.getColor(ray, this.world.objects).get());
+          const ray = this.camera.getRay(u, v);
 
-        const { x, y, z } = format(this.color);
+          this.color.add(ray.getColor(ray, this.world.objects));
+        }
+
+        const { x, y, z } = format(this.color, this.samples);
 
         pixels[p + 0] = x;
         pixels[p + 1] = y;

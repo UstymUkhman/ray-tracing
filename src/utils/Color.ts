@@ -27,6 +27,17 @@ export const getRGB = (color: string | number, format: 255 | 1 = 1): RGB => {
   };
 };
 
+export const format = (color: Vector3, samples: number) => {
+  const scale = 1.0 / samples;
+  color.multiply(scale);
+
+  return color.set(
+    clamp(color.x, 0.0, 0.999) * 256 | 0,
+    clamp(color.y, 0.0, 0.999) * 256 | 0,
+    clamp(color.z, 0.0, 0.999) * 256 | 0
+  );
+};
+
 export const getHex = (color: RGB | number) => {
   color = typeof color === 'number' ? color : getValue(color);
   return `#${(`000000${color.toString(16)}`).slice(-6)}`;
@@ -38,10 +49,3 @@ export const getInt = (color: RGB | string) => {
 };
 
 export const random = () => randomInt(0, 0xffffff);
-
-export const format = (color: Vector3) =>
-  color.set(
-    255.999 * color.x | 0,
-    255.999 * color.y | 0,
-    255.999 * color.z | 0
-  );

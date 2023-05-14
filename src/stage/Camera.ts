@@ -1,11 +1,12 @@
 import Viewport from '@/utils/Viewport';
 import Vector3 from '@/utils/Vector3';
+import Ray from '@/stage/Ray';
 
 export default class Camera
 {
   private readonly height = 2.0;
   private readonly focalLength = 1.0;
-  public readonly origin = new Vector3();
+  private readonly origin = new Vector3();
 
   private readonly width = Viewport.size.ratio * this.height;
   private readonly vertical = new Vector3(0.0, this.height, 0.0);
@@ -16,10 +17,14 @@ export default class Camera
       .sub(this.vertical.clone.divide(2.0))
       .sub(new Vector3(0.0, 0.0, this.focalLength));
 
-  public getDirection (u: number, v: number): Vector3 {
+  private getDirection (u: number, v: number): Vector3 {
     return this.lowerLeftCorner.clone
       .add(this.horizontal.clone.multiply(u))
       .add(this.vertical.clone.multiply(v))
       .sub(this.origin);
+  }
+
+  public getRay (u: number, v: number): Ray {
+    return new Ray(this.origin, this.getDirection(u, v));
   }
 }

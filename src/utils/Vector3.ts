@@ -38,7 +38,7 @@ export default class Vector3
   public divide (f: Vector3 | number): Vector3
   {
     return typeof f === 'number'
-      ? this.multiply((1 / f))
+      ? this.multiply((1.0 / f))
       : this.set(
         this.vec[0] / f.x,
         this.vec[1] / f.y,
@@ -132,9 +132,9 @@ export default class Vector3
   }
 
   public negate (): this {
-    this.vec[0] *= -1;
-    this.vec[1] *= -1;
-    this.vec[2] *= -1;
+    this.vec[0] *= -1.0;
+    this.vec[1] *= -1.0;
+    this.vec[2] *= -1.0;
 
     return this;
   }
