@@ -1,3 +1,5 @@
+import { random } from '@/utils/Number';
+
 /* eslint-disable no-dupe-class-members */
 type Value<V> = V extends undefined ? Vec3 : number;
 type Vec3 = [number, number, number];
@@ -59,6 +61,14 @@ export default class Vector3
     return this;
   }
 
+  public random (min = 0.0, max = 1.0): this {
+    return this.set(
+      random(min, max),
+      random(min, max),
+      random(min, max)
+    );
+  }
+
   public get lengthSquared (): number {
     return this.dot(this);
   }
@@ -112,6 +122,14 @@ export default class Vector3
 
   public reset (s = 0.0): this {
     return this.set(s, s, s);
+  }
+
+  public get sqrt (): this {
+    return this.set(
+      Math.sqrt(this.vec[0]),
+      Math.sqrt(this.vec[1]),
+      Math.sqrt(this.vec[2])
+    );
   }
 
   public get x (): number {

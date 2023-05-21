@@ -4,6 +4,7 @@ import { Config } from '@/stage/Config';
 import { format } from '@/utils/Color';
 import Vector3 from '@/utils/Vector3';
 import Camera from '@/stage/Camera';
+import Ray from '@/stage/Ray';
 
 export default class Tracer
 {
@@ -13,13 +14,19 @@ export default class Tracer
 
   private readonly width = Config.Scene.width;
   private readonly height = Config.Scene.height;
+
+  private readonly depth = Config.Scene.maxDepth;
   private readonly samples = Config.Scene.samples;
 
   public createPPMImage (): Uint8ClampedArray
   {
+    const ray = new Ray(new Vector3(), new Vector3());
+
     const pixels = new Uint8ClampedArray(
       this.width * this.height * 3
     );
+
+    const start = Date.now();
 
     for (let p = 0, h = this.height - 1, lw = this.width - 1, lh = h; h > -1; h--)
     {
@@ -34,9 +41,11 @@ export default class Tracer
           const u = (w + Math.random()) / lw;
           const v = (h + Math.random()) / lh;
 
-          const ray = this.camera.getRay(u, v);
+          this.camera.setRay(ray, u, v);
 
-          this.color.add(ray.getColor(ray, this.world.objects));
+          // const ray = this.camera.getRay(u, v);
+
+          this.color.add(ray.getColor(ray, this.world.objects, this.depth));
         }
 
         const { x, y, z } = format(this.color, this.samples);
@@ -46,6 +55,8 @@ export default class Tracer
         pixels[p + 2] = z;
       }
     }
+
+    console.info(`Time: ${toFixed((Date.now() - start) / 1e3)} sec.`);
 
     return pixels;
   }

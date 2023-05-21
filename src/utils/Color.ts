@@ -29,7 +29,7 @@ export const getRGB = (color: string | number, format: 255 | 1 = 1): RGB => {
 
 export const format = (color: Vector3, samples: number) => {
   const scale = 1.0 / samples;
-  color.multiply(scale);
+  color.multiply(scale).sqrt;
 
   return color.set(
     clamp(color.x, 0.0, 0.999) * 256 | 0,

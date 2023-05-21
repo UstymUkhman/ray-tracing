@@ -5,6 +5,8 @@ import type { Hittable } from '@/stage/hittables';
 export default class Ray
 {
   private readonly color = new Vector3(1.0);
+  private readonly far = Infinity;
+  private readonly near = 0.001;
 
   public constructor (
     private readonly orig: Vector3,
@@ -15,9 +17,19 @@ export default class Ray
     return this.orig.clone.add(this.dir.multiply(t));
   }
 
-  public getColor (ray: Ray, scene: Hittable): Vector3 {
-    if (scene.hit(ray, 0.0, Infinity, Record))
-      return new Vector3(1.0).add(Record.normal).multiply(0.5);
+  public getColor (ray: Ray, scene: Hittable, depth: number): Vector3 {
+    if (!depth) return this.color.reset();
+
+    if (scene.hit(ray, this.near, this.far, Record))
+      return this.getColor(
+        new Ray(
+          Record.point,
+          Record.point.clone
+            .add(Record.normal)
+            .add(this.randomUnitSphere)
+            .sub(Record.point)
+        ), scene, depth - 1.0
+      ).multiply(0.5);
 
     const t = (ray.dir.unitVector.y + 1.0) * 0.5;
 
@@ -27,8 +39,24 @@ export default class Ray
       .multiply(t));
   }
 
+  private get randomUnitSphere (): Vector3 {
+    const rand = new Vector3();
+
+    for ( ; ; )
+      if (rand.random(-1.0).lengthSquared < 1.0)
+        return rand;
+  }
+
+  public set direction (dir: Vector3) {
+    this.dir.copy(dir);
+  }
+
   public get direction (): Vector3 {
     return this.dir;
+  }
+
+  public set origin (orig: Vector3) {
+    this.orig.copy(orig);
   }
 
   public get origin (): Vector3 {
