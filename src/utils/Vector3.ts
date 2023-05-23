@@ -61,12 +61,31 @@ export default class Vector3
     return this;
   }
 
+  public randomHemisphere (normal: Vector3): Vector3 {
+    const sphere = this.randomUnitSphere;
+
+    return sphere.dot(normal) > 0.0
+      ? sphere : sphere.negate;
+  }
+
   public random (min = 0.0, max = 1.0): this {
     return this.set(
       random(min, max),
       random(min, max),
       random(min, max)
     );
+  }
+
+  public get randomUnitSphere (): Vector3 {
+    const rand = new Vector3();
+
+    for ( ; ; )
+      if (rand.random(-1.0).lengthSquared < 1.0)
+        return rand;
+  }
+
+  public get randomUnitVector (): Vector3 {
+    return this.randomUnitSphere.unitVector;
   }
 
   public get lengthSquared (): number {
@@ -124,6 +143,14 @@ export default class Vector3
     return this.set(s, s, s);
   }
 
+  public get negate (): this {
+    this.vec[0] *= -1.0;
+    this.vec[1] *= -1.0;
+    this.vec[2] *= -1.0;
+
+    return this;
+  }
+
   public get sqrt (): this {
     return this.set(
       Math.sqrt(this.vec[0]),
@@ -147,13 +174,5 @@ export default class Vector3
   public print (): string {
     const [x, y, z] = this.vec;
     return `Vector3 { x: ${x}, y: ${y}, z: ${z} }`;
-  }
-
-  public negate (): this {
-    this.vec[0] *= -1.0;
-    this.vec[1] *= -1.0;
-    this.vec[2] *= -1.0;
-
-    return this;
   }
 }

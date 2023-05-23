@@ -17,7 +17,7 @@ class Record
 
   public setFaceNormal (ray: Ray, outwardNormal: Vector3): void {
     this.frontFace = ray.direction.clone.dot(outwardNormal) < 0.0;
-    this.normal.copy(this.frontFace ? outwardNormal : outwardNormal.negate());
+    this.normal.copy(this.frontFace ? outwardNormal : outwardNormal.negate);
   }
 }
 
