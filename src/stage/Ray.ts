@@ -5,14 +5,13 @@ import type { Hittable } from '@/stage/hittables';
 export default class Ray
 {
   private readonly color = new Vector3(1.0);
-  private readonly target = new Vector3();
 
   private readonly far = Infinity;
   private readonly near = 0.001;
 
   public constructor (
-    private readonly orig: Vector3,
-    private readonly dir: Vector3
+    private readonly orig = new Vector3(),
+    private readonly dir = new Vector3()
   ) {}
 
   public at (t: number): Vector3 {
@@ -23,14 +22,14 @@ export default class Ray
     if (!depth) return this.color.reset();
 
     if (scene.hit(ray, this.near, this.far, Record)) {
-      this.target.copy(Record.point.clone.add(
-        this.target.randomHemisphere(Record.normal)
-      ));
+      const attenuation = new Vector3();
+      const scattered = new Ray();
 
-      return this.getColor(new Ray(
-          Record.point, this.target.sub(Record.point)
-        ), scene, depth - 1.0
-      ).multiply(0.5);
+      if (Record.material.scatter(ray, Record, scattered, attenuation))
+        return this.getColor(scattered, scene, depth - 1.0)
+          .multiply(attenuation);
+
+      return this.color.reset();
     }
 
     const t = (ray.dir.unitVector.y + 1.0) * 0.5;

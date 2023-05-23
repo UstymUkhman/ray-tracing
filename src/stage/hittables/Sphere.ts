@@ -2,12 +2,14 @@ import Hittable from './Hittable';
 import type Ray from '@/stage/Ray';
 import type { Hits } from './types';
 import Vector3 from '@/utils/Vector3';
+import type { Material } from '@/stage/materials';
 
 export default class Sphere extends Hittable
 {
   public constructor (
-    private readonly center: Vector3 = new Vector3(),
-    private readonly radius: number = 0.0
+    private readonly center: Vector3,
+    private readonly radius: number,
+    private readonly material: Material
   ) {
     super();
   }
@@ -27,14 +29,16 @@ export default class Sphere extends Hittable
     const d = halfB * halfB - a * c;
 
     if (d < 0) return false;
+
     const sqrtD = Math.sqrt(d);
     let root = (-halfB - sqrtD) / a;
 
     if (root < tMin || root > tMax) {
       root = (-halfB + sqrtD) / a;
 
-      if (root < tMin || root > tMax)
+      if (root < tMin || root > tMax) {
         return false;
+      }
     }
 
     record.t = root;
@@ -44,6 +48,7 @@ export default class Sphere extends Hittable
       .sub(this.center).divide(this.radius);
 
     record.setFaceNormal(ray, outwardNormal);
+    record.material = this.material;
 
     return true;
   }

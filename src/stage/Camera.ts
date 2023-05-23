@@ -1,6 +1,6 @@
 import Viewport from '@/utils/Viewport';
 import Vector3 from '@/utils/Vector3';
-import type Ray from '@/stage/Ray';
+import Ray from '@/stage/Ray';
 
 export default class Camera
 {
@@ -29,8 +29,4 @@ export default class Camera
     // ray.origin = this.origin;
     return ray;
   }
-
-  /* public getRay (u: number, v: number): Ray {
-    return new Ray(this.origin, this.getDirection(u, v));
-  } */
 }

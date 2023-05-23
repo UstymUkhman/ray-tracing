@@ -1,10 +1,14 @@
-import type Ray from '@/stage/Ray';
+import type { Material } from '@/stage/materials';
 import Vector3 from '@/utils/Vector3';
+import type Ray from '@/stage/Ray';
 
 class Record
 {
   public t = 0.0;
-  public frontFace = false;
+
+  private frontFace = false;
+  public material!: Material;
+
   public readonly point = new Vector3();
   public readonly normal = new Vector3();
 
@@ -16,7 +20,7 @@ class Record
   }
 
   public setFaceNormal (ray: Ray, outwardNormal: Vector3): void {
-    this.frontFace = ray.direction.clone.dot(outwardNormal) < 0.0;
+    this.frontFace = ray.direction.dot(outwardNormal) < 0.0;
     this.normal.copy(this.frontFace ? outwardNormal : outwardNormal.negate);
   }
 }

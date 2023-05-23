@@ -20,13 +20,12 @@ export default class Tracer
 
   public createPPMImage (): Uint8ClampedArray
   {
-    const ray = new Ray(new Vector3(), new Vector3());
-
     const pixels = new Uint8ClampedArray(
       this.width * this.height * 3
     );
 
     const start = Date.now();
+    const ray = new Ray();
 
     for (let p = 0, h = this.height - 1, lw = this.width - 1, lh = h; h > -1; h--)
     {
@@ -42,8 +41,6 @@ export default class Tracer
           const v = (h + Math.random()) / lh;
 
           this.camera.setRay(ray, u, v);
-
-          // const ray = this.camera.getRay(u, v);
 
           this.color.add(ray.getColor(ray, this.world.objects, this.depth));
         }

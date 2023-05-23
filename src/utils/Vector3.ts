@@ -61,11 +61,9 @@ export default class Vector3
     return this;
   }
 
-  public randomHemisphere (normal: Vector3): Vector3 {
-    const sphere = this.randomUnitSphere;
-
-    return sphere.dot(normal) > 0.0
-      ? sphere : sphere.negate;
+  public randomHemisphere (normal: Vector3): this {
+    this.randomUnitSphere;
+    return this.dot(normal) > 0.0 ? this : this.negate;
   }
 
   public random (min = 0.0, max = 1.0): this {
@@ -76,16 +74,18 @@ export default class Vector3
     );
   }
 
-  public get randomUnitSphere (): Vector3 {
-    const rand = new Vector3();
-
-    for ( ; ; )
-      if (rand.random(-1.0).lengthSquared < 1.0)
-        return rand;
+  public reflect (normal: Vector3): Vector3 {
+    return this.sub(normal.multiply(this.dot(normal) * 2.0));
   }
 
   public get randomUnitVector (): Vector3 {
     return this.randomUnitSphere.unitVector;
+  }
+
+  public get randomUnitSphere (): this {
+    for ( ; ; )
+      if (this.random(-1.0).lengthSquared < 1.0)
+        return this;
   }
 
   public get lengthSquared (): number {
@@ -127,6 +127,12 @@ export default class Vector3
     return this;
   }
 
+  public get nearZero (): boolean {
+    return Math.abs(this.vec[0]) < 1e-8 &&
+      Math.abs(this.vec[1]) < 1e-8 &&
+      Math.abs(this.vec[2]) < 1e-8;
+  }
+
   public get unitVector (): this {
     return this.divide(this.length);
   }
@@ -141,6 +147,11 @@ export default class Vector3
 
   public reset (s = 0.0): this {
     return this.set(s, s, s);
+  }
+
+  public get print (): string {
+    const [x, y, z] = this.vec;
+    return `Vector3 { x: ${x}, y: ${y}, z: ${z} }`;
   }
 
   public get negate (): this {
@@ -169,10 +180,5 @@ export default class Vector3
 
   public get z (): number {
     return this.vec[2];
-  }
-
-  public print (): string {
-    const [x, y, z] = this.vec;
-    return `Vector3 { x: ${x}, y: ${y}, z: ${z} }`;
   }
 }
