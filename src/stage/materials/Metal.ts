@@ -21,11 +21,12 @@ export default class Metal extends Material
     scattered: Ray,
     attenuation: Vector3
   ): boolean {
-    const reflected = inRay.direction.unitVector.reflect(record.normal.clone);
+    const reflected = inRay.direction.unitVector.reflect(record.normal);
     this.direction.randomUnitSphere.multiply(this.fuzz).add(reflected);
 
     scattered.direction = this.direction;
     scattered.origin = record.point;
+
     attenuation.copy(this.albedo);
 
     return this.direction.dot(record.normal) > 0.0;

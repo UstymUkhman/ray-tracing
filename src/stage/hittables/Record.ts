@@ -6,7 +6,7 @@ class Record
 {
   public t = 0.0;
 
-  private frontFace = false;
+  public frontFace = false;
   public material!: Material;
 
   public readonly point = new Vector3();

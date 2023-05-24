@@ -53,6 +53,14 @@ export default class Vector3
     return v === undefined ? this.vec : this.vec[v];
   }
 
+  public refract (normal: Vector3, eoe: number): this {
+    const theta = Math.min(this.clone.negate.dot(normal), 1.0);
+    this.copy(normal.clone.multiply(theta).add(this).multiply(eoe));
+
+    const angle = Math.abs(1.0 - this.lengthSquared);
+    return this.add(normal.multiply(-Math.sqrt(angle)));
+  }
+
   public set (x: number, y: number, z: number): this {
     this.vec[0] = x;
     this.vec[1] = y;
@@ -75,7 +83,7 @@ export default class Vector3
   }
 
   public reflect (normal: Vector3): Vector3 {
-    return this.sub(normal.multiply(this.dot(normal) * 2.0));
+    return this.sub(normal.clone.multiply(this.dot(normal) * 2.0));
   }
 
   public get randomUnitVector (): Vector3 {
@@ -142,7 +150,11 @@ export default class Vector3
   }
 
   public get clone (): Vector3 {
-    return new Vector3(...this.get());
+    return new Vector3(
+      this.vec[0],
+      this.vec[1],
+      this.vec[2]
+    );
   }
 
   public reset (s = 0.0): this {

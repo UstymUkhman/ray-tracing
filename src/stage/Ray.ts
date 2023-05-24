@@ -15,7 +15,7 @@ export default class Ray
   ) {}
 
   public at (t: number): Vector3 {
-    return this.orig.clone.add(this.dir.multiply(t));
+    return this.orig.clone.add(this.dir.clone.multiply(t));
   }
 
   public getColor (ray: Ray, scene: Hittable, depth: number): Vector3 {
