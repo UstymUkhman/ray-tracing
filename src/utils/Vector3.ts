@@ -100,6 +100,16 @@ export default class Vector3
     return this.dot(this);
   }
 
+  public get randomUnitDisk (): this {
+    for ( ; ; ) {
+      this.random(-1.0);
+      this.vec[2] = 0.0;
+
+      if (this.lengthSquared < 1.0)
+        return this;
+    }
+  }
+
   public cross (vec: Vector3): this {
     return this.set(
       this.vec[1] * vec.z - this.vec[2] * vec.y,

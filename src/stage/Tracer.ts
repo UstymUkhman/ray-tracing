@@ -9,6 +9,8 @@ import Ray from '@/stage/Ray';
 
 export default class Tracer
 {
+  private readonly camera: Camera;
+
   private readonly world = new World();
   private readonly color = new Vector3();
 
@@ -18,13 +20,20 @@ export default class Tracer
   private readonly depth = Config.Scene.maxDepth;
   private readonly samples = Config.Scene.samples;
 
-  private readonly camera = new Camera(
-    new Vector3(-2.0, 2.0, 1.0),
-    new Vector3(0.0, 0.0, -1.0),
-    new Vector3(0.0, 1.0, 0.0),
-    20.0,
-    Viewport.size.ratio
-  );
+  public constructor () {
+    const origin = new Vector3(3.0, 3.0, 2.0);
+    const target = new Vector3(0.0, 0.0, -1.0);
+
+    this.camera = new Camera(
+      origin,
+      target,
+      new Vector3(0.0, 1.0, 0.0),
+      20.0,
+      Viewport.size.ratio,
+      2.0,
+      origin.clone.sub(target).length
+    );
+  }
 
   public createPPMImage (): Uint8ClampedArray
   {
