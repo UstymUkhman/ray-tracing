@@ -1,6 +1,7 @@
 import { World } from '@/stage/hittables';
 import { toFixed } from '@/utils/Number';
 import { Config } from '@/stage/Config';
+import Viewport from '@/utils/Viewport';
 import { format } from '@/utils/Color';
 import Vector3 from '@/utils/Vector3';
 import Camera from '@/stage/Camera';
@@ -10,13 +11,20 @@ export default class Tracer
 {
   private readonly world = new World();
   private readonly color = new Vector3();
-  private readonly camera = new Camera();
 
   private readonly width = Config.Scene.width;
   private readonly height = Config.Scene.height;
 
   private readonly depth = Config.Scene.maxDepth;
   private readonly samples = Config.Scene.samples;
+
+  private readonly camera = new Camera(
+    new Vector3(-2.0, 2.0, 1.0),
+    new Vector3(0.0, 0.0, -1.0),
+    new Vector3(0.0, 1.0, 0.0),
+    20.0,
+    Viewport.size.ratio
+  );
 
   public createPPMImage (): Uint8ClampedArray
   {

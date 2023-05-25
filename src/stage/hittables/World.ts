@@ -16,7 +16,7 @@ export default class World
     this.addSphere(new Vector3(0.0, -100.5, -1.0), 100.0, groundMaterial);
     this.addSphere(new Vector3(0.0, 0.0, -1.0), 0.5, centerMaterial);
     this.addSphere(new Vector3(-1.0, 0.0, -1.0), 0.5, leftMaterial);
-    this.addSphere(new Vector3(-1.0, 0.0, -1.0), -0.4, leftMaterial);
+    this.addSphere(new Vector3(-1.0, 0.0, -1.0), -0.45, leftMaterial);
     this.addSphere(new Vector3(1.0, 0.0, -1.0), 0.5, rightMaterial);
   }
 

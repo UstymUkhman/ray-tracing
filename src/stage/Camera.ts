@@ -1,32 +1,51 @@
-import Viewport from '@/utils/Viewport';
+import { degToRad } from '@/utils/Number';
 import Vector3 from '@/utils/Vector3';
 import Ray from '@/stage/Ray';
 
 export default class Camera
 {
-  private readonly height = 2.0;
-  private readonly focalLength = 1.0;
-  private readonly origin = new Vector3();
+  private readonly width: number;
+  private readonly height: number;
 
-  private readonly width = Viewport.size.ratio * this.height;
-  private readonly vertical = new Vector3(0.0, this.height, 0.0);
-  private readonly horizontal = new Vector3(this.width, 0.0, 0.0);
+  private readonly vertical: Vector3;
+  private readonly horizontal: Vector3;
 
-  private readonly lowerLeftCorner = this.origin.clone
-    .sub(this.horizontal.clone.divide(2.0))
-    .sub(this.vertical.clone.divide(2.0))
-    .sub(new Vector3(0.0, 0.0, this.focalLength));
+  // private readonly focalLength = 1.0;
+  private readonly lowerLeftCorner: Vector3;
 
-  private getDirection (u: number, v: number): Vector3 {
-    return this.lowerLeftCorner.clone
-      .add(this.horizontal.clone.multiply(u))
-      .add(this.vertical.clone.multiply(v))
-      .sub(this.origin);
+  public constructor (
+    private readonly origin: Vector3,
+    lookAt: Vector3,
+    vUp: Vector3,
+    fov: number,
+    ratio: number
+  ) {
+    const w = this.origin.clone.sub(lookAt).unitVector;
+    const height = Math.tan(degToRad(fov) * 0.5);
+
+    const u = vUp.cross(w).unitVector;
+    const v = w.clone.cross(u);
+
+    this.height = height * 2.0;
+    this.width = ratio * this.height;
+
+    this.vertical = v.multiply(this.height);
+    this.horizontal = u.multiply(this.width);
+
+    this.lowerLeftCorner = this.origin.clone
+      .sub(this.horizontal.clone.divide(2.0))
+      .sub(this.vertical.clone.divide(2.0))
+      .sub(w);
   }
 
-  public setRay (ray: Ray, u: number, v: number): Ray {
-    ray.direction = this.getDirection(u, v);
-    // ray.origin = this.origin;
+  public setRay (ray: Ray, s: number, t: number): Ray {
+    ray.direction = this.lowerLeftCorner.clone
+      .add(this.horizontal.clone.multiply(s))
+      .add(this.vertical.clone.multiply(t))
+      .sub(this.origin);
+
+    ray.origin = this.origin;
+
     return ray;
   }
 }
