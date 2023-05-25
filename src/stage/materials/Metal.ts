@@ -5,13 +5,14 @@ import type { Hits } from '@/stage/hittables/types';
 
 export default class Metal extends Material
 {
+  private readonly fuzz: number;
+  private readonly albedo: Vector3;
   private readonly direction = new Vector3();
 
-  public constructor (
-    private readonly albedo: Vector3,
-    private readonly fuzz: number
-  ) {
+  public constructor (color: Vector3, fuzz: number)
+  {
     super();
+    this.albedo = color.clone;
     this.fuzz = Math.min(fuzz, 1.0);
   }
 

@@ -20,18 +20,16 @@ export default class Tracer
   private readonly depth = Config.Scene.maxDepth;
   private readonly samples = Config.Scene.samples;
 
-  public constructor () {
-    const origin = new Vector3(3.0, 3.0, 2.0);
-    const target = new Vector3(0.0, 0.0, -1.0);
-
+  public constructor ()
+  {
     this.camera = new Camera(
-      origin,
-      target,
+      new Vector3(13.0, 2.0, 3.0),
+      new Vector3(0.0, 0.0, 0.0),
       new Vector3(0.0, 1.0, 0.0),
       20.0,
       Viewport.size.ratio,
-      2.0,
-      origin.clone.sub(target).length
+      0.1,
+      10.0
     );
   }
 

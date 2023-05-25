@@ -5,10 +5,13 @@ import type { Hits } from '@/stage/hittables/types';
 
 export default class Lambertian extends Material
 {
+  private readonly albedo: Vector3;
   private readonly direction = new Vector3();
 
-  public constructor (private readonly albedo: Vector3) {
+  public constructor (color: Vector3)
+  {
     super();
+    this.albedo = color.clone;
   }
 
   public override scatter (

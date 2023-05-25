@@ -6,7 +6,7 @@
 ![](https://img.shields.io/github/package-json/v/UstymUkhman/ray-tracing?color=orange&style=flat-square)
 ![](https://img.shields.io/github/license/UstymUkhman/ray-tracing?color=lightgrey&style=flat-square)
 
-<!-- [![](./public/assets/images/preview.jpg)](https://ustymukhman.github.io/ray-tracing/dist) -->
+[![](./public/assets/images/preview.png)](https://ustymukhman.github.io/ray-tracing/dist)
 
 ## Download ##
 

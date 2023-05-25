@@ -16,10 +16,8 @@ export default class Camera
   private readonly lensRadius: number;
   private readonly horizontal: Vector3;
 
-  // private readonly focalLength = 1.0;
-  private readonly lowerLeftCorner: Vector3;
-
   private readonly random = new Vector3();
+  private readonly lowerLeftCorner: Vector3;
 
   public constructor (
     origin: Vector3,

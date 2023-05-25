@@ -3,9 +3,9 @@ export namespace Config
   export const Scene = {
     pixelRatio: 1.0,
     maxDepth: 50.0,
-    samples: 100.0,
+    samples: 500.0,
     backEnd: '2d',
-    height: 225.0,
-    width: 400.0
+    height: 400.0,
+    width: 600.0
   } as const;
 }
