@@ -4,11 +4,11 @@
 
   "display": "standalone",
   "author": "Ustym Ukhman",
-  "orientation": "portrait",
+  "orientation": "landscape",
 
-  "name": "Ray Tracing",
   "short_name": "Ray Tracing",
-  "description": "Ray Tracing in One Weekend [TypeScript]",
+  "name": "Ray Tracing in One Weekend",
+  "description": "Ray Tracing in One Weekend with (Assembly & Type)Script",
 
   "prefer_related_applications": false,
   "background_color": "#222222",

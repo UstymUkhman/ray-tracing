@@ -1,6 +1,6 @@
-# Ray Tracing #
+# Ray Tracing in One Weekend #
 
-*[Ray Tracing in One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html) [TypeScript]*
+> My version of [Ray Tracing in One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html) with [TypeScript](https://www.typescriptlang.org/).<br />[AssemblyScript](https://www.assemblyscript.org/) version coming soon...
 
 ![](https://img.shields.io/github/deployments/UstymUkhman/ray-tracing/github-pages?style=flat-square)
 ![](https://img.shields.io/github/package-json/v/UstymUkhman/ray-tracing?color=orange&style=flat-square)
