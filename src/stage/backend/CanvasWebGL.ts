@@ -75,13 +75,12 @@ export default class CanvasWebGL extends Canvas
       this.context.linkProgram(this.program);
     }
 
-    if (!this.context.getProgramParameter(this.program, this.context.LINK_STATUS)) {
+    if (!this.context.getProgramParameter(this.program, this.context.LINK_STATUS))
       return console.error(
-        `Unable to initialize shader program: ${this.context.getProgramInfoLog(
-          this.program
-        )}`
+        `Unable to initialize shader program: ${
+          this.context.getProgramInfoLog(this.program)
+        }`
       );
-    }
 
     this.context.clear(this.context.COLOR_BUFFER_BIT);
     const { r, g, b } = getRGB(this.clearColor, 1.0);
@@ -136,18 +135,6 @@ export default class CanvasWebGL extends Canvas
     this.context.texParameteri(this.context.TEXTURE_2D, this.context.TEXTURE_MIN_FILTER, this.context.NEAREST);
     this.context.texParameteri(this.context.TEXTURE_2D, this.context.TEXTURE_MAG_FILTER, this.context.NEAREST);
   }
-
-  /* private drawPixel (x: number, y: number, color: number): void {
-    const p = this.getPixel(x, y);
-    color = color / 0xffffff * 255.0;
-
-    this.textureData[p + 0] = color;
-    this.textureData[p + 1] = color;
-    this.textureData[p + 2] = color;
-
-    this.updateTexture();
-    this.context.drawArrays(this.context.TRIANGLES, 0.0, 6.0);
-  } */
 
   public override drawImage (pixels: Uint8ClampedArray): void {
     this.textureData = pixels;

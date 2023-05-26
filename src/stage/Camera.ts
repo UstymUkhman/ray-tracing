@@ -54,7 +54,7 @@ export default class Camera
       .sub(w.multiply(focusDist));
   }
 
-  public setRay (ray: Ray, s: number, t: number): Ray {
+  public setRay (ray: Ray, s: number, t: number): void {
     const randomDisk = this.random.randomUnitDisk.multiply(this.lensRadius);
 
     const offset = this.u.clone.multiply(randomDisk.x)
@@ -66,7 +66,5 @@ export default class Camera
       .sub(this.origin).sub(offset);
 
     ray.origin = offset.add(this.origin);
-
-    return ray;
   }
 }
