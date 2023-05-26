@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://ustymukhman.github.io/ray-tracing/dist/sitemap.xml
