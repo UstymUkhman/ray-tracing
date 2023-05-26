@@ -9,16 +9,17 @@ import Ray from '@/stage/Ray';
 
 export default class Tracer
 {
-  private readonly camera: Camera;
+  private last = Date.now();
 
+  private readonly camera: Camera;
   private readonly world = new World();
   private readonly color = new Vector3();
 
-  private readonly width = Config.Scene.width;
+  private readonly width  = Config.Scene.width;
   private readonly height = Config.Scene.height;
+  private readonly depth  = Config.Scene.maxDepth;
 
-  private readonly depth = Config.Scene.maxDepth;
-  private readonly samples = Config.Scene.samples;
+  private readonly samples: number = Config.Scene.samples;
 
   public constructor ()
   {
@@ -33,24 +34,23 @@ export default class Tracer
     );
   }
 
-  public createPPMImage (): Uint8ClampedArray
-  {
-    const pixels = new Uint8ClampedArray(
-      this.width * this.height * 3
-    );
-
-    const start = Date.now();
+  public createPPMImage (
+    pixels: Uint8ClampedArray,
+    start: number,
+    samples = this.samples
+  ): void {
     const ray = new Ray();
+    const last = this.samples === samples;
 
     for (let p = 0, h = this.height - 1, lw = this.width - 1, lh = h; h > -1; h--)
     {
-      console.info(`Progress: ${toFixed((1 - h / lh) * 100)}%`);
+      last && console.info(`Progress: ${toFixed((1 - h / lh) * 100)}%`);
 
       for (let w = 0; w < this.width; w++, p += 3)
       {
         this.color.reset();
 
-        for (let s = 0; s < this.samples; s++)
+        for (let s = 0; s < samples; s++)
         {
           const u = (w + Math.random()) / lw;
           const v = (h + Math.random()) / lh;
@@ -60,7 +60,7 @@ export default class Tracer
           this.color.add(ray.getColor(ray, this.world.objects, this.depth));
         }
 
-        const { x, y, z } = format(this.color, this.samples);
+        const { x, y, z } = format(this.color, samples);
 
         pixels[p + 0] = x;
         pixels[p + 1] = y;
@@ -68,8 +68,13 @@ export default class Tracer
       }
     }
 
-    console.info(`Time: ${toFixed((Date.now() - start) / 1e3)} sec.`);
+    const now = Date.now();
 
-    return pixels;
+    const s = `${(last && 'Total ') || ''}Samples: ${samples}`;
+    const tt = `Total Time: ${toFixed((now - start) / 1e3)} sec.`;
+    const lrt = `Last Render Time: ${toFixed((now - this.last) / 1e3)} sec.`;
+
+    console.info(`${s} | ${lrt} | ${tt}`);
+    this.last = now;
   }
 }

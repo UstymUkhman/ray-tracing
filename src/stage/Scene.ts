@@ -7,15 +7,28 @@ import {
 
 import Tracer from '@/stage/Tracer';
 import Events from '@/stage/Events';
+import { Config } from '@/stage/Config';
 import type Worker from '@/utils/worker';
+
 import type { Canvas } from '@/stage/backend';
+import { DELTA_UPDATE } from '@/utils/Number';
+import type { ImageData } from '@/stage/types';
 import type { SceneParams } from '@/stage/types';
 
 export default class Scene
 {
+  private nextSample = 0.0;
+
   private readonly canvas!: Canvas;
   private readonly tracer?: Tracer;
   private readonly worker?: Worker;
+
+  private readonly start = Date.now();
+  private readonly samples = Config.Scene.samples;
+
+  private readonly pixels = new Uint8ClampedArray(
+    Config.Scene.width * Config.Scene.height * 3
+  );
 
   public constructor (params: SceneParams) {
     this.canvas = this.createCanvas(params);
@@ -50,15 +63,20 @@ export default class Scene
   }
 
   private createPPMImage (download = false): void {
-    this.worker
-      ? this.worker.post('Create::PPMImage', { download })
-      : this.showPPMImage({ download, pixels: this.tracer?.createPPMImage() }, true);
+    if (this.worker) return this.worker.post('Create::PPMImage', { download });
+
+    this.tracer?.createPPMImage(this.pixels, this.start, this.nextSample++);
+    this.showPPMImage({ pixels: this.pixels, sample: this.nextSample, download }, true);
   }
 
   private showPPMImage (data: unknown, worker?: boolean): void {
-    const { download, pixels } = data as { download: boolean, pixels: Uint8ClampedArray };
-    download && this.downloadPPMImage(pixels, worker);
-    this.canvas.drawImage(pixels);
+    const imageData = data as ImageData;
+    this.canvas.drawImage(imageData.pixels);
+
+    this.samples === imageData.sample ||
+    !(this.worker ? imageData.sample : this.nextSample)
+      ? imageData.download && this.downloadPPMImage(imageData.pixels, worker)
+      : setTimeout(this.createPPMImage.bind(this, imageData.download), DELTA_UPDATE);
   }
 
   private downloadPPMImage (pixels: Uint8ClampedArray, worker?: boolean): void {

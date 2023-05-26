@@ -14,3 +14,9 @@ export type SceneParams = {
   pixelRatio: number,
   worker?: Worker
 };
+
+export type ImageData = {
+  pixels: Uint8ClampedArray;
+  download: boolean;
+  sample: number;
+};
