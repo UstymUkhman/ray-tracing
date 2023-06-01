@@ -1,7 +1,7 @@
 import '@/app/app.css';
 import Stage from '@/stage';
 import { onMount } from 'solid-js';
-import { Config } from '@/stage/Config';
+import Config from '@/stage/Config';
 
 export const App = () =>
 {
@@ -9,8 +9,8 @@ export const App = () =>
   onMount(() => new Stage(canvas));
 
   return <canvas
-    height={Config.Scene.height}
-    width={Config.Scene.width}
+    height={Config.height}
+    width={Config.width}
     ref={canvas}
   />;
 };

@@ -1,6 +1,6 @@
 import Scene from '@/stage/Scene';
 import Tracer from '@/stage/Tracer';
-import { Config } from '@/stage/Config';
+import Config from '@/stage/Config';
 
 let start = 0.0;
 let samples = 0.0;
@@ -8,7 +8,7 @@ let samples = 0.0;
 const tracer = new Tracer();
 
 const pixels = new Uint8ClampedArray(
-  Config.Scene.width * Config.Scene.height * 3
+  Config.width * Config.height * 3
 );
 
 self.onerror = error => console.error(error);
@@ -25,7 +25,7 @@ self.onmessage = (message): Scene | void => {
       });
 
     case 'Create::PPMImage': {
-      tracer.createPPMImage(pixels, start ||= Date.now(), samples++);
+      tracer.createPPMImage(pixels, start ||= Date.now(), ++samples);
       params = { sample: samples, pixels, ...params };
       break;
     }

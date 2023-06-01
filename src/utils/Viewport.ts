@@ -1,4 +1,4 @@
-import { Config } from '@/stage/Config';
+import Config from '@/stage/Config';
 
 type Callback = (
   width: number,
@@ -14,8 +14,9 @@ type Size = {
 
 class Viewport
 {
-  private width = Config.Scene.width;
-  private height = Config.Scene.height;
+  private width = Config.width;
+  private height = Config.height;
+
   private ratio = this.width / this.height;
   private readonly callbacks: Array<Callback> = [];
 
@@ -29,10 +30,7 @@ class Viewport
     index !== -1 && this.callbacks.splice(index, 1);
   }
 
-  public update (
-    width = Config.Scene.width,
-    height = Config.Scene.height
-  ) {
+  public update (width = Config.width, height = Config.height) {
     this.width = width;
     this.height = height;
 

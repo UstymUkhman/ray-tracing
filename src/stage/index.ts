@@ -1,6 +1,6 @@
 import type { OffscreenCanvas } from '@/stage/types';
 import type { Event } from '@/utils/Events';
-import { Config } from '@/stage/Config';
+import Config from '@/stage/Config';
 import Worker from '@/utils/worker';
 import Client from '@/stage/Client';
 import Events from '@/stage/Events';
@@ -19,7 +19,7 @@ export default class Stage
 
   public constructor (canvas: HTMLCanvasElement) {
     Events.createWorkerEvents(this.worker, this.offscreen);
-    const { backEnd, pixelRatio = devicePixelRatio } = Config.Scene;
+    const { backEnd, pixelRatio = devicePixelRatio } = Config;
     Events.add('Download::PPMImage', this.downloadPPMImage.bind(this));
 
     !this.offscreen

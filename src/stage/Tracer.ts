@@ -1,10 +1,10 @@
 import { World } from '@/stage/hittables';
 import { toFixed } from '@/utils/Number';
-import { Config } from '@/stage/Config';
 import Viewport from '@/utils/Viewport';
 import { format } from '@/utils/Color';
 import Vector3 from '@/utils/Vector3';
 import Camera from '@/stage/Camera';
+import Config from '@/stage/Config';
 import Ray from '@/stage/Ray';
 
 export default class Tracer
@@ -15,11 +15,11 @@ export default class Tracer
   private readonly world = new World();
   private readonly color = new Vector3();
 
-  private readonly width  = Config.Scene.width;
-  private readonly height = Config.Scene.height;
-  private readonly depth  = Config.Scene.maxDepth;
+  private readonly width  = Config.width;
+  private readonly height = Config.height;
+  private readonly depth  = Config.maxDepth;
 
-  private readonly samples: number = Config.Scene.samples;
+  private readonly samples: number = Config.samples;
 
   public constructor ()
   {

@@ -5,11 +5,11 @@ import {
   // CanvasWebGPU,
 } from '@/stage/backend';
 
+import Config from '@/stage/Config';
 import Tracer from '@/stage/Tracer';
 import Events from '@/stage/Events';
-import { Config } from '@/stage/Config';
-import type Worker from '@/utils/worker';
 
+import type Worker from '@/utils/worker';
 import type { Canvas } from '@/stage/backend';
 import { DELTA_UPDATE } from '@/utils/Number';
 import type { ImageData } from '@/stage/types';
@@ -24,10 +24,10 @@ export default class Scene
   private readonly worker?: Worker;
 
   private readonly start = Date.now();
-  private readonly samples = Config.Scene.samples;
+  private readonly samples = Config.samples;
 
   private readonly pixels = new Uint8ClampedArray(
-    Config.Scene.width * Config.Scene.height * 3
+    Config.width * Config.height * 3
   );
 
   public constructor (params: SceneParams) {
@@ -65,7 +65,7 @@ export default class Scene
   private createPPMImage (download = false): void {
     if (this.worker) return this.worker.post('Create::PPMImage', { download });
 
-    this.tracer?.createPPMImage(this.pixels, this.start, this.nextSample++);
+    this.tracer?.createPPMImage(this.pixels, this.start, ++this.nextSample);
     this.showPPMImage({ pixels: this.pixels, sample: this.nextSample, download }, true);
   }
 
