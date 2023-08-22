@@ -1,4 +1,4 @@
-import { random } from '@/utils/Number';
+import { clamp, random } from '@/utils/Number';
 
 /* eslint-disable no-dupe-class-members */
 type Value<V> = V extends undefined ? Vec3 : number;
@@ -40,7 +40,7 @@ export default class Vector3
   public divide (f: Vector3 | number): Vector3
   {
     return typeof f === 'number'
-      ? this.multiply((1.0 / f))
+      ? this.multiply(1.0 / f)
       : this.set(
         this.vec[0] / f.x,
         this.vec[1] / f.y,
@@ -189,6 +189,14 @@ export default class Vector3
       Math.sqrt(this.vec[0]),
       Math.sqrt(this.vec[1]),
       Math.sqrt(this.vec[2])
+    );
+  }
+
+  public get rgb (): this {
+    return this.set(
+      clamp(this.vec[0] * 256 | 0, 0, 255),
+      clamp(this.vec[1] * 256 | 0, 0, 255),
+      clamp(this.vec[2] * 256 | 0, 0, 255)
     );
   }
 

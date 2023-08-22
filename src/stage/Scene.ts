@@ -8,8 +8,10 @@ import {
 import Config from '@/stage/Config';
 import Tracer from '@/stage/Tracer';
 import Events from '@/stage/Events';
-
+import Vector3 from '@/utils/Vector3';
 import type Worker from '@/utils/worker';
+
+import { floatToInt } from '@/utils/Color';
 import type { Canvas } from '@/stage/backend';
 import { DELTA_UPDATE } from '@/utils/Number';
 import type { ImageData } from '@/stage/types';
@@ -17,16 +19,21 @@ import type { SceneParams } from '@/stage/types';
 
 export default class Scene
 {
-  private nextSample = 0.0;
+  private sample = 0.0;
 
   private readonly canvas!: Canvas;
   private readonly tracer?: Tracer;
   private readonly worker?: Worker;
 
   private readonly start = Date.now();
+  private readonly color = new Vector3();
   private readonly samples = Config.samples;
 
-  private readonly pixels = new Uint8ClampedArray(
+  private readonly f32 = new Float32Array(
+    Config.width * Config.height * 3
+  );
+
+  private readonly uint8 = new Uint8ClampedArray(
     Config.width * Config.height * 3
   );
 
@@ -65,8 +72,10 @@ export default class Scene
   private createPPMImage (download = false): void {
     if (this.worker) return this.worker.post('Create::PPMImage', { download });
 
-    this.tracer?.createPPMImage(this.pixels, this.start, ++this.nextSample);
-    this.showPPMImage({ pixels: this.pixels, sample: this.nextSample, download }, true);
+    this.tracer?.createPPMImage(this.f32, this.start, ++this.sample);
+    floatToInt(this.f32, this.uint8, this.color, this.sample);
+
+    this.showPPMImage({ pixels: this.uint8, sample: this.sample, download }, true);
   }
 
   private showPPMImage (data: unknown, worker?: boolean): void {
@@ -74,7 +83,7 @@ export default class Scene
     this.canvas.drawImage(imageData.pixels);
 
     this.samples === imageData.sample ||
-    !(this.worker ? imageData.sample : this.nextSample)
+    !(this.worker ? imageData.sample : this.sample)
       ? imageData.download && this.downloadPPMImage(imageData.pixels, worker)
       : setTimeout(this.createPPMImage.bind(this, imageData.download), DELTA_UPDATE);
   }

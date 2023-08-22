@@ -1,11 +1,18 @@
 import Scene from '@/stage/Scene';
 import Tracer from '@/stage/Tracer';
 import Config from '@/stage/Config';
+import Vector3 from '@/utils/Vector3';
+import { floatToInt } from '@/utils/Color';
 
 let start = 0.0;
-let samples = 0.0;
+let sample = 0.0;
 
+const color = new Vector3();
 const tracer = new Tracer();
+
+const f32 = new Float32Array(
+  Config.width * Config.height * 3
+);
 
 const pixels = new Uint8ClampedArray(
   Config.width * Config.height * 3
@@ -24,11 +31,11 @@ self.onmessage = (message): Scene | void => {
         ...params
       });
 
-    case 'Create::PPMImage': {
-      tracer.createPPMImage(pixels, start ||= Date.now(), ++samples);
-      params = { sample: samples, pixels, ...params };
+    case 'Create::PPMImage':
+      tracer.createPPMImage(f32, start ||= Date.now(), ++sample);
+      floatToInt(f32, pixels, color, sample);
+      params = { sample, pixels, ...params };
       break;
-    }
   }
 
   self.postMessage({

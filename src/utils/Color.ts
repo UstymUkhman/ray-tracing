@@ -1,10 +1,16 @@
-import Vector3 from '@/utils/Vector3';
+import type Vector3 from '@/utils/Vector3';
 import { clamp, randomInt } from '@/utils/Number';
 
 export type RGB = { r: number; g: number; b: number; };
 
-const getValue = ({ r, g, b }: RGB) =>
-  clamp(r * 255, 0, 255) << 16 ^ clamp(g * 255, 0, 255) << 8 ^ clamp(b * 255, 0, 255) << 0;
+export const floatToInt = (f32: Float32Array, uint8: Uint8ClampedArray, color: Vector3, samples: number): void => {
+  for (let p = 0; p < f32.length; p += 3)
+  {
+    color.set(f32[p], f32[p + 1], f32[p + 2]);
+    const { x, y, z } = format(color, samples);
+    uint8[p] = x; uint8[p + 1] = y; uint8[p + 2] = z;
+  }
+};
 
 export const blend = (initial: RGB | string | number, target: RGB | string | number, p = 0.5): string => {
   initial = getRGB(typeof initial === 'object' ? getInt(initial) : initial, 255);
@@ -27,25 +33,20 @@ export const getRGB = (color: string | number, format: 255 | 1 = 1): RGB => {
   };
 };
 
-export const format = (color: Vector3, samples: number) => {
-  const scale = 1.0 / samples;
-  color.multiply(scale).sqrt;
-
-  return color.set(
-    clamp(color.x, 0.0, 0.999) * 256 | 0,
-    clamp(color.y, 0.0, 0.999) * 256 | 0,
-    clamp(color.z, 0.0, 0.999) * 256 | 0
-  );
-};
-
-export const getHex = (color: RGB | number) => {
+export const getHex = (color: RGB | number): string => {
   color = typeof color === 'number' ? color : getValue(color);
   return `#${(`000000${color.toString(16)}`).slice(-6)}`;
 };
 
-export const getInt = (color: RGB | string) => {
+export const getInt = (color: RGB | string): number => {
   color = typeof color === 'string' ? color : getHex(color);
   return parseInt(color.slice(1), 16);
 };
 
-export const random = () => randomInt(0, 0xffffff);
+export const random = (): number => randomInt(0, 0xffffff);
+
+const format = (color: Vector3, samples: number): Vector3 =>
+  color.divide(samples).sqrt.rgb;
+
+const getValue = ({ r, g, b }: RGB): number =>
+  clamp(r * 255, 0, 255) << 16 ^ clamp(g * 255, 0, 255) << 8 ^ clamp(b * 255, 0, 255) << 0;

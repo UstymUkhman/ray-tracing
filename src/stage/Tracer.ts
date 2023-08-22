@@ -1,7 +1,6 @@
 import { World } from '@/stage/hittables';
 import { toFixed } from '@/utils/Number';
 import Viewport from '@/utils/Viewport';
-import { format } from '@/utils/Color';
 import Vector3 from '@/utils/Vector3';
 import Camera from '@/stage/Camera';
 import Config from '@/stage/Config';
@@ -35,7 +34,7 @@ export default class Tracer
   }
 
   public createPPMImage (
-    pixels: Uint8ClampedArray,
+    f32: Float32Array,
     start: number,
     samples = this.samples
   ): void {
@@ -48,23 +47,18 @@ export default class Tracer
 
       for (let w = 0; w < this.width; w++, p += 3)
       {
-        this.color.reset();
+        this.color.set(f32[p], f32[p + 1], f32[p + 2]);
 
-        for (let s = 0; s < samples; s++)
-        {
-          const u = (w + Math.random()) / lw;
-          const v = (h + Math.random()) / lh;
+        const u = (w + Math.random()) / lw;
+        const v = (h + Math.random()) / lh;
 
-          this.camera.setRay(ray, u, v);
+        this.camera.setRay(ray, u, v);
 
-          this.color.add(ray.getColor(ray, this.world.objects, this.depth));
-        }
+        const { x, y, z } = this.color.add(
+          ray.getColor(ray, this.world.objects, this.depth)
+        );
 
-        const { x, y, z } = format(this.color, samples);
-
-        pixels[p + 0] = x;
-        pixels[p + 1] = y;
-        pixels[p + 2] = z;
+        f32[p] = x; f32[p + 1] = y; f32[p + 2] = z;
       }
     }
 
