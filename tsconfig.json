@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "forceConsistentCasingInFileNames": true,
-    "types": ["node", "./src/global.d.ts"],
     "allowSyntheticDefaultImports": true,
     "typeRoots": ["node_modules/@types"],
     "jsxImportSource": "solid-js",
@@ -24,6 +23,7 @@
 
     "module": "ESNext",
     "target": "ESNext",
+    "types": ["node"],
     "jsx": "preserve",
 
     "sourceMap": true,

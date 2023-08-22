@@ -17,7 +17,7 @@ export default class Canvas2D extends Canvas
   public override drawImage (pixels: Uint8ClampedArray): void {
     for (let p = 0, d = 0; p < pixels.length; p += 3, d += 4)
     {
-      this.image.data[d + 0] = pixels[p + 0];
+      this.image.data[d    ] = pixels[p    ];
       this.image.data[d + 1] = pixels[p + 1];
       this.image.data[d + 2] = pixels[p + 2];
       this.image.data[d + 3] = 255;
