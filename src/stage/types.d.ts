@@ -1,6 +1,3 @@
-/// <reference types="node" />
-/// <reference types="vite/client" />
-
 export type BackEndContext = '2d' | 'webgl' | 'webgl2' | 'webgpu';
 type SceneCanvas = HTMLCanvasElement | OffscreenCanvas;
 
