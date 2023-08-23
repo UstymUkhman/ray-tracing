@@ -56,8 +56,10 @@ export default abstract class Canvas
           powerPreference: 'high-performance',
           failIfMajorPerformanceCaveat: true,
           preserveDrawingBuffer: false,
+          // Stopped working on Chromium if
+          // `true` in offscreen canvas:
+          desynchronized: !offscreen,
           premultipliedAlpha: false,
-          desynchronized: true,
           antialias: true,
           stencil: false,
           depth: false,

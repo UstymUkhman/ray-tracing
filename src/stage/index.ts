@@ -11,11 +11,11 @@ export default class Stage
   private readonly client = new Client();
   private readonly worker = new Worker();
 
-  private readonly offscreen = false; /* !DEBUG && (
+  private readonly offscreen = !DEBUG && (
     typeof HTMLCanvasElement !== 'undefined' && !!(
       HTMLCanvasElement.prototype as OffscreenCanvas
     ).transferControlToOffscreen
-  ); */
+  );
 
   public constructor (canvas: HTMLCanvasElement) {
     Events.createWorkerEvents(this.worker, this.offscreen);
