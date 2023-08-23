@@ -1,3 +1,4 @@
+/* eslint-disable no-dupe-class-members */
 import { clamp, random } from './Number';
 
 export default class Vector3
@@ -10,53 +11,45 @@ export default class Vector3
     this.vec[2] = z;
   }
 
-  // public multiply (t: number): this;
-  // public multiply (v: Vector3): Vector3;
-  // public multiply (f: Vector3 | number): Vector3
-  // {
-  //   if (typeof f !== 'number')
-  //     return this.set(
-  //       this.vec[0] * f.x,
-  //       this.vec[1] * f.y,
-  //       this.vec[2] * f.z
-  //     );
+  public multiply (t: number): this;
+  public multiply (v: Vector3): Vector3;
+  public multiply (f: Vector3 | number): Vector3
+  {
+    if (typeof f !== 'number')
+      return this.set(
+        this.vec[0] * f.x,
+        this.vec[1] * f.y,
+        this.vec[2] * f.z
+      );
 
-  //   const t = f as number;
+    const t = f as number;
 
-  //   this.vec[0] *= t;
-  //   this.vec[1] *= t;
-  //   this.vec[2] *= t;
-
-  //   return this;
-  // }
-
-  // public divide (t: number): this;
-  // public divide (v: Vector3): Vector3;
-  // public divide (f: Vector3 | number): Vector3
-  // {
-  //   return typeof f === 'number'
-  //     ? this.multiply(1.0 / f)
-  //     : this.set(
-  //       this.vec[0] / f.x,
-  //       this.vec[1] / f.y,
-  //       this.vec[2] / f.z
-  //     );
-  // }
-
-  // public refract (normal: Vector3, eoe: f64): this {
-  //   const theta = Math.min(this.clone.negate.dot(normal), 1.0);
-  //   this.copy(normal.clone.multiply(theta).add(this).multiply(eoe));
-
-  //   const angle = Math.abs(1.0 - this.lengthSquared);
-  //   return this.add(normal.multiply(-Math.sqrt(angle)));
-  // }
-
-  public set (x: f64, y: f64, z: f64): this {
-    this.vec[0] = x;
-    this.vec[1] = y;
-    this.vec[2] = z;
+    this.vec[0] *= t;
+    this.vec[1] *= t;
+    this.vec[2] *= t;
 
     return this;
+  }
+
+  public divide (t: number): this;
+  public divide (v: Vector3): Vector3;
+  public divide (f: Vector3 | number): Vector3
+  {
+    return typeof f === 'number'
+      ? this.multiply(1.0 / f)
+      : this.set(
+        this.vec[0] / f.x,
+        this.vec[1] / f.y,
+        this.vec[2] / f.z
+      );
+  }
+
+  public refract (normal: Vector3, eoe: f64): this {
+    const theta = Math.min(this.clone.negate.dot(normal), 1.0);
+    this.copy(normal.clone.multiply(theta).add(this).multiply(eoe));
+
+    const angle = Math.abs(1.0 - this.lengthSquared);
+    return this.add(normal.multiply(-Math.sqrt(angle)));
   }
 
   public randomHemisphere (normal: Vector3): this {
@@ -72,13 +65,21 @@ export default class Vector3
     );
   }
 
-  // public reflect (normal: Vector3): Vector3 {
-  //   return this.sub(normal.clone.multiply(this.dot(normal) * 2.0));
-  // }
+  public reflect (normal: Vector3): Vector3 {
+    return this.sub(normal.clone.multiply(this.dot(normal) * 2.0));
+  }
 
-  // public get randomUnitVector (): Vector3 {
-  //   return this.randomUnitSphere.unitVector;
-  // }
+  public set (x: f64, y: f64, z: f64): this {
+    this.vec[0] = x;
+    this.vec[1] = y;
+    this.vec[2] = z;
+
+    return this;
+  }
+
+  public get randomUnitVector (): Vector3 {
+    return this.randomUnitSphere.unitVector;
+  }
 
   public get randomUnitSphere (): this {
     for ( ; ; )
@@ -142,9 +143,9 @@ export default class Vector3
     return this.vec;
   }
 
-  // public get unitVector (): this {
-  //   return this.divide(this.length);
-  // }
+  public get unitVector (): this {
+    return this.divide(this.length);
+  }
 
   public get nearZero (): bool {
     return Math.abs(this.vec[0]) < 1e-8 &&

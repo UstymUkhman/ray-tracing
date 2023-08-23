@@ -13,4 +13,4 @@ pids
 
 build/*
 node_modules
-!build/**/*.wat
+!build/**/release.wat
