@@ -20,7 +20,7 @@ export default class Canvas2D extends Canvas
       this.image.data[d    ] = pixels[p    ];
       this.image.data[d + 1] = pixels[p + 1];
       this.image.data[d + 2] = pixels[p + 2];
-      this.image.data[d + 3] = 255;
+      this.image.data[d + 3] = 0xff;
     }
 
     this.context.putImageData(this.image, 0.0, 0.0);

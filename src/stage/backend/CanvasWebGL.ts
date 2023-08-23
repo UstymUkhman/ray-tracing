@@ -83,7 +83,11 @@ export default class CanvasWebGL extends Canvas
       );
 
     this.context.clear(this.context.COLOR_BUFFER_BIT);
-    const { r, g, b } = getRGB(this.clearColor, 1.0);
+    const rgb = getRGB(this.clearColor, 1.0);
+
+    const r = rgb.get('r') ?? 0.0;
+    const g = rgb.get('g') ?? 0.0;
+    const b = rgb.get('b') ?? 0.0;
 
     this.context.clearColor(r, g, b, 1.0);
     this.context.useProgram(this.program);

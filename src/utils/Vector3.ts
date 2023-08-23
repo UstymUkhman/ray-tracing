@@ -9,10 +9,10 @@ export default class Vector3
 {
   private readonly vec = [0.0, 0.0, 0.0] as Vec3;
 
-  public constructor (x = 0.0, y?: number, z?: number) {
+  public constructor (x = 0.0, y = x, z = x) {
     this.vec[0] = x;
-    this.vec[1] = y ?? x;
-    this.vec[2] = z ?? x;
+    this.vec[1] = y;
+    this.vec[2] = z;
   }
 
   public multiply (t: number): this;
@@ -194,9 +194,9 @@ export default class Vector3
 
   public get rgb (): this {
     return this.set(
-      clamp(this.vec[0] * 256 | 0, 0, 255),
-      clamp(this.vec[1] * 256 | 0, 0, 255),
-      clamp(this.vec[2] * 256 | 0, 0, 255)
+      clamp(this.vec[0] * 256 | 0, 0, 0xff),
+      clamp(this.vec[1] * 256 | 0, 0, 0xff),
+      clamp(this.vec[2] * 256 | 0, 0, 0xff)
     );
   }
 
