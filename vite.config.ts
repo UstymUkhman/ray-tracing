@@ -9,7 +9,11 @@ export default ({ mode }: { mode: string }) =>
 
     resolve: {
       conditions: ['development', 'browser'],
-      alias: { '@': resolve('src') }
+
+      alias: {
+        '@B': resolve('build'),
+        '@S': resolve('src')
+      }
     },
 
     define: {

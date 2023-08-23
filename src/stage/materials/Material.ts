@@ -1,6 +1,6 @@
-import type Ray from '@/stage/Ray';
-import type Vector3 from '@/utils/Vector3';
-import type { Hits } from '@/stage/hittables/types';
+import type Ray from '@S/stage/Ray';
+import type Vector3 from '@S/utils/Vector3';
+import type { Hits } from '@S/stage/hittables/types';
 
 export default abstract class Material
 {

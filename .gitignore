@@ -11,5 +11,6 @@ pids
 .DS_Store
 .lock-wscript
 
-coverage
+build/*
 node_modules
+!build/**/*.wat

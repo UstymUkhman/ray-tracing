@@ -1,4 +1,4 @@
-import { clamp, random } from '@/utils/Number';
+import { clamp, random } from '@S/utils/Number';
 
 /* eslint-disable no-dupe-class-members */
 type Value<V> = V extends undefined ? Vec3 : number;

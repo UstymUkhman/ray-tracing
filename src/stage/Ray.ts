@@ -1,6 +1,6 @@
-import Vector3 from '@/utils/Vector3';
-import { Record } from '@/stage/hittables';
-import type { Hittable } from '@/stage/hittables';
+import Vector3 from '@S/utils/Vector3';
+import { Record } from '@S/stage/hittables';
+import type { Hittable } from '@S/stage/hittables';
 
 export default class Ray
 {

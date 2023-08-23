@@ -1,8 +1,8 @@
 import Hittable from './Hittable';
-import type Ray from '@/stage/Ray';
+import type Ray from '@S/stage/Ray';
 import type { Hits } from './types';
-import Vector3 from '@/utils/Vector3';
-import type { Material } from '@/stage/materials';
+import Vector3 from '@S/utils/Vector3';
+import type { Material } from '@S/stage/materials';
 
 export default class Sphere extends Hittable
 {

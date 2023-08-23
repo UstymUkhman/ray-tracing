@@ -1,8 +1,8 @@
-import Scene from '@/stage/Scene';
-import Tracer from '@/stage/Tracer';
-import Config from '@/stage/Config';
-import Vector3 from '@/utils/Vector3';
-import { floatToInt } from '@/utils/Color';
+import Scene from '@S/stage/Scene';
+import Tracer from '@S/stage/Tracer';
+import Config from '@S/stage/Config';
+import Vector3 from '@S/utils/Vector3';
+import { floatToInt } from '@S/utils/Color';
 
 let start = 0.0;
 let sample = 0.0;

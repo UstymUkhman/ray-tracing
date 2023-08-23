@@ -1,7 +1,7 @@
-import '@/app/app.css';
-import Stage from '@/stage';
+import '@S/app/app.css';
+import Stage from '@S/stage';
 import { onMount } from 'solid-js';
-import Config from '@/stage/Config';
+import Config from '@S/stage/Config';
 
 export const App = () =>
 {

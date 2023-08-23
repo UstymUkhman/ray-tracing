@@ -35,9 +35,8 @@
     "noEmit": true,
 
     "paths": {
-      "@assets/*": ["src/assets/*"],
-      "@scss/*": ["src/scss/*"],
-      "@/*": ["src/*"]
+      "@B/*": ["build/*"],
+      "@S/*": ["src/*"]
     }
   },
 

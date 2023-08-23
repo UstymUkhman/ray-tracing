@@ -1,0 +1,24 @@
+{
+  "options": {
+    "bindings": "esm"
+  },
+
+  "targets": {
+    "debug": {
+      "textFile": "build/debug.wat",
+      "outFile": "build/debug.wasm",
+      "sourceMap": true,
+      "debug": true
+    },
+
+    "release": {
+      "textFile": "build/release.wat",
+      "outFile": "build/release.wasm",
+      "optimizeLevel": 3,
+      "sourceMap": true,
+      "converge": false,
+      "noAssert": false,
+      "shrinkLevel": 0
+    }
+  }
+}

@@ -1,9 +1,9 @@
-import { World } from '@/stage/hittables';
-import { toFixed } from '@/utils/Number';
-import Vector3 from '@/utils/Vector3';
-import Camera from '@/stage/Camera';
-import Config from '@/stage/Config';
-import Ray from '@/stage/Ray';
+import { World } from '@S/stage/hittables';
+import { toFixed } from '@S/utils/Number';
+import Vector3 from '@S/utils/Vector3';
+import Camera from '@S/stage/Camera';
+import Config from '@S/stage/Config';
+import Ray from '@S/stage/Ray';
 
 export default class Tracer
 {

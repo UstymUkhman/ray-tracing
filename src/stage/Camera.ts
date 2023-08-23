@@ -1,6 +1,6 @@
-import { degToRad } from '@/utils/Number';
-import Vector3 from '@/utils/Vector3';
-import type Ray from '@/stage/Ray';
+import { degToRad } from '@S/utils/Number';
+import Vector3 from '@S/utils/Vector3';
+import type Ray from '@S/stage/Ray';
 
 export default class Camera
 {

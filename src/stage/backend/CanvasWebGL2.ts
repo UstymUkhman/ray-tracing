@@ -1,7 +1,7 @@
-import type { SceneParams } from '@/stage/types';
-import Vertex from '@/shaders/webgl2/main.vert?raw';
-import Fragment from '@/shaders/webgl2/main.frag?raw';
-import CanvasWebGL from '@/stage/backend/CanvasWebGL';
+import type { SceneParams } from '@S/stage/types';
+import Vertex from '@S/shaders/webgl2/main.vert?raw';
+import Fragment from '@S/shaders/webgl2/main.frag?raw';
+import CanvasWebGL from '@S/stage/backend/CanvasWebGL';
 
 export default class CanvasWebGL2 extends CanvasWebGL
 {

@@ -1,6 +1,6 @@
 import Record from './Record';
 import Hittable from './Hittable';
-import type Ray from '@/stage/Ray';
+import type Ray from '@S/stage/Ray';
 import type { Hits } from './types';
 
 export default class List extends Hittable

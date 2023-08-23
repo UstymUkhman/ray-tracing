@@ -3,19 +3,19 @@ import {
   CanvasWebGL,
   CanvasWebGL2
   // CanvasWebGPU,
-} from '@/stage/backend';
+} from '@S/stage/backend';
 
-import Config from '@/stage/Config';
-import Tracer from '@/stage/Tracer';
-import Events from '@/stage/Events';
-import Vector3 from '@/utils/Vector3';
-import type Worker from '@/utils/worker';
+import Config from '@S/stage/Config';
+import Tracer from '@S/stage/Tracer';
+import Events from '@S/stage/Events';
+import Vector3 from '@S/utils/Vector3';
+import type Worker from '@S/utils/worker';
 
-import { floatToInt } from '@/utils/Color';
-import type { Canvas } from '@/stage/backend';
-import { DELTA_UPDATE } from '@/utils/Number';
-import type { ImageData } from '@/stage/types';
-import type { SceneParams } from '@/stage/types';
+import { floatToInt } from '@S/utils/Color';
+import type { Canvas } from '@S/stage/backend';
+import { DELTA_UPDATE } from '@S/utils/Number';
+import type { ImageData } from '@S/stage/types';
+import type { SceneParams } from '@S/stage/types';
 
 export default class Scene
 {

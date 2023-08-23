@@ -1,7 +1,7 @@
-import { type Material, Lambertian, Metal, Dielectric } from '@/stage/materials';
-import { List, Sphere } from '@/stage/hittables';
-import { random } from '@/utils/Number';
-import Vector3 from '@/utils/Vector3';
+import { type Material, Lambertian, Metal, Dielectric } from '@S/stage/materials';
+import { List, Sphere } from '@S/stage/hittables';
+import { random } from '@S/utils/Number';
+import Vector3 from '@S/utils/Vector3';
 
 export default class World
 {

@@ -1,5 +1,5 @@
-import type Vector3 from '@/utils/Vector3';
-import { clamp, randomInt } from '@/utils/Number';
+import type Vector3 from '@S/utils/Vector3';
+import { clamp, randomInt } from '@S/utils/Number';
 
 export type RGB = { r: number; g: number; b: number; };
 

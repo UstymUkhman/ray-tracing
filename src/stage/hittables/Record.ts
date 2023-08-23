@@ -1,6 +1,6 @@
-import type { Material } from '@/stage/materials';
-import Vector3 from '@/utils/Vector3';
-import type Ray from '@/stage/Ray';
+import type { Material } from '@S/stage/materials';
+import Vector3 from '@S/utils/Vector3';
+import type Ray from '@S/stage/Ray';
 
 class Record
 {
