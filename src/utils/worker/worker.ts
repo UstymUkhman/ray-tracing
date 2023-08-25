@@ -1,26 +1,22 @@
-import Scene from '@S/stage/Scene';
-import Tracer from '@S/stage/Tracer';
+import type { Trace } from '@S/stage/types';
 import Config from '@S/stage/Config';
-import Vector3 from '@S/utils/Vector3';
-import { floatToInt } from '@S/utils/Color';
+import Scene from '@S/stage/Scene';
 
 let start = 0.0;
 let sample = 0.0;
-
-const color = new Vector3();
-const tracer = new Tracer();
+let trace: Trace;
 
 const f32 = new Float32Array(
   Config.width * Config.height * 3
 );
 
-const pixels = new Uint8ClampedArray(
+let u8 = new Uint8ClampedArray(
   Config.width * Config.height * 3
 );
 
 self.onerror = error => console.error(error);
 
-self.onmessage = (message): Scene | void => {
+self.onmessage = async (message): Promise<Scene | void> => {
   const { event } = message.data;
   let { params } = message.data;
 
@@ -31,10 +27,18 @@ self.onmessage = (message): Scene | void => {
         ...params
       });
 
+    case 'Create::Tracer':
+      trace = (await import(
+        params.tracer !== 'as'
+          ? '../../stage/Tracer.ts'
+          : '../../../build/release.js'
+      )).trace;
+
+      break;
+
     case 'Create::PPMImage':
-      tracer.createPPMImage(f32, start ||= Date.now(), ++sample);
-      floatToInt(f32, pixels, color, sample);
-      params = { sample, pixels, ...params };
+      u8 = trace(start ||= Date.now(), f32, u8, ++sample);
+      params = { sample, pixels: u8, ...params };
       break;
   }
 

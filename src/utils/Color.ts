@@ -14,15 +14,17 @@ export const getHex = (color: number): string =>
   `#${(`000000${color.toString(16)}`).slice(-6)}`;
 
 export const floatToInt = (
+  u8: Uint8ClampedArray,
   f32: Float32Array,
-  uint8: Uint8ClampedArray,
   color: Vector3,
   samples: number
-): void => {
+): Uint8ClampedArray => {
   for (let p = 0; p < f32.length; p += 3)
   {
     color.set(f32[p], f32[p + 1], f32[p + 2]);
     const { x, y, z } = format(color, samples);
-    uint8[p] = x; uint8[p + 1] = y; uint8[p + 2] = z;
+    u8[p] = x; u8[p + 1] = y; u8[p + 2] = z;
   }
+
+  return u8;
 };

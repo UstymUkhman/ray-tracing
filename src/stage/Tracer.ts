@@ -1,3 +1,4 @@
+import { floatToInt } from '@S/utils/Color';
 import { World } from '@S/stage/hittables';
 import { toFixed } from '@S/utils/Number';
 import Vector3 from '@S/utils/Vector3';
@@ -5,7 +6,7 @@ import Camera from '@S/stage/Camera';
 import Config from '@S/stage/Config';
 import Ray from '@S/stage/Ray';
 
-export default class Tracer
+class Tracer
 {
   private last = Date.now();
 
@@ -17,7 +18,7 @@ export default class Tracer
   private readonly height = Config.height;
   private readonly depth  = Config.maxDepth;
 
-  private readonly samples: number = Config.samples;
+  public readonly samples: number = Config.samples;
 
   public constructor ()
   {
@@ -36,13 +37,13 @@ export default class Tracer
 
   public createPPMImage (
     f32: Float32Array,
-    start: number,
-    samples = this.samples
+    samples: number,
+    start: number
   ): void {
     const ray = new Ray();
     const last = this.samples === samples;
 
-    for (let p = 0, h = this.height - 1, lw = this.width - 1, lh = h; h > -1; h--)
+    for (let p = 0, h = this.height, lw = this.width - 1, lh = h - 1; h--; )
     {
       last && console.info(`Progress: ${toFixed((1 - h / lh) * 100)}%`);
 
@@ -73,3 +74,17 @@ export default class Tracer
     this.last = now;
   }
 }
+
+const tracer = new Tracer();
+
+export const trace = (
+  start: number,
+  f32: Float32Array,
+  u8: Uint8ClampedArray,
+  sample = tracer.samples
+): Uint8ClampedArray => {
+  const color = new Vector3();
+
+  tracer.createPPMImage(f32, sample, start);
+  return floatToInt(u8, f32, color, sample);
+};

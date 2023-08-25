@@ -6,12 +6,10 @@ import {
 } from '@S/stage/backend';
 
 import Config from '@S/stage/Config';
-import Tracer from '@S/stage/Tracer';
 import Events from '@S/stage/Events';
-import Vector3 from '@S/utils/Vector3';
-import type Worker from '@S/utils/worker';
+import { trace } from '@S/stage/Tracer';
 
-import { floatToInt } from '@S/utils/Color';
+import type WebWorker from '@S/utils/worker';
 import type { Canvas } from '@S/stage/backend';
 import { DELTA_UPDATE } from '@S/utils/Number';
 import type { ImageData } from '@S/stage/types';
@@ -21,31 +19,28 @@ export default class Scene
 {
   private sample = 0.0;
 
-  private readonly canvas!: Canvas;
-  private readonly tracer?: Tracer;
-  private readonly worker?: Worker;
+  private readonly canvas!:  Canvas;
+  private readonly worker?:  WebWorker;
 
-  private readonly start = Date.now();
-  private readonly color = new Vector3();
+  private readonly start   = Date.now();
   private readonly samples = Config.samples;
 
   private readonly f32 = new Float32Array(
     Config.width * Config.height * 3
   );
 
-  private readonly uint8 = new Uint8ClampedArray(
+  private readonly u8 = new Uint8ClampedArray(
     Config.width * Config.height * 3
   );
 
   public constructor (params: SceneParams) {
     this.canvas = this.createCanvas(params);
 
-    !(this.worker = params.worker)
-      ? this.tracer = new Tracer()
-      : this.createWorkerEvents();
+    ((this.worker = params.worker))
+      ? this.createWorkerEvents(params.tracer)
+      : this.createPPMImage();
 
     this.canvas.clear();
-    this.createPPMImage();
   }
 
   private createCanvas (params: SceneParams): Canvas {
@@ -65,17 +60,21 @@ export default class Scene
     }
   }
 
-  private createWorkerEvents (): void {
-    this.worker?.add('Create::PPMImage', this.showPPMImage.bind(this));
+  private createWorkerEvents (tracer?: string): void {
+    tracer = tracer === 'as' ? tracer : 'ts';
+    this.worker?.post('Create::Tracer', { tracer });
+
+    this.worker?.add('Create::Tracer', () => {
+      this.worker?.add('Create::PPMImage', this.showPPMImage.bind(this));
+      this.createPPMImage();
+    });
   }
 
   private createPPMImage (download = false): void {
     if (this.worker) return this.worker.post('Create::PPMImage', { download });
 
-    this.tracer?.createPPMImage(this.f32, this.start, ++this.sample);
-    floatToInt(this.f32, this.uint8, this.color, this.sample);
-
-    this.showPPMImage({ pixels: this.uint8, sample: this.sample, download }, true);
+    trace(this.start, this.f32, this.u8, ++this.sample);
+    this.showPPMImage({ pixels: this.u8, sample: this.sample, download }, true);
   }
 
   private showPPMImage (data: unknown, worker?: boolean): void {
