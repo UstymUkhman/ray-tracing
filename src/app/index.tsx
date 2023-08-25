@@ -5,12 +5,26 @@ import Config from '@S/stage/Config';
 
 export const App = () =>
 {
-  let canvas!: HTMLCanvasElement;
-  onMount(() => new Stage(canvas));
+  let ts!: HTMLCanvasElement;
+  let as!: HTMLCanvasElement;
 
-  return <canvas
-    height={Config.height}
-    width={Config.width}
-    ref={canvas}
-  />;
+  onMount(() => new Stage([ts, as]));
+
+  return (
+    <section>
+      <canvas
+        height={Config.height}
+        width={Config.width}
+        data-tracer="ts"
+        ref={ts}
+      />
+
+      <canvas
+        height={Config.height}
+        width={Config.width}
+        data-tracer="as"
+        ref={as}
+      />
+    </section>
+  );
 };

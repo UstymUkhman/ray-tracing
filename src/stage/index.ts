@@ -1,7 +1,7 @@
 import type { OffscreenCanvas } from '@S/stage/types';
 import type { Event } from '@S/utils/Events';
+import WebWorker from '@S/utils/worker';
 import Config from '@S/stage/Config';
-import Worker from '@S/utils/worker';
 import Client from '@S/stage/Client';
 import Events from '@S/stage/Events';
 import Scene from '@S/stage/Scene';
@@ -9,24 +9,29 @@ import Scene from '@S/stage/Scene';
 export default class Stage
 {
   private readonly client = new Client();
-  private readonly worker = new Worker();
 
-  private readonly offscreen = !DEBUG && (
+  private readonly offscreen = false; /* !DEBUG && (
     typeof HTMLCanvasElement !== 'undefined' && !!(
       HTMLCanvasElement.prototype as OffscreenCanvas
     ).transferControlToOffscreen
-  );
+  ); */
 
-  public constructor (canvas: HTMLCanvasElement) {
-    Events.createWorkerEvents(this.worker, this.offscreen);
-    const { backEnd, pixelRatio = devicePixelRatio } = Config;
-    Events.add('Download::PPMImage', this.downloadPPMImage.bind(this));
+  public constructor (scenes: HTMLCanvasElement[]) {
+    scenes.forEach(canvas => {
+      const worker = new WebWorker();
+      const { tracer } = canvas.dataset;
 
-    !this.offscreen
-      ? new Scene({ canvas, worker: this.worker, backEnd, pixelRatio })
-      : this.worker.transfer((canvas as OffscreenCanvas)
-        .transferControlToOffscreen(), { backEnd, pixelRatio }
-      );
+      Events.createWorkerEvents(worker, this.offscreen);
+      const { backEnd, pixelRatio = devicePixelRatio } = Config;
+      Events.add('Download::PPMImage', this.downloadPPMImage.bind(this));
+
+      !this.offscreen
+        ? new Scene({ canvas, worker, tracer, backEnd, pixelRatio })
+        : worker.transfer((canvas as OffscreenCanvas)
+          .transferControlToOffscreen(),
+          { backEnd, pixelRatio }
+        );
+    });
   }
 
   private downloadPPMImage (event: Event): void {

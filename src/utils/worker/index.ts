@@ -2,12 +2,12 @@ type EventData = { callback: Callback, params?: EventParams };
 export type Callback = (data: unknown) => unknown;
 type EventParams = Record<string, unknown>;
 
-import WebWorker from './worker?worker';
+import Worker from './worker?worker';
 
-export default class Worker
+export default class WebWorker
 {
+  private readonly worker = new Worker();
   private events: Map<string, EventData> = new Map();
-  private worker = new WebWorker();
 
   public constructor () {
     this.worker.onmessage = this.onMessage.bind(this);
@@ -43,6 +43,10 @@ export default class Worker
 
   public remove (event: string): void {
     this.events.delete(event);
+  }
+
+  public get self (): Worker {
+    return this.worker;
   }
 
   public dispose(): void {

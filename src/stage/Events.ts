@@ -1,19 +1,22 @@
 import type { Callback as ECallback } from '@S/utils/Events';
 import type { Callback as WCallback } from '@S/utils/worker';
-import WebWorker from '@S/utils/worker/worker';
+import type WebWorker from '@S/utils/worker';
 import { Emitter } from '@S/utils/Events';
-import Worker from '@S/utils/worker';
 
 class WorkerEvents
 {
-  public constructor (private readonly worker: Worker) {}
+  private static worker: Worker;
+
+  public constructor (private readonly worker: WebWorker) {
+    WorkerEvents.worker = worker.self;
+  }
 
   public add (name: string, callback: WCallback): void {
     this.worker.add(name, callback);
   }
 
   public static dispatch (name: string, data?: unknown): void {
-    WebWorker.postMessage({ name, response: { data }});
+    WorkerEvents.worker.postMessage({ name, response: { data }});
   }
 
   public remove (name: string): void {
@@ -30,7 +33,7 @@ class Events extends Emitter
   private offscreen = false;
   private workerEvents?: WorkerEvents;
 
-  public createWorkerEvents (worker: Worker, offscreen: boolean): void {
+  public createWorkerEvents (worker: WebWorker, offscreen: boolean): void {
     this.workerEvents = new WorkerEvents(worker);
     this.offscreen = offscreen;
   }
