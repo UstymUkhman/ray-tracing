@@ -1,4 +1,4 @@
-import Vector3 from './Vector3';
+// import Vector3 from './Vector3';
 
 export function getRGB (color: isize, format: u8 = 1): Map<string, isize> {
   const rgb = new Map<string, isize>();
@@ -7,27 +7,35 @@ export function getRGB (color: isize, format: u8 = 1): Map<string, isize> {
   return rgb.set('b', color & format);
 }
 
-function format (color: Vector3, samples: u16): Vector3 {
+/* function format (color: Vector3, samples: u16): Vector3 {
   return color.divide(samples).sqrt.rgb;
-}
+} */
 
 export function getHex (color: f64): string {
   return `#${(`000000${color.toString(16)}`).slice(-6)}`;
 }
 
 export const floatToInt = (
-  f32: Float32Array,
-  uint8: Uint8ClampedArray,
-  color: Vector3,
-  samples: u16
-): void => {
-  for (let p = 0; p < f32.length; p += 3)
+  colors: Uint8ClampedArray,
+  pixels: Float32Array //,
+  // color: Vector3,
+  // samples: u16
+): Uint8ClampedArray => {
+  for (let p = 0; p < pixels.length; p += 3)
   {
-    color.set(f32[p], f32[p + 1], f32[p + 2]);
+    /*
+    color.set(pixels[p], pixels[p + 1], pixels[p + 2]);
     const vec3 = format(color, samples);
 
-    uint8[p    ] = vec3.xu8;
-    uint8[p + 1] = vec3.yu8;
-    uint8[p + 2] = vec3.zu8;
+    colors[p    ] = vec3.xu8;
+    colors[p + 1] = vec3.yu8;
+    colors[p + 2] = vec3.zu8;
+    */
+
+    colors[p    ] = u8(pixels[p    ]);
+    colors[p + 1] = u8(pixels[p + 1]);
+    colors[p + 2] = u8(pixels[p + 2]);
   }
+
+  return colors;
 };

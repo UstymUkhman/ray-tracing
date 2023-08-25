@@ -11,7 +11,7 @@ export default class Vector3
     this.vec[2] = z;
   }
 
-  public multiply (t: number): this;
+  /* public multiply (t: number): this;
   public multiply (v: Vector3): Vector3;
   public multiply (f: Vector3 | number): Vector3
   {
@@ -50,7 +50,7 @@ export default class Vector3
 
     const angle = Math.abs(1.0 - this.lengthSquared);
     return this.add(normal.multiply(-Math.sqrt(angle)));
-  }
+  } */
 
   public randomHemisphere (normal: Vector3): this {
     this.randomUnitSphere;
@@ -65,9 +65,9 @@ export default class Vector3
     );
   }
 
-  public reflect (normal: Vector3): Vector3 {
+  /* public reflect (normal: Vector3): Vector3 {
     return this.sub(normal.clone.multiply(this.dot(normal) * 2.0));
-  }
+  } */
 
   public set (x: f64, y: f64, z: f64): this {
     this.vec[0] = x;
@@ -77,9 +77,9 @@ export default class Vector3
     return this;
   }
 
-  public get randomUnitVector (): Vector3 {
+  /* public get randomUnitVector (): Vector3 {
     return this.randomUnitSphere.unitVector;
-  }
+  } */
 
   public get randomUnitSphere (): this {
     for ( ; ; )
@@ -143,9 +143,9 @@ export default class Vector3
     return this.vec;
   }
 
-  public get unitVector (): this {
+  /* public get unitVector (): this {
     return this.divide(this.length);
-  }
+  } */
 
   public get nearZero (): bool {
     return Math.abs(this.vec[0]) < 1e-8 &&
