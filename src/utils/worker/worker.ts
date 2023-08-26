@@ -29,9 +29,9 @@ self.onmessage = async (message): Promise<Scene | void> => {
 
     case 'Create::Tracer':
       trace = (await import(
-        params.tracer !== 'as'
-          ? '../../stage/Tracer.ts'
-          : '../../../build/release.js'
+        params.tracer === 'assemblyscript'
+          ? '../../../build/release.js'
+          : '../../stage/Tracer.ts'
       )).trace;
 
       break;

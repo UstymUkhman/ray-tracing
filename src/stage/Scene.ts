@@ -7,10 +7,11 @@ import {
 
 import Config from '@S/stage/Config';
 import Events from '@S/stage/Events';
-import { trace } from '@S/stage/Tracer';
 
+import type { Trace } from '@S/stage/types';
 import type WebWorker from '@S/utils/worker';
 import type { Canvas } from '@S/stage/backend';
+
 import { DELTA_UPDATE } from '@S/utils/Number';
 import type { ImageData } from '@S/stage/types';
 import type { SceneParams } from '@S/stage/types';
@@ -18,29 +19,36 @@ import type { SceneParams } from '@S/stage/types';
 export default class Scene
 {
   private sample = 0.0;
+  private trace!: Trace;
 
-  private readonly canvas!:  Canvas;
-  private readonly worker?:  WebWorker;
+  private readonly canvas!: Canvas;
+  private readonly worker?: WebWorker;
 
   private readonly start   = Date.now();
   private readonly samples = Config.samples;
+
+  private u8 = new Uint8ClampedArray(
+    Config.width * Config.height * 3
+  );
 
   private readonly f32 = new Float32Array(
     Config.width * Config.height * 3
   );
 
-  private readonly u8 = new Uint8ClampedArray(
-    Config.width * Config.height * 3
-  );
-
   public constructor (params: SceneParams) {
+    const tracer = this.getTracer(params);
     this.canvas = this.createCanvas(params);
 
     ((this.worker = params.worker))
-      ? this.createWorkerEvents(params.tracer)
-      : this.createPPMImage();
+      ? this.createWorkerEvents(tracer)
+      : this.loadTracer(tracer);
 
     this.canvas.clear();
+  }
+
+  private getTracer (params: SceneParams): string {
+    return params.tracer !== 'assemblyscript'
+      ? 'typescript' : 'assemblyscript';
   }
 
   private createCanvas (params: SceneParams): Canvas {
@@ -60,8 +68,7 @@ export default class Scene
     }
   }
 
-  private createWorkerEvents (tracer?: string): void {
-    tracer = tracer === 'as' ? tracer : 'ts';
+  private createWorkerEvents (tracer: string): void {
     this.worker?.post('Create::Tracer', { tracer });
 
     this.worker?.add('Create::Tracer', () => {
@@ -70,10 +77,20 @@ export default class Scene
     });
   }
 
+  private loadTracer (tracer: string): void {
+    import(tracer === 'assemblyscript'
+      ? '../../build/release.js'
+      : './Tracer.ts'
+    ).then(({ trace }) => {
+      this.trace = trace;
+      this.createPPMImage();
+    });
+  }
+
   private createPPMImage (download = false): void {
     if (this.worker) return this.worker.post('Create::PPMImage', { download });
 
-    trace(this.start, this.f32, this.u8, ++this.sample);
+    this.u8 = this.trace(this.start, this.f32, this.u8, ++this.sample);
     this.showPPMImage({ pixels: this.u8, sample: this.sample, download }, true);
   }
 

@@ -28,6 +28,8 @@
 
 ## Build ##
 
+`pnpm asbuild`
+
 `pnpm build`
 
 `pnpm serve`

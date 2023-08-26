@@ -10,11 +10,11 @@ export default class Stage
 {
   private readonly client = new Client();
 
-  private readonly offscreen = false; /* !DEBUG && (
+  private readonly offscreen = !DEBUG && (
     typeof HTMLCanvasElement !== 'undefined' && !!(
       HTMLCanvasElement.prototype as OffscreenCanvas
     ).transferControlToOffscreen
-  ); */
+  );
 
   public constructor (scenes: HTMLCanvasElement[]) {
     scenes.forEach(canvas => {
@@ -29,7 +29,7 @@ export default class Stage
         ? new Scene({ canvas, worker, tracer, backEnd, pixelRatio })
         : worker.transfer((canvas as OffscreenCanvas)
           .transferControlToOffscreen(),
-          { backEnd, pixelRatio }
+          { tracer, backEnd, pixelRatio }
         );
     });
   }

@@ -5,25 +5,25 @@ import Config from '@S/stage/Config';
 
 export const App = () =>
 {
-  let ts!: HTMLCanvasElement;
-  let as!: HTMLCanvasElement;
+  let typescript!: HTMLCanvasElement;
+  let assemblyscript!: HTMLCanvasElement;
 
-  onMount(() => new Stage([ts, as]));
+  onMount(() => new Stage([typescript, assemblyscript]));
 
   return (
     <section>
       <canvas
+        data-tracer="typescript"
         height={Config.height}
         width={Config.width}
-        data-tracer="ts"
-        ref={ts}
+        ref={typescript}
       />
 
       <canvas
+        data-tracer="assemblyscript"
         height={Config.height}
         width={Config.width}
-        data-tracer="as"
-        ref={as}
+        ref={assemblyscript}
       />
     </section>
   );
