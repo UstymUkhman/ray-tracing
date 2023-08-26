@@ -6,7 +6,7 @@ export default class Tracer
   private readonly height: f64 = Config.height;
 
   // private readonly depth: u8 = Config.maxDepth;
-  // public readonly samples: u16 = Config.samples;
+  public readonly samples: u16 = Config.samples;
 
   public createPPMImage (
     pixels: Float32Array //,
