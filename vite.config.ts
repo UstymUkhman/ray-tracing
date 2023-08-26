@@ -27,6 +27,10 @@ export default ({ mode }: { mode: string }) =>
       }
     },
 
+    build: { target: 'esnext' },
+
+    worker: { format: 'es' },
+
     plugins: [solid()],
 
     server: {
