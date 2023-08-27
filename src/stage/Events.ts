@@ -1,22 +1,20 @@
 import type { Callback as ECallback } from '@S/utils/Events';
 import type { Callback as WCallback } from '@S/utils/worker';
+
 import type WebWorker from '@S/utils/worker';
+import Worker from '@S/utils/worker/worker';
 import { Emitter } from '@S/utils/Events';
 
 class WorkerEvents
 {
-  private static worker: Worker;
-
-  public constructor (private readonly worker: WebWorker) {
-    WorkerEvents.worker = worker.self;
-  }
+  public constructor (private readonly worker: WebWorker) {}
 
   public add (name: string, callback: WCallback): void {
     this.worker.add(name, callback);
   }
 
   public static dispatch (name: string, data?: unknown): void {
-    WorkerEvents.worker.postMessage({ name, response: { data }});
+    Worker.postMessage({ name, response: { data }});
   }
 
   public remove (name: string): void {

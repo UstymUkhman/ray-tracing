@@ -1,7 +1,6 @@
 type EventData = { callback: Callback, params?: EventParams };
 export type Callback = (data: unknown) => unknown;
 type EventParams = Record<string, unknown>;
-
 import Worker from './worker?worker';
 
 export default class WebWorker
@@ -43,10 +42,6 @@ export default class WebWorker
 
   public remove (event: string): void {
     this.events.delete(event);
-  }
-
-  public get self (): Worker {
-    return this.worker;
   }
 
   public dispose(): void {

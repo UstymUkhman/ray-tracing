@@ -23,7 +23,9 @@ export default class Stage
 
       Events.createWorkerEvents(worker, this.offscreen);
       const { backEnd, pixelRatio = devicePixelRatio } = Config;
-      Events.add('Download::PPMImage', this.downloadPPMImage.bind(this));
+
+      this.offscreen &&
+        Events.add('Download::PPMImage', this.downloadPPMImage.bind(this));
 
       !this.offscreen
         ? new Scene({ canvas, worker, tracer, backEnd, pixelRatio })
@@ -32,6 +34,9 @@ export default class Stage
           { tracer, backEnd, pixelRatio }
         );
     });
+
+    !this.offscreen &&
+      Events.add('Download::PPMImage', this.downloadPPMImage.bind(this));
   }
 
   private downloadPPMImage (event: Event): void {
