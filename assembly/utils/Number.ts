@@ -5,11 +5,11 @@ export function clamp<N extends number = f64>
 
 export function toFixed (value: f64, mantissa: u8 = 2): f64 {
   const pow10 = Math.pow(10.0, mantissa);
-  return f64(isize(pow10 * value)) / pow10;
+  return f64(i32(pow10 * value)) / pow10;
 }
 
-export function randomInt (min: isize, max: isize): isize {
-  return isize(Math.random() * (max - min + 1)) + min;
+export function randomInt (min: i32, max: i32): i32 {
+  return i32(Math.random() * (max - min + 1)) + min;
 }
 
 export function random (min: f64, max: f64): f64 {

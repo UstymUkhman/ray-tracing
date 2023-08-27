@@ -8,8 +8,33 @@ section {
 
   margin: auto;
   display: grid;
-  position: absolute;
 
+  position: absolute;
   transform: translate(-50%, -50%);
+
   grid-template-areas: ". ." /* ". ." */;
+
+  @media only screen and (max-width: 800px) {
+    grid-template-areas: "." "." /* "." "." */;
+
+    padding:
+      calc(max(100dvh - 990px, 20px) * 0.5)
+      calc(max(100% - 360px, 0px) * 0.5);
+
+    overflow: hidden auto;
+    position: relative;
+
+    transform: unset;
+    inset: unset;
+
+    height: 100%;
+    width: 100%;
+  }
+
+  & > canvas {
+    @media only screen and (max-width: 360px) {
+      height: auto;
+      width: 100vw;
+    }
+  }
 }

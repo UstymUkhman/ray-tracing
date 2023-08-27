@@ -185,9 +185,9 @@ export default class Vector3
 
   public get rgb (): this {
     return this.set(
-      clamp(isize(this.vec[0] * 256), 0, 0xff),
-      clamp(isize(this.vec[1] * 256), 0, 0xff),
-      clamp(isize(this.vec[2] * 256), 0, 0xff)
+      clamp(i32(this.vec[0] * 256), 0, 0xff),
+      clamp(i32(this.vec[1] * 256), 0, 0xff),
+      clamp(i32(this.vec[2] * 256), 0, 0xff)
     );
   }
 

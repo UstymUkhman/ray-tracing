@@ -1,7 +1,8 @@
 import Vector3 from './Vector3';
 
-export function getRGB (color: isize, format: u8 = 1): Map<string, isize> {
-  const rgb = new Map<string, isize>();
+export function getRGB (color: i32, format: u8 = 1): Map<string, i32> {
+  const rgb = new Map<string, i32>();
+
   rgb.set('r', (color >> 16) & format);
   rgb.set('g', (color >> 8) & format);
   return rgb.set('b', color & format);
@@ -23,13 +24,11 @@ export const floatToInt = (
 ): Uint8ClampedArray => {
   for (let p = 0; p < pixels.length; p += 3)
   {
-    format(
-      color.set(
+    format(color.set(
         pixels[p    ],
         pixels[p + 1],
         pixels[p + 2]
-      ),
-      samples
+      ), samples
     );
 
     colors[p    ] = color.xu8;
