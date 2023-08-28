@@ -1,9 +1,9 @@
 (module
  (type $i32_=>_none (func (param i32)))
- (type $i32_i32_=>_none (func (param i32 i32)))
- (type $none_=>_none (func))
  (type $i32_i32_=>_i32 (func (param i32 i32) (result i32)))
  (type $i32_=>_i32 (func (param i32) (result i32)))
+ (type $none_=>_none (func))
+ (type $i32_i32_=>_none (func (param i32 i32)))
  (type $i32_=>_f64 (func (param i32) (result f64)))
  (type $i32_i32_=>_f64 (func (param i32 i32) (result f64)))
  (type $i32_f64_=>_i32 (func (param i32 f64) (result i32)))
@@ -3579,7 +3579,7 @@
   global.set $~lib/memory/__stack_pointer
   local.get $0
  )
- (func $assembly/utils/Vector3/Vector3#copy (param $0 i32) (param $1 i32)
+ (func $assembly/utils/Vector3/Vector3#copy (param $0 i32) (param $1 i32) (result i32)
   (local $2 i32)
   (local $3 f64)
   (local $4 f64)
@@ -3626,11 +3626,12 @@
   local.get $1
   call $assembly/utils/Vector3/Vector3#get:z
   call $assembly/utils/Vector3/Vector3#set
-  drop
+  local.set $0
   global.get $~lib/memory/__stack_pointer
   i32.const 8
   i32.add
   global.set $~lib/memory/__stack_pointer
+  local.get $0
  )
  (func $assembly/utils/Vector3/Vector3#dot (param $0 i32) (param $1 i32) (result f64)
   (local $2 f64)
@@ -3763,16 +3764,79 @@
   global.set $~lib/memory/__stack_pointer
   local.get $2
  )
+ (func $assembly/utils/Vector3/Vector3#get:unitVector (param $0 i32) (result i32)
+  (local $1 f64)
+  (local $2 i32)
+  global.get $~lib/memory/__stack_pointer
+  i32.const 8
+  i32.sub
+  global.set $~lib/memory/__stack_pointer
+  block $folding-inner0
+   global.get $~lib/memory/__stack_pointer
+   i32.const 1836
+   i32.lt_s
+   br_if $folding-inner0
+   global.get $~lib/memory/__stack_pointer
+   local.tee $2
+   i64.const 0
+   i64.store $0
+   local.get $2
+   local.get $0
+   i32.store $0
+   local.get $2
+   local.get $0
+   i32.store $0 offset=4
+   local.get $2
+   i32.const 4
+   i32.sub
+   global.set $~lib/memory/__stack_pointer
+   global.get $~lib/memory/__stack_pointer
+   i32.const 1836
+   i32.lt_s
+   br_if $folding-inner0
+   global.get $~lib/memory/__stack_pointer
+   local.tee $2
+   i32.const 0
+   i32.store $0
+   local.get $2
+   local.get $0
+   i32.store $0
+   local.get $0
+   call $assembly/utils/Vector3/Vector3#get:lengthSquared
+   f64.sqrt
+   local.set $1
+   global.get $~lib/memory/__stack_pointer
+   i32.const 4
+   i32.add
+   global.set $~lib/memory/__stack_pointer
+   local.get $0
+   local.get $1
+   call $assembly/utils/Vector3/Vector3#divideScalar
+   local.set $0
+   global.get $~lib/memory/__stack_pointer
+   i32.const 8
+   i32.add
+   global.set $~lib/memory/__stack_pointer
+   local.get $0
+   return
+  end
+  i32.const 34624
+  i32.const 34672
+  i32.const 1
+  i32.const 1
+  call $~lib/builtins/abort
+  unreachable
+ )
  (func $assembly/Ray/Ray#getColor (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   (local $3 f64)
   (local $4 f64)
-  (local $5 f64)
+  (local $5 i32)
   (local $6 i32)
   (local $7 i32)
-  (local $8 i32)
+  (local $8 f64)
   (local $9 f64)
   global.get $~lib/memory/__stack_pointer
-  i32.const 20
+  i32.const 28
   i32.sub
   global.set $~lib/memory/__stack_pointer
   block $folding-inner2
@@ -3782,17 +3846,17 @@
     i32.lt_s
     br_if $folding-inner1
     global.get $~lib/memory/__stack_pointer
-    local.tee $6
+    local.tee $5
     i32.const 0
-    i32.const 20
+    i32.const 28
     memory.fill $0
-    local.get $6
+    local.get $5
     local.get $2
     i32.store $0
-    local.get $6
+    local.get $5
     local.get $1
     i32.store $0 offset=4
-    block $__inlined_func$assembly/hittables/Hittable/Hittable#hit@override (result i32)
+    block $__inlined_func$assembly/hittables/Hittable/Hittable#hit@override (result f64)
      local.get $2
      i32.const 8
      i32.sub
@@ -3809,14 +3873,14 @@
       i32.lt_s
       br_if $folding-inner1
       global.get $~lib/memory/__stack_pointer
-      local.tee $6
+      local.tee $5
       i32.const 0
       i32.const 20
       memory.fill $0
-      local.get $6
+      local.get $5
       local.get $1
       i32.store $0 offset=12
-      local.get $6
+      local.get $5
       i32.const 4
       i32.sub
       global.set $~lib/memory/__stack_pointer
@@ -3825,27 +3889,27 @@
       i32.lt_s
       br_if $folding-inner1
       global.get $~lib/memory/__stack_pointer
-      local.tee $7
+      local.tee $6
       i32.const 0
       i32.store $0
-      local.get $7
+      local.get $6
       local.get $1
       i32.store $0
       local.get $1
       i32.load $0 offset=4
-      local.set $8
-      local.get $7
+      local.set $7
+      local.get $6
       i32.const 4
       i32.add
       global.set $~lib/memory/__stack_pointer
       global.get $~lib/memory/__stack_pointer
-      local.get $8
-      i32.store $0 offset=8
-      local.get $8
-      call $assembly/utils/Vector3/Vector3#get:clone
-      local.set $7
-      global.get $~lib/memory/__stack_pointer
       local.get $7
+      i32.store $0 offset=8
+      local.get $7
+      call $assembly/utils/Vector3/Vector3#get:clone
+      local.set $6
+      global.get $~lib/memory/__stack_pointer
+      local.get $6
       i32.store $0
       global.get $~lib/memory/__stack_pointer
       local.get $2
@@ -3853,96 +3917,221 @@
       global.get $~lib/memory/__stack_pointer
       local.get $2
       i32.load $0 offset=8
-      local.tee $8
+      local.tee $7
       i32.store $0 offset=4
+      local.get $5
       local.get $6
       local.get $7
-      local.get $8
       call $assembly/utils/Vector3/Vector3#sub
-      local.tee $6
+      local.tee $5
       i32.store $0 offset=16
       global.get $~lib/memory/__stack_pointer
       local.get $1
       i32.store $0 offset=4
       local.get $1
       call $assembly/Ray/Ray#get:direction
-      local.set $7
-      global.get $~lib/memory/__stack_pointer
-      local.get $7
-      i32.store $0
-      local.get $7
-      call $assembly/utils/Vector3/Vector3#get:lengthSquared
-      local.set $3
+      local.set $6
       global.get $~lib/memory/__stack_pointer
       local.get $6
+      i32.store $0
+      local.get $6
+      call $assembly/utils/Vector3/Vector3#get:lengthSquared
+      local.set $8
+      global.get $~lib/memory/__stack_pointer
+      local.get $5
       i32.store $0
       global.get $~lib/memory/__stack_pointer
       local.get $1
       i32.store $0 offset=8
       local.get $1
       call $assembly/Ray/Ray#get:direction
-      local.set $7
+      local.set $6
       global.get $~lib/memory/__stack_pointer
-      local.get $7
-      i32.store $0 offset=4
       local.get $6
-      local.get $7
+      i32.store $0 offset=4
+      local.get $5
+      local.get $6
       call $assembly/utils/Vector3/Vector3#dot
+      f64.const 2
+      f64.mul
+      local.set $3
+      global.get $~lib/memory/__stack_pointer
+      local.get $5
+      i32.store $0
+      local.get $5
+      call $assembly/utils/Vector3/Vector3#get:lengthSquared
       local.set $9
       global.get $~lib/memory/__stack_pointer
-      local.get $6
+      local.get $2
       i32.store $0
-      local.get $6
-      call $assembly/utils/Vector3/Vector3#get:lengthSquared
+      local.get $2
+      f64.load $0
       local.set $4
       global.get $~lib/memory/__stack_pointer
       local.get $2
       i32.store $0
-      local.get $2
-      f64.load $0
-      local.set $5
-      global.get $~lib/memory/__stack_pointer
-      local.get $2
-      i32.store $0
-      local.get $9
-      local.get $9
-      f64.mul
       local.get $3
+      local.get $3
+      f64.mul
+      local.get $8
+      local.get $9
       local.get $4
-      local.get $5
       local.get $2
       f64.load $0
       f64.mul
       f64.sub
       f64.mul
+      f64.const 4
+      f64.mul
       f64.sub
-      f64.const 0
-      f64.ge
-      local.set $2
+      local.set $4
       global.get $~lib/memory/__stack_pointer
       i32.const 20
       i32.add
       global.set $~lib/memory/__stack_pointer
-      local.get $2
+      local.get $4
+      f64.const 0
+      f64.lt
+      if (result f64)
+       f64.const -1
+      else
+       local.get $3
+       f64.neg
+       local.get $4
+       f64.sqrt
+       f64.sub
+       local.get $8
+       local.get $8
+       f64.add
+       f64.div
+      end
       br $__inlined_func$assembly/hittables/Hittable/Hittable#hit@override
      end
      unreachable
     end
+    local.tee $3
+    f64.const 0
+    f64.gt
     if
      global.get $~lib/memory/__stack_pointer
-     local.tee $1
-     local.get $0
-     i32.store $0 offset=4
+     local.tee $2
      local.get $1
+     i32.store $0 offset=12
+     local.get $2
+     i32.const 20
+     i32.sub
+     global.set $~lib/memory/__stack_pointer
+     global.get $~lib/memory/__stack_pointer
+     i32.const 1836
+     i32.lt_s
+     br_if $folding-inner1
+     global.get $~lib/memory/__stack_pointer
+     local.tee $5
+     i32.const 0
+     i32.const 20
+     memory.fill $0
+     local.get $5
+     local.get $1
+     i32.store $0 offset=12
+     local.get $5
+     local.get $1
+     i32.load $0 offset=4
+     local.tee $5
+     i32.store $0 offset=8
+     local.get $5
+     call $assembly/utils/Vector3/Vector3#get:clone
+     local.set $5
+     global.get $~lib/memory/__stack_pointer
+     local.get $5
+     i32.store $0
+     global.get $~lib/memory/__stack_pointer
+     local.get $1
+     i32.store $0 offset=16
+     global.get $~lib/memory/__stack_pointer
+     local.get $1
+     i32.load $0 offset=8
+     local.tee $1
+     i32.store $0 offset=12
+     local.get $1
+     call $assembly/utils/Vector3/Vector3#get:clone
+     local.set $1
+     global.get $~lib/memory/__stack_pointer
+     local.get $1
+     i32.store $0 offset=8
+     local.get $1
+     local.get $3
+     call $assembly/utils/Vector3/Vector3#multiplyScalar
+     local.set $1
+     global.get $~lib/memory/__stack_pointer
+     local.get $1
+     i32.store $0 offset=4
+     local.get $5
+     local.get $1
+     call $assembly/utils/Vector3/Vector3#add
+     local.set $1
+     global.get $~lib/memory/__stack_pointer
+     i32.const 20
+     i32.add
+     global.set $~lib/memory/__stack_pointer
+     global.get $~lib/memory/__stack_pointer
+     local.get $1
+     i32.store $0 offset=4
+     f64.const 0
+     f64.const 0
+     f64.const -1
+     call $assembly/utils/Vector3/Vector3#constructor
+     local.set $5
+     global.get $~lib/memory/__stack_pointer
+     local.get $5
+     i32.store $0 offset=8
+     local.get $1
+     local.get $5
+     call $assembly/utils/Vector3/Vector3#sub
+     local.set $1
+     global.get $~lib/memory/__stack_pointer
+     local.get $1
+     i32.store $0
+     local.get $2
+     local.get $1
+     call $assembly/utils/Vector3/Vector3#get:unitVector
+     local.tee $1
+     i32.store $0 offset=16
+     global.get $~lib/memory/__stack_pointer
+     local.get $0
+     i32.store $0 offset=24
+     global.get $~lib/memory/__stack_pointer
      local.get $0
      i32.load $0
      local.tee $0
+     i32.store $0 offset=12
+     global.get $~lib/memory/__stack_pointer
+     local.get $1
+     i32.store $0 offset=20
+     local.get $0
+     local.get $1
+     call $assembly/utils/Vector3/Vector3#copy
+     local.set $0
+     global.get $~lib/memory/__stack_pointer
+     local.get $0
+     i32.store $0 offset=4
+     i32.const 1
+     global.set $~argumentsLength
+     f64.const 1
+     call $assembly/utils/Vector3/Vector3#constructor@varargs
+     local.set $1
+     global.get $~lib/memory/__stack_pointer
+     local.get $1
+     i32.store $0 offset=8
+     local.get $0
+     local.get $1
+     call $assembly/utils/Vector3/Vector3#add
+     local.set $0
+     global.get $~lib/memory/__stack_pointer
+     local.get $0
      i32.store $0
      local.get $0
-     f64.const 1
-     f64.const 0
-     f64.const 0
-     call $assembly/utils/Vector3/Vector3#set
+     f64.const 0.5
+     call $assembly/utils/Vector3/Vector3#multiplyScalar
      local.set $0
      br $folding-inner2
     end
@@ -3955,55 +4144,9 @@
     i32.load $0 offset=8
     local.tee $1
     i32.store $0 offset=4
-    local.get $2
-    i32.const 8
-    i32.sub
-    global.set $~lib/memory/__stack_pointer
-    global.get $~lib/memory/__stack_pointer
-    i32.const 1836
-    i32.lt_s
-    br_if $folding-inner1
-    global.get $~lib/memory/__stack_pointer
-    local.tee $2
-    i64.const 0
-    i64.store $0
-    local.get $2
     local.get $1
-    i32.store $0
-    local.get $2
-    local.get $1
-    i32.store $0 offset=4
-    local.get $2
-    i32.const 4
-    i32.sub
-    global.set $~lib/memory/__stack_pointer
-    global.get $~lib/memory/__stack_pointer
-    i32.const 1836
-    i32.lt_s
-    br_if $folding-inner1
-    global.get $~lib/memory/__stack_pointer
-    local.tee $2
-    i32.const 0
-    i32.store $0
-    local.get $2
-    local.get $1
-    i32.store $0
-    local.get $1
-    call $assembly/utils/Vector3/Vector3#get:lengthSquared
-    f64.sqrt
-    local.set $3
-    global.get $~lib/memory/__stack_pointer
-    i32.const 4
-    i32.add
-    global.set $~lib/memory/__stack_pointer
-    local.get $1
-    local.get $3
-    call $assembly/utils/Vector3/Vector3#divideScalar
+    call $assembly/utils/Vector3/Vector3#get:unitVector
     local.set $1
-    global.get $~lib/memory/__stack_pointer
-    i32.const 8
-    i32.add
-    global.set $~lib/memory/__stack_pointer
     global.get $~lib/memory/__stack_pointer
     local.get $1
     i32.store $0
@@ -4016,7 +4159,7 @@
     local.set $3
     global.get $~lib/memory/__stack_pointer
     local.get $0
-    i32.store $0 offset=16
+    i32.store $0 offset=20
     global.get $~lib/memory/__stack_pointer
     local.get $0
     i32.load $0
@@ -4088,7 +4231,7 @@
    unreachable
   end
   global.get $~lib/memory/__stack_pointer
-  i32.const 20
+  i32.const 28
   i32.add
   global.set $~lib/memory/__stack_pointer
   local.get $0
@@ -4629,6 +4772,7 @@
        local.get $4
        local.get $5
        call $assembly/utils/Vector3/Vector3#copy
+       drop
        global.get $~lib/memory/__stack_pointer
        i32.const 12
        i32.add
@@ -4673,6 +4817,7 @@
        local.get $4
        local.get $6
        call $assembly/utils/Vector3/Vector3#copy
+       drop
        global.get $~lib/memory/__stack_pointer
        i32.const 12
        i32.add

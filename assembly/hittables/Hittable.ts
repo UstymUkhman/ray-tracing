@@ -7,5 +7,5 @@ export default abstract class Hittable
     // tMin: f64,
     // tMax: f64,
     // record: Hits
-  ): bool;
+  ): f64 /* bool */;
 }

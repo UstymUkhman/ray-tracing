@@ -35,12 +35,10 @@ class Tracer
     // samples: u16,
     // start: f64
   ): void {
-    // Image:
     const ray = new Ray();
 
     const sphere = new Sphere(0.5, new Vector3(0.0, 0.0, -1.0));
 
-    // Render:
     for (let p = 0, h = this.height, lw = this.width - 1, lh = h - 1; h--; )
     {
       for (let w = 0; w < this.width; w++, p += 3)

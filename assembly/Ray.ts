@@ -15,8 +15,11 @@ export default class Ray
   }
 
   public getColor (ray: Ray, scene: Hittable): Vector3 {
-    if (scene.hit(ray)) {
-      return this.color.set(1.0, 0.0, 0.0);
+    const d = scene.hit(ray);
+
+    if (d > 0.0) {
+      const n = ray.at(d).sub(new Vector3(0.0, 0.0, -1.0)).unitVector;
+      return this.color.copy(n).add(new Vector3(1.0)).multiplyScalar(0.5);
     }
 
     const t = (ray.dir.unitVector.y + 1.0) * 0.5;
