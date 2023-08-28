@@ -77,14 +77,14 @@ class Tracer
 
 const tracer = new Tracer();
 
-export const trace = (
+export function trace (
   start: number,
   f32: Float32Array,
   u8: Uint8ClampedArray,
   sample = tracer.samples
-): Uint8ClampedArray => {
+): Uint8ClampedArray {
   const color = new Vector3();
 
   tracer.createPPMImage(f32, sample, start);
   return floatToInt(u8, f32, color, sample);
-};
+}

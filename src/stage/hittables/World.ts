@@ -11,35 +11,35 @@ export default class World
   public constructor ()
   {
     this.addSphere(
-      new Vector3(0.0, -1000.0, 0.0),
       1000.0,
+      new Vector3(0.0, -1000.0, 0.0),
       new Lambertian(new Vector3(0.5))
     );
 
     this.generateSmallSpheres();
 
     this.addSphere(
-      new Vector3(0.0, 1.0, 0.0),
       1.0,
+      new Vector3(0.0, 1.0, 0.0),
       new Dielectric(1.5)
     );
 
     this.addSphere(
-      new Vector3(-4.0, 1.0, 0.0),
       1.0,
+      new Vector3(-4.0, 1.0, 0.0),
       new Lambertian(new Vector3(0.4, 0.2, 0.1))
     );
 
     this.addSphere(
-      new Vector3(4.0, 1.0, 0.0),
       1.0,
+      new Vector3(4.0, 1.0, 0.0),
       new Metal(new Vector3(0.7, 0.6, 0.5), 0.0)
     );
   }
 
-  private addSphere (center: Vector3, radius: number, material: Material): void
+  private addSphere (radius: number, center: Vector3, material: Material): void
   {
-    this.hittables.add(new Sphere(center, radius, material));
+    this.hittables.add(new Sphere(radius, center, material));
   }
 
   private generateSmallSpheres (): void
@@ -64,7 +64,7 @@ export default class World
           {
             this.color.random().multiply(this.color.random());
             const sphereMaterial = new Lambertian(this.color);
-            this.addSphere(center, 0.2, sphereMaterial);
+            this.addSphere(0.2, center, sphereMaterial);
           }
           else if (rand < 0.95)
           {
@@ -72,12 +72,12 @@ export default class World
             const fuzz = random(0.0, 0.5);
 
             const sphereMaterial = new Metal(this.color, fuzz);
-            this.addSphere(center, 0.2, sphereMaterial);
+            this.addSphere(0.2, center, sphereMaterial);
           }
           else
           {
             const sphereMaterial = new Dielectric(1.5);
-            this.addSphere(center, 0.2, sphereMaterial);
+            this.addSphere(0.2, center, sphereMaterial);
           }
         }
       }

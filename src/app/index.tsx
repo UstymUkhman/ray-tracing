@@ -8,7 +8,10 @@ export const App = () =>
   let typescript!: HTMLCanvasElement;
   let assemblyscript!: HTMLCanvasElement;
 
-  onMount(() => new Stage([typescript, assemblyscript]));
+  onMount(() => new Stage([
+    typescript,
+    assemblyscript
+  ]));
 
   return (
     <section>

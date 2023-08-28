@@ -1909,13 +1909,13 @@
   local.get $0
   i32.store $0 offset=4
   local.get $0
-  f64.const 400
+  f64.const 360
   f64.store $0 offset=8
   local.get $1
   local.get $0
   i32.store $0 offset=4
   local.get $0
-  f64.const 225
+  f64.const 240
   f64.store $0 offset=16
   local.get $1
   local.get $0
@@ -3301,7 +3301,7 @@
   local.get $1
   local.get $1
   f64.load $0 offset=8
-  f64.const 1.7777777777777777
+  f64.const 1.5
   f64.mul
   f64.store $0
   local.get $0
