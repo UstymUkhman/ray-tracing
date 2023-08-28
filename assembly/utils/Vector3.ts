@@ -99,6 +99,10 @@ export default class Vector3
     );
   }
 
+  public reset (s: f64 = 0.0): this {
+    return this.set(s, s, s);
+  }
+
   public copy (vec: Vector3): this {
     return this.set(vec.x, vec.y, vec.z);
   }
@@ -153,10 +157,6 @@ export default class Vector3
       this.vec[1],
       this.vec[2]
     );
-  }
-
-  public reset (s = 0.0): this {
-    return this.set(s, s, s);
   }
 
   public get print (): string {
