@@ -1,4 +1,4 @@
-export function clamp<N extends number = f64>
+export function clamp<N extends f64>
   (value: N, min: f64 = 0, max: f64 = 1): N {
     return <N> Math.max(min, Math.min(value, max));
 }

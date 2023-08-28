@@ -1,3 +1,4 @@
+import { Hittable } from './hittables';
 import Vector3 from './utils/Vector3';
 
 export default class Ray
@@ -13,7 +14,11 @@ export default class Ray
     return this.orig.clone.add(this.dir.clone.multiplyScalar(t));
   }
 
-  public getColor (ray: Ray): Vector3 {
+  public getColor (ray: Ray, scene: Hittable): Vector3 {
+    if (scene.hit(ray)) {
+      return this.color.set(1.0, 0.0, 0.0);
+    }
+
     const t = (ray.dir.unitVector.y + 1.0) * 0.5;
 
     return this.color.reset(1.0)
