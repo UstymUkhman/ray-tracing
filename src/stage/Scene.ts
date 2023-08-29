@@ -7,8 +7,10 @@ import {
 
 import Config from '@S/stage/Config';
 import Events from '@S/stage/Events';
+import Vector3 from '@S/utils/Vector3';
 
 import type { Trace } from '@S/stage/types';
+import { floatToInt } from '@S/utils/Color';
 import type WebWorker from '@S/utils/worker';
 import type { Canvas } from '@S/stage/backend';
 
@@ -21,17 +23,18 @@ export default class Scene
   private sample = 0.0;
   private trace!: Trace;
 
+  private f32 = new Float32Array(
+    Config.width * Config.height * 3
+  );
+
   private readonly canvas!: Canvas;
   private readonly worker?: WebWorker;
 
   private readonly start   = Date.now();
+  private readonly color   = new Vector3();
   private readonly samples = Config.samples;
 
-  private u8 = new Uint8ClampedArray(
-    Config.width * Config.height * 3
-  );
-
-  private readonly f32 = new Float32Array(
+  private readonly u8 = new Uint8ClampedArray(
     Config.width * Config.height * 3
   );
 
@@ -90,7 +93,9 @@ export default class Scene
   private createPPMImage (download = false): void {
     if (this.worker) return this.worker.post('Create::PPMImage', { download });
 
-    this.u8 = this.trace(this.start, this.f32, this.u8, ++this.sample);
+    this.f32 = this.trace(this.start, this.f32, ++this.sample);
+    floatToInt(this.u8, this.f32, this.color, this.sample);
+
     this.showPPMImage({ pixels: this.u8, sample: this.sample, download }, true);
   }
 

@@ -1,4 +1,6 @@
 import type { Trace } from '@S/stage/types';
+import { floatToInt } from '@S/utils/Color';
+import Vector3 from '@S/utils/Vector3';
 import Config from '@S/stage/Config';
 import Scene from '@S/stage/Scene';
 
@@ -6,11 +8,13 @@ let start = 0.0;
 let sample = 0.0;
 let trace: Trace;
 
-const f32 = new Float32Array(
+const color = new Vector3();
+
+let f32 = new Float32Array(
   Config.width * Config.height * 3
 );
 
-let u8 = new Uint8ClampedArray(
+const u8 = new Uint8ClampedArray(
   Config.width * Config.height * 3
 );
 
@@ -37,7 +41,8 @@ self.onmessage = async (message): Promise<Scene | void> => {
       break;
 
     case 'Create::PPMImage':
-      u8 = trace(start ||= Date.now(), f32, u8, ++sample);
+      f32 = trace(start ||= Date.now(), f32, ++sample);
+      floatToInt(u8, f32, color, sample);
       params = { sample, pixels: u8, ...params };
       break;
   }

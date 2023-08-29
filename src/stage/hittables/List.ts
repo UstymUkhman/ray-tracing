@@ -7,9 +7,8 @@ export default class List extends Hittable
 {
   private readonly objects: Hittable[] = [];
 
-  public constructor (object?: Hittable) {
+  public constructor () {
     super();
-    object && this.add(object);
   }
 
   public add (object: Hittable): void {

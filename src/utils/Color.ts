@@ -18,13 +18,13 @@ export const floatToInt = (
   f32: Float32Array,
   color: Vector3,
   samples: number
-): Uint8ClampedArray => {
+): void => {
   for (let p = 0; p < f32.length; p += 3)
   {
-    color.set(f32[p], f32[p + 1], f32[p + 2]);
-    const { x, y, z } = format(color, samples);
+    const { x, y, z } = format(color.set(
+      f32[p], f32[p + 1], f32[p + 2]
+    ), samples);
+
     u8[p] = x; u8[p + 1] = y; u8[p + 2] = z;
   }
-
-  return u8;
 };

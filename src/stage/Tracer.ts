@@ -1,4 +1,4 @@
-import { floatToInt } from '@S/utils/Color';
+// import { floatToInt } from '@S/utils/Color';
 import { World } from '@S/stage/hittables';
 import { toFixed } from '@S/utils/Number';
 import Vector3 from '@S/utils/Vector3';
@@ -39,7 +39,7 @@ class Tracer
     f32: Float32Array,
     samples: number,
     start: number
-  ): void {
+  ): Float32Array {
     const ray = new Ray();
     const last = this.samples === samples;
 
@@ -71,7 +71,9 @@ class Tracer
     const lrt = `Last Render Time: ${toFixed((now - this.last) / 1e3)} sec.`;
 
     console.info(`${s} | ${lrt} | ${tt}`);
+
     this.last = now;
+    return f32;
   }
 }
 
@@ -80,11 +82,7 @@ const tracer = new Tracer();
 export function trace (
   start: number,
   f32: Float32Array,
-  u8: Uint8ClampedArray,
   sample = tracer.samples
-): Uint8ClampedArray {
-  const color = new Vector3();
-
-  tracer.createPPMImage(f32, sample, start);
-  return floatToInt(u8, f32, color, sample);
+): Float32Array {
+  return tracer.createPPMImage(f32, sample, start);
 }

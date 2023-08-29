@@ -25,6 +25,5 @@ export type ImageData = {
 export type Trace = (
   start: number,
   f32: Float32Array,
-  u8: Uint8ClampedArray,
   sample?: number
-) => Uint8ClampedArray;
+) => Float32Array;

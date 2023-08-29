@@ -21,20 +21,10 @@ export const floatToInt = (
   pixels: Float32Array,
   color: Vector3,
   samples: u16
-): Uint8ClampedArray => {
+): void => {
   for (let p = 0; p < pixels.length; p += 3)
   {
-    format(color.set(
-        pixels[p    ],
-        pixels[p + 1],
-        pixels[p + 2]
-      ), samples
-    );
-
-    colors[p    ] = color.xu8;
-    colors[p + 1] = color.yu8;
-    colors[p + 2] = color.zu8;
+    format(color.set(pixels[p], pixels[p + 1], pixels[p + 2]), samples);
+    colors[p] = color.xu8; colors[p + 1] = color.yu8; colors[p + 2] = color.zu8;
   }
-
-  return colors;
 };

@@ -1,4 +1,3 @@
-import { floatToInt } from './utils/Color';
 import { toFixed } from './utils/Number';
 import Vector3 from './utils/Vector3';
 import { World } from './hittables';
@@ -39,7 +38,7 @@ class Tracer
     pixels: Float32Array,
     samples: u16,
     start: i32
-  ): void {
+  ): Float32Array {
     const ray = new Ray();
     const last = this.samples === samples;
 
@@ -49,30 +48,14 @@ class Tracer
 
       for (let w = 0; w < this.width; w++, p += 3)
       {
-        /// Temp:
-        this.color.reset();
+        this.color.set(pixels[p], pixels[p + 1], pixels[p + 2]);
 
-        for (let s: u16 = 0; s < samples; s++)
-        {
-          const u = (w + Math.random()) / lw;
-          const v = (h + Math.random()) / lh;
+        const u = (w + Math.random()) / lw;
+        const v = (h + Math.random()) / lh;
 
-          this.camera.setRay(ray, u, v);
+        this.camera.setRay(ray, u, v);
 
-          this.color.add(
-            ray.getColor(ray, this.world.objects, this.depth)
-          );
-        }
-        ///
-
-        /*
-          const u = w / lw;
-          const v = h / lh;
-
-          this.camera.setRay(ray, u, v);
-
-          const color = ray.getColor(ray, this.world.objects);
-        */
+        this.color.add(ray.getColor(ray, this.world.objects, this.depth));
 
         pixels[p    ] = this.color.xf32;
         pixels[p + 1] = this.color.yf32;
@@ -87,7 +70,9 @@ class Tracer
     const lrt = `Last Render Time: ${toFixed(f64(now - this.last) / 1e3)} sec.`;
 
     console.info(`${s} | ${lrt} | ${tt}`);
+
     this.last = now;
+    return pixels;
   }
 }
 
@@ -96,12 +81,7 @@ const tracer = new Tracer();
 export function trace (
   start: i32,
   pixels: Float32Array,
-  colors: Uint8ClampedArray,
   sample: u16 = tracer.samples
-): Uint8ClampedArray {
-  sample = tracer.samples;
-  const color = new Vector3();
-
-  tracer.createPPMImage(pixels, sample, start);
-  return floatToInt(colors, pixels, color, sample);
+): Float32Array {
+  return tracer.createPPMImage(pixels, sample, start);
 }
