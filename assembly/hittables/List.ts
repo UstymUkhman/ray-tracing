@@ -17,10 +17,10 @@ export default class List extends Hittable
 
   public override hit (
     ray: Ray,
-    tMin: number,
-    tMax: number,
+    tMin: f64,
+    tMax: f64,
     record: Record
-  ): boolean {
+  ): bool {
     let hit = false;
     let closest = tMax;
 

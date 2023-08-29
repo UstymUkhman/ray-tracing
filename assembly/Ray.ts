@@ -22,12 +22,14 @@ export default class Ray
     if (!depth) return this.color.reset();
 
     if (scene.hit(ray, this.near, this.far, IRecord)) {
-      const target = IRecord.point.clone.add(
-        new Vector3().randomHemisphere(IRecord.normal)
-      );
+      const attenuation = new Vector3();
+      const scattered = new Ray();
 
-      const scattered = new Ray(IRecord.point, target.sub(IRecord.point));
-      return this.getColor(scattered, scene, depth - 1).multiplyScalar(0.5);
+      if (IRecord.material.scatter(ray, IRecord, scattered, attenuation))
+        return this.getColor(scattered, scene, depth - 1)
+          .multiply(attenuation);
+
+      return this.color.reset();
     }
 
     const t = (ray.dir.unitVector.y + 1.0) * 0.5;

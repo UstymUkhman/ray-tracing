@@ -1,3 +1,4 @@
+import { Material } from '../materials';
 import Vector3 from '../utils/Vector3';
 import Ray from '../Ray';
 
@@ -5,8 +6,8 @@ export default class Record
 {
   public t: f64 = 0.0;
 
+  public material!: Material;
   public frontFace: bool = false;
-  // public material!: Material;
 
   public readonly point: Vector3 = new Vector3();
   public readonly normal: Vector3 = new Vector3();

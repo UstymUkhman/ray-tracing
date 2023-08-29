@@ -2,13 +2,14 @@ import Ray from '../Ray';
 import Record from './Record';
 import Hittable from './Hittable';
 import Vector3 from '../utils/Vector3';
+import { Material } from '../materials';
 
 export default class Sphere extends Hittable
 {
   public constructor (
     private readonly radius: f64,
-    private readonly center: Vector3 //,
-    // private readonly material: Material
+    private readonly center: Vector3,
+    private readonly material: Material
   ) {
     super();
   }
@@ -47,6 +48,7 @@ export default class Sphere extends Hittable
       .sub(this.center).divideScalar(this.radius);
 
     record.setFaceNormal(ray, outwardNormal);
+    record.material = this.material;
 
     return true;
   }
