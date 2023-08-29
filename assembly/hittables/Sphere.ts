@@ -1,4 +1,5 @@
 import Ray from '../Ray';
+import Record from './Record';
 import Hittable from './Hittable';
 import Vector3 from '../utils/Vector3';
 
@@ -13,21 +14,40 @@ export default class Sphere extends Hittable
   }
 
   public override hit (
-    ray: Ray //,
-    // tMin: f64,
-    // tMax: f64,
-    // record: Hits
-  ): f64 /* bool */ {
+    ray: Ray,
+    tMin: f64,
+    tMax: f64,
+    record: Record
+  ): bool {
     const oc = ray.origin.clone.sub(this.center);
 
     const a = ray.direction.lengthSquared;
-    // const halfB = oc.dot(ray.direction);
-    const b = oc.dot(ray.direction) * 2.0;
+    const halfB = oc.dot(ray.direction);
 
     const c = oc.lengthSquared - this.radius * this.radius;
-    // const d = halfB * halfB - a * c;
-    const d = b * b - a * c * 4.0;
+    const d = halfB * halfB - a * c;
 
-    return d < 0.0 ? -1.0 : (-b - Math.sqrt(d)) / (a * 2.0);
+    if (d < 0) return false;
+
+    const sqrtD = Math.sqrt(d);
+    let root = (-halfB - sqrtD) / a;
+
+    if (root < tMin || root > tMax) {
+      root = (-halfB + sqrtD) / a;
+
+      if (root < tMin || root > tMax) {
+        return false;
+      }
+    }
+
+    record.t = root;
+    record.point.copy(ray.at(record.t));
+
+    const outwardNormal = record.point.clone
+      .sub(this.center).divideScalar(this.radius);
+
+    record.setFaceNormal(ray, outwardNormal);
+
+    return true;
   }
 }

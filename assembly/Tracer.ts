@@ -1,6 +1,6 @@
 import { floatToInt } from './utils/Color';
 import Vector3 from './utils/Vector3';
-import { Sphere } from './hittables';
+import { World } from './hittables';
 import Camera from './Camera';
 import Config from './Config';
 import Ray from './Ray';
@@ -8,6 +8,7 @@ import Ray from './Ray';
 class Tracer
 {
   private readonly camera: Camera;
+  private readonly world: World = new World();
 
   private readonly width: f64 = Config.width;
   private readonly height: f64 = Config.height;
@@ -37,8 +38,6 @@ class Tracer
   ): void {
     const ray = new Ray();
 
-    const sphere = new Sphere(0.5, new Vector3(0.0, 0.0, -1.0));
-
     for (let p = 0, h = this.height, lw = this.width - 1, lh = h - 1; h--; )
     {
       for (let w = 0; w < this.width; w++, p += 3)
@@ -48,7 +47,7 @@ class Tracer
 
         this.camera.setRay(ray, u, v);
 
-        const color = ray.getColor(ray, sphere);
+        const color = ray.getColor(ray, this.world.objects);
 
         pixels[p    ] = f32(color.x * 255.999);
         pixels[p + 1] = f32(color.y * 255.999);

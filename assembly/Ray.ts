@@ -1,9 +1,13 @@
 import { Hittable } from './hittables';
+import { IRecord } from './hittables';
 import Vector3 from './utils/Vector3';
 
 export default class Ray
 {
   private readonly color: Vector3 = new Vector3(1.0);
+
+  private readonly far: f64 = Infinity;
+  private readonly near: f64 = 0.001;
 
   public constructor (
     private readonly orig: Vector3 = new Vector3(),
@@ -15,11 +19,8 @@ export default class Ray
   }
 
   public getColor (ray: Ray, scene: Hittable): Vector3 {
-    const d = scene.hit(ray);
-
-    if (d > 0.0) {
-      const n = ray.at(d).sub(new Vector3(0.0, 0.0, -1.0)).unitVector;
-      return this.color.copy(n).add(new Vector3(1.0)).multiplyScalar(0.5);
+    if (scene.hit(ray, this.near, this.far, IRecord)) {
+      return this.color.reset(1.0).add(IRecord.normal).multiplyScalar(0.5);
     }
 
     const t = (ray.dir.unitVector.y + 1.0) * 0.5;
