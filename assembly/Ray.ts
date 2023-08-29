@@ -18,9 +18,16 @@ export default class Ray
     return this.orig.clone.add(this.dir.clone.multiplyScalar(t));
   }
 
-  public getColor (ray: Ray, scene: Hittable): Vector3 {
+  public getColor (ray: Ray, scene: Hittable, depth: u8): Vector3 {
+    if (!depth) return this.color.reset();
+
     if (scene.hit(ray, this.near, this.far, IRecord)) {
-      return this.color.reset(1.0).add(IRecord.normal).multiplyScalar(0.5);
+      const target = IRecord.point.clone.add(
+        new Vector3().randomHemisphere(IRecord.normal)
+      );
+
+      const scattered = new Ray(IRecord.point, target.sub(IRecord.point));
+      return this.getColor(scattered, scene, depth - 1).multiplyScalar(0.5);
     }
 
     const t = (ray.dir.unitVector.y + 1.0) * 0.5;

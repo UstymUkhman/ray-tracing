@@ -18,17 +18,17 @@ export default class Vector3
     return this.add(normal.multiplyScalar(-Math.sqrt(angle)));
   }
 
-  public randomHemisphere (normal: Vector3): this {
-    this.randomUnitSphere;
-    return this.dot(normal) > 0.0 ? this : this.negate;
-  }
-
-  public random (min = 0.0, max = 1.0): this {
+  public random (min: f64 = 0.0, max: f64 = 1.0): this {
     return this.set(
       random(min, max),
       random(min, max),
       random(min, max)
     );
+  }
+
+  public randomHemisphere (normal: Vector3): this {
+    this.randomUnitSphere;
+    return this.dot(normal) > 0.0 ? this : this.negate;
   }
 
   public reflect (normal: Vector3): Vector3 {
@@ -51,6 +51,9 @@ export default class Vector3
     for ( ; ; )
       if (this.random(-1.0).lengthSquared < 1.0)
         return this;
+
+    // eslint-disable-next-line no-unreachable
+    return this;
   }
 
   public get randomUnitDisk (): this {
@@ -185,10 +188,22 @@ export default class Vector3
 
   public get rgb (): this {
     return this.set(
-      clamp(i32(this.vec[0] * 256), 0, 0xff),
-      clamp(i32(this.vec[1] * 256), 0, 0xff),
-      clamp(i32(this.vec[2] * 256), 0, 0xff)
+      clamp(u32(this.vec[0] * 256), 0, 0xff),
+      clamp(u32(this.vec[1] * 256), 0, 0xff),
+      clamp(u32(this.vec[2] * 256), 0, 0xff)
     );
+  }
+
+  public get xf32 (): f32 {
+    return <f32>this.vec[0];
+  }
+
+  public get yf32 (): f32 {
+    return <f32>this.vec[1];
+  }
+
+  public get zf32 (): f32 {
+    return <f32>this.vec[2];
   }
 
   public get xu8 (): u8 {

@@ -14,7 +14,7 @@ class Tracer
   private readonly width: f64 = Config.width;
   private readonly height: f64 = Config.height;
 
-  // private readonly depth: u8 = Config.maxDepth;
+  private readonly depth: u8 = Config.maxDepth;
   public readonly samples: u16 = Config.samples;
 
   private readonly color: Vector3 = new Vector3();
@@ -60,7 +60,7 @@ class Tracer
           this.camera.setRay(ray, u, v);
 
           this.color.add(
-            ray.getColor(ray, this.world.objects)
+            ray.getColor(ray, this.world.objects, this.depth)
           );
         }
         ///
@@ -74,9 +74,9 @@ class Tracer
           const color = ray.getColor(ray, this.world.objects);
         */
 
-        pixels[p    ] = f32(this.color.x * 255.999);
-        pixels[p + 1] = f32(this.color.y * 255.999);
-        pixels[p + 2] = f32(this.color.z * 255.999);
+        pixels[p    ] = this.color.xf32;
+        pixels[p + 1] = this.color.yf32;
+        pixels[p + 2] = this.color.zf32;
       }
     }
 
@@ -103,5 +103,5 @@ export function trace (
   const color = new Vector3();
 
   tracer.createPPMImage(pixels, sample, start);
-  return floatToInt(colors, pixels, color, /* sample */ sample);
+  return floatToInt(colors, pixels, color, sample);
 }

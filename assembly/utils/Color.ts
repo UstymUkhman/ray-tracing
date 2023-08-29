@@ -9,7 +9,7 @@ export function getRGB (color: i32, format: u8 = 1): Map<string, i32> {
 }
 
 function format (color: Vector3, samples: u16): Vector3 {
-  return color.divideScalar(samples)/*.sqrt.rgb*/;
+  return color.divideScalar(samples).sqrt.rgb;
 }
 
 export function getHex (color: f64): string {
