@@ -1,41 +1,87 @@
-import { Material, Lambertian, Metal } from '../materials';
+import { Material, Lambertian, Metal, Dielectric } from '../materials';
+import { random } from '../utils/Number';
 import Vector3 from '../utils/Vector3';
 import { List, Sphere } from './';
 
 export default class World
 {
+  private readonly color: Vector3 = new Vector3();
   private readonly hittables: List = new List();
 
   public constructor ()
   {
     this.addSphere(
-      100.0,
-      new Vector3(0.0, -100.5, -1.0),
-      new Lambertian(new Vector3(0.8, 0.8, 0.0))
+      1000.0,
+      new Vector3(0.0, -1000.0, 0.0),
+      new Lambertian(new Vector3(0.5))
+    );
+
+    this.generateSmallSpheres();
+
+    this.addSphere(
+      1.0,
+      new Vector3(0.0, 1.0, 0.0),
+      new Dielectric(1.5)
     );
 
     this.addSphere(
-      0.5,
-      new Vector3(0.0, 0.0, -1.0),
-      new Lambertian(new Vector3(0.7, 0.3, 0.3))
+      1.0,
+      new Vector3(-4.0, 1.0, 0.0),
+      new Lambertian(new Vector3(0.4, 0.2, 0.1))
     );
 
     this.addSphere(
-      0.5,
-      new Vector3(-1.0, 0.0, -1.0),
-      new Metal(new Vector3(0.8), 0.3)
-    );
-
-    this.addSphere(
-      0.5,
-      new Vector3(1.0, 0.0, -1.0),
-      new Metal(new Vector3(0.8, 0.6, 0.2), 1.0)
+      1.0,
+      new Vector3(4.0, 1.0, 0.0),
+      new Metal(new Vector3(0.7, 0.6, 0.5), 0.0)
     );
   }
 
   private addSphere (radius: f64, center: Vector3, material: Material): void
   {
     this.hittables.add(new Sphere(radius, center, material));
+  }
+
+  private generateSmallSpheres (): void
+  {
+    for (let i = -11; i < 11; i++)
+    {
+      for (let j = -11; j < 11; j++)
+      {
+        const center = new Vector3(
+          Math.random() * 0.9 + i,
+          0.2,
+          Math.random() * 0.9 + j
+        );
+
+        const offset = new Vector3(4.0, 0.2, 0.0);
+
+        if (center.clone.sub(offset).length > 0.9)
+        {
+          const rand = Math.random();
+
+          if (rand < 0.8)
+          {
+            this.color.random().multiply(this.color.random());
+            const sphereMaterial = new Lambertian(this.color);
+            this.addSphere(0.2, center, sphereMaterial);
+          }
+          else if (rand < 0.95)
+          {
+            this.color.random(0.5);
+            const fuzz = random(0.0, 0.5);
+
+            const sphereMaterial = new Metal(this.color, fuzz);
+            this.addSphere(0.2, center, sphereMaterial);
+          }
+          else
+          {
+            const sphereMaterial = new Dielectric(1.5);
+            this.addSphere(0.2, center, sphereMaterial);
+          }
+        }
+      }
+    }
   }
 
   public get objects (): List {

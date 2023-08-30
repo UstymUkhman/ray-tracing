@@ -24,13 +24,13 @@ class Tracer
     const ratio = Config.width / Config.height;
 
     this.camera = new Camera(
-      new Vector3(/* 13.0, 2.0, 3.0 */),
+      new Vector3(13.0, 2.0, 3.0),
       new Vector3(0.0, 0.0, 0.0),
       new Vector3(0.0, 1.0, 0.0),
       20.0,
-      ratio //,
-      // 0.1,
-      // 10.0
+      ratio,
+      0.1,
+      10.0
     );
   }
 
@@ -57,9 +57,7 @@ class Tracer
 
         this.color.add(ray.getColor(ray, this.world.objects, this.depth));
 
-        pixels[p    ] = this.color.xf32;
-        pixels[p + 1] = this.color.yf32;
-        pixels[p + 2] = this.color.zf32;
+        pixels[p] = this.color.xf32; pixels[p + 1] = this.color.yf32; pixels[p + 2] = this.color.zf32;
       }
     }
 
