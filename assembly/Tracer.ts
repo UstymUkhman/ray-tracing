@@ -38,9 +38,13 @@ class Tracer
     {
       if (Config.log) console.info(`Progress: ${toFixed((1 - h / lh) * 100)}%`);
 
-      for (let w = 0; w < this.width; w++, p += 3)
+      for (let w = 0, l = this.width; w < l; ++w, p += 3)
       {
-        this.color.set(pixels[p], pixels[p + 1], pixels[p + 2]);
+        this.color.set(
+          unchecked(pixels[p    ]),
+          unchecked(pixels[p + 1]),
+          unchecked(pixels[p + 2])
+        );
 
         const u = (w + Math.random()) / lw;
         const v = (h + Math.random()) / lh;
@@ -49,7 +53,9 @@ class Tracer
 
         this.color.add(ray.getColor(ray, this.world.objects, this.depth));
 
-        pixels[p] = this.color.xf32; pixels[p + 1] = this.color.yf32; pixels[p + 2] = this.color.zf32;
+        unchecked(pixels[p    ] = this.color.xf32);
+        unchecked(pixels[p + 1] = this.color.yf32);
+        unchecked(pixels[p + 2] = this.color.zf32);
       }
     }
 

@@ -5,14 +5,16 @@ import Hittable from './Hittable';
 
 export default class List extends Hittable
 {
-  private readonly objects: Hittable[] = [];
+  private readonly objects: StaticArray<Hittable>;
 
-  public constructor () {
+  public constructor (private length: i32) {
     super();
+    this.objects = new StaticArray(length);
   }
 
-  public add (object: Hittable): void {
-    this.objects.push(object);
+  public add (object: Hittable, o: i32): void {
+    unchecked(this.objects[o] = object);
+    this.length = ++o;
   }
 
   public override hit (
@@ -24,18 +26,14 @@ export default class List extends Hittable
     let hit = false;
     let closest = tMax;
 
-    for (let o = 0, l = this.objects.length; o < l; o++) {
-      if (this.objects[o].hit(ray, tMin, closest, IRecord)) {
+    for (let o = 0, l = this.length; o < l; ++o)
+      if (unchecked(this.objects[o]).hit(ray, tMin, closest, IRecord))
+      {
         closest = IRecord.t;
         record.copy(IRecord);
         hit = true;
       }
-    }
 
     return hit;
-  }
-
-  public clear (): void {
-    this.objects.length = 0;
   }
 }

@@ -39,8 +39,8 @@
     "lint:css": "stylelint **/*.{css,scss}",
     "lint:js": "eslint src/**/*.{ts,tsx,js,jsx}",
     "asbuild": "pnpm asbuild:debug && pnpm asbuild:release",
-    "asbuild:debug": "asc assembly/index.ts --target debug",
-    "asbuild:release": "asc assembly/index.ts --target release"
+    "asbuild:debug": "asc --config asconfig.json --target debug",
+    "asbuild:release": "asc --config asconfig.json --target release"
   },
   "exports": {
     ".": {

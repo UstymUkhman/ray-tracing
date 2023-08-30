@@ -34,8 +34,4 @@ export default class List extends Hittable
 
     return hit;
   }
-
-  public clear (): void {
-    this.objects.length = 0;
-  }
 }

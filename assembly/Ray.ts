@@ -19,7 +19,7 @@ export default class Ray
   }
 
   public getColor (ray: Ray, scene: Hittable, depth: u8): Vector3 {
-    if (!depth) return this.color.reset();
+    if (depth === 0) return this.color.reset();
 
     if (scene.hit(ray, this.near, this.far, IRecord)) {
       const attenuation = new Vector3();

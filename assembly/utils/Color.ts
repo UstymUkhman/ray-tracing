@@ -15,9 +15,16 @@ export const floatToInt = (
 ): Uint8ClampedArray => {
   const color = new Vector3();
 
-  for (let p = 0; p < pixels.length; p += 3) {
-    format(color.set(pixels[p], pixels[p + 1], pixels[p + 2]), samples);
-    colors[p] = color.xu8; colors[p + 1] = color.yu8; colors[p + 2] = color.zu8;
+  for (let p = 0, lp = pixels.length; p < lp; p += 3) {
+    format(color.set(
+      unchecked(pixels[p    ]),
+      unchecked(pixels[p + 1]),
+      unchecked(pixels[p + 2])
+    ), samples);
+
+    unchecked(colors[p    ] = color.xu8);
+    unchecked(colors[p + 1] = color.yu8);
+    unchecked(colors[p + 2] = color.zu8);
   }
 
   return colors;

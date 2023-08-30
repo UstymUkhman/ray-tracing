@@ -1,5 +1,10 @@
 {
+  "entries": [
+    "assembly/index.ts"
+  ],
+
   "options": {
+    "sourceMap": true,
     "bindings": "esm"
   },
 
@@ -7,7 +12,6 @@
     "debug": {
       "textFile": "build/debug.wat",
       "outFile": "build/debug.wasm",
-      "sourceMap": true,
       "debug": true
     },
 
@@ -15,9 +19,9 @@
       "textFile": "build/release.wat",
       "outFile": "build/release.wasm",
       "optimizeLevel": 3,
-      "sourceMap": true,
-      "converge": false,
-      "noAssert": false,
+      "converge": true,
+      "noAssert": true,
+      "optimize": true,
       "shrinkLevel": 0
     }
   }

@@ -5,8 +5,10 @@ import { List, Sphere } from './';
 
 export default class World
 {
+  private readonly hittables: List = new List(4 /* 488 */);
   private readonly color: Vector3 = new Vector3();
-  private readonly hittables: List = new List();
+
+  private sphereCount: i32 = 0;
 
   public constructor ()
   {
@@ -16,7 +18,7 @@ export default class World
       new Lambertian(new Vector3(0.5))
     );
 
-    this.generateSmallSpheres();
+    // this.generateSmallSpheres();
 
     this.addSphere(
       1.0,
@@ -39,14 +41,14 @@ export default class World
 
   private addSphere (radius: f64, center: Vector3, material: Material): void
   {
-    this.hittables.add(new Sphere(radius, center, material));
+    this.hittables.add(new Sphere(radius, center, material), this.sphereCount++);
   }
 
   private generateSmallSpheres (): void
   {
-    for (let i = -11; i < 11; i++)
+    for (let i = -11; i < 11; ++i)
     {
-      for (let j = -11; j < 11; j++)
+      for (let j = -11; j < 11; ++j)
       {
         const center = new Vector3(
           Math.random() * 0.9 + i,
