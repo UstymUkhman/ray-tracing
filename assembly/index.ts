@@ -1,1 +1,1 @@
-export { trace } from './Tracer';
+export { trace, format } from './Tracer';

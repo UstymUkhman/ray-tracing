@@ -7,36 +7,33 @@ import {
 
 import Config from '@S/stage/Config';
 import Events from '@S/stage/Events';
-import Vector3 from '@S/utils/Vector3';
-
-import type { Trace } from '@S/stage/types';
-import { floatToInt } from '@S/utils/Color';
+import { toFixed } from '@S/utils/Number';
 import type WebWorker from '@S/utils/worker';
-import type { Canvas } from '@S/stage/backend';
 
 import { DELTA_UPDATE } from '@S/utils/Number';
-import type { ImageData } from '@S/stage/types';
-import type { SceneParams } from '@S/stage/types';
+import type { Canvas } from '@S/stage/backend';
+import type { Trace, Format } from '@S/stage/types';
+import type { SceneParams, ImageData } from '@S/stage/types';
 
 export default class Scene
 {
   private sample = 0.0;
   private trace!: Trace;
+  private format!: Format;
+  private last = Date.now();
 
   private f32 = new Float32Array(
     Config.width * Config.height * 3
   );
 
-  private readonly canvas!: Canvas;
-  private readonly worker?: WebWorker;
-
-  private readonly start   = Date.now();
-  private readonly color   = new Vector3();
-  private readonly samples = Config.samples;
-
-  private readonly u8 = new Uint8ClampedArray(
+  private u8 = new Uint8ClampedArray(
     Config.width * Config.height * 3
   );
+
+  private readonly canvas!: Canvas;
+  private readonly worker?: WebWorker;
+  private readonly start   = Date.now();
+  private readonly samples = Config.samples;
 
   public constructor (params: SceneParams) {
     const tracer = this.getTracer(params);
@@ -84,8 +81,9 @@ export default class Scene
     import(tracer === 'assemblyscript'
       ? '../../build/release.js'
       : './Tracer.ts'
-    ).then(({ trace }) => {
+    ).then(({ trace, format }) => {
       this.trace = trace;
+      this.format = format;
       this.createPPMImage();
     });
   }
@@ -93,10 +91,19 @@ export default class Scene
   private createPPMImage (download = false): void {
     if (this.worker) return this.worker.post('Create::PPMImage', { download });
 
-    this.f32 = this.trace(this.start, this.f32, ++this.sample);
-    floatToInt(this.u8, this.f32, this.color, this.sample);
-
+    this.f32 = this.trace(this.f32);
+    this.u8 = this.format(this.u8, this.f32, ++this.sample);
     this.showPPMImage({ pixels: this.u8, sample: this.sample, download }, true);
+
+    const now = Date.now();
+    const last = this.samples === this.sample;
+
+    const s = `${(last && 'Total ') || ''}Samples: ${this.sample}`;
+    const tt = `Total Time: ${toFixed((now - this.start) / 1e3)} sec.`;
+    const lrt = `Last Render Time: ${toFixed((now - this.last) / 1e3)} sec.`;
+
+    console.info(`${s} | ${lrt} | ${tt}`);
+    this.last = now;
   }
 
   private showPPMImage (data: unknown, worker?: boolean): void {

@@ -1,3 +1,4 @@
+import { floatToInt } from './utils/Color';
 import { toFixed } from './utils/Number';
 import Vector3 from './utils/Vector3';
 import { World } from './hittables';
@@ -7,17 +8,13 @@ import Ray from './Ray';
 
 class Tracer
 {
-  private readonly camera: Camera;
-  private last: i32 = i32(Date.now());
-
   private readonly width: f64 = Config.width;
   private readonly height: f64 = Config.height;
-
   private readonly depth: u8 = Config.maxDepth;
-  public readonly samples: u16 = Config.samples;
 
   private readonly color: Vector3 = new Vector3();
   private readonly world: World = new World();
+  private readonly camera: Camera;
 
   public constructor ()
   {
@@ -34,17 +31,12 @@ class Tracer
     );
   }
 
-  public createPPMImage (
-    pixels: Float32Array,
-    samples: u16,
-    start: i32
-  ): Float32Array {
+  public createPPMImage (pixels: Float32Array): Float32Array {
     const ray = new Ray();
-    const last = this.samples === samples;
 
     for (let p = 0, h = this.height, lw = this.width - 1, lh = h - 1; h--; )
     {
-      if (last) console.info(`Progress: ${toFixed((1 - h / lh) * 100)}%`);
+      if (Config.log) console.info(`Progress: ${toFixed((1 - h / lh) * 100)}%`);
 
       for (let w = 0; w < this.width; w++, p += 3)
       {
@@ -61,25 +53,20 @@ class Tracer
       }
     }
 
-    const now = i32(Date.now());
-
-    const s = `${last ? 'Total ' : ''}Samples: ${samples}`;
-    const tt = `Total Time: ${toFixed(f64(now - start) / 1e3)} sec.`;
-    const lrt = `Last Render Time: ${toFixed(f64(now - this.last) / 1e3)} sec.`;
-
-    console.info(`${s} | ${lrt} | ${tt}`);
-
-    this.last = now;
     return pixels;
   }
 }
 
 const tracer = new Tracer();
 
-export function trace (
-  start: i32,
+export function trace (pixels: Float32Array): Float32Array {
+  return tracer.createPPMImage(pixels);
+}
+
+export function format (
+  colors: Uint8ClampedArray,
   pixels: Float32Array,
-  sample: u16 = tracer.samples
-): Float32Array {
-  return tracer.createPPMImage(pixels, sample, start);
+  samples: u16
+): Uint8ClampedArray {
+  return floatToInt(colors, pixels, samples);
 }

@@ -1,3 +1,4 @@
+import { floatToInt } from '@S/utils/Color';
 import { World } from '@S/stage/hittables';
 import { toFixed } from '@S/utils/Number';
 import Vector3 from '@S/utils/Vector3';
@@ -7,17 +8,13 @@ import Ray from '@S/stage/Ray';
 
 class Tracer
 {
-  private last = Date.now();
   private readonly camera: Camera;
-
   private readonly world = new World();
   private readonly color = new Vector3();
 
   private readonly width  = Config.width;
   private readonly height = Config.height;
   private readonly depth  = Config.maxDepth;
-
-  public readonly samples: number = Config.samples;
 
   public constructor ()
   {
@@ -34,21 +31,16 @@ class Tracer
     );
   }
 
-  public createPPMImage (
-    f32: Float32Array,
-    samples: number,
-    start: number
-  ): Float32Array {
+  public createPPMImage (pixels: Float32Array): Float32Array {
     const ray = new Ray();
-    const last = this.samples === samples;
 
     for (let p = 0, h = this.height, lw = this.width - 1, lh = h - 1; h--; )
     {
-      last && console.info(`Progress: ${toFixed((1 - h / lh) * 100)}%`);
+      Config.log && console.info(`Progress: ${toFixed((1 - h / lh) * 100)}%`);
 
       for (let w = 0; w < this.width; w++, p += 3)
       {
-        this.color.set(f32[p], f32[p + 1], f32[p + 2]);
+        this.color.set(pixels[p], pixels[p + 1], pixels[p + 2]);
 
         const u = (w + Math.random()) / lw;
         const v = (h + Math.random()) / lh;
@@ -57,29 +49,24 @@ class Tracer
 
         this.color.add(ray.getColor(ray, this.world.objects, this.depth));
 
-        f32[p] = this.color.x; f32[p + 1] = this.color.y; f32[p + 2] = this.color.z;
+        pixels[p] = this.color.x; pixels[p + 1] = this.color.y; pixels[p + 2] = this.color.z;
       }
     }
 
-    const now = Date.now();
-
-    const s = `${(last && 'Total ') || ''}Samples: ${samples}`;
-    const tt = `Total Time: ${toFixed((now - start) / 1e3)} sec.`;
-    const lrt = `Last Render Time: ${toFixed((now - this.last) / 1e3)} sec.`;
-
-    console.info(`${s} | ${lrt} | ${tt}`);
-
-    this.last = now;
-    return f32;
+    return pixels;
   }
 }
 
 const tracer = new Tracer();
 
-export function trace (
-  start: number,
+export function trace (pixels: Float32Array): Float32Array {
+  return tracer.createPPMImage(pixels);
+}
+
+export function format (
+  u8: Uint8ClampedArray,
   f32: Float32Array,
-  sample = tracer.samples
-): Float32Array {
-  return tracer.createPPMImage(f32, sample, start);
+  samples: number
+): Uint8ClampedArray {
+  return floatToInt(u8, f32, samples);
 }

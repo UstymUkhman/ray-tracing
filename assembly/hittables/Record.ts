@@ -12,6 +12,7 @@ export default class Record
   public readonly point: Vector3 = new Vector3();
   public readonly normal: Vector3 = new Vector3();
 
+  @inline
   public copy (record: Record): void {
     this.frontFace = record.frontFace;
     this.normal.copy(record.normal);
@@ -19,6 +20,7 @@ export default class Record
     this.t = record.t;
   }
 
+  @inline
   public setFaceNormal (ray: Ray, outwardNormal: Vector3): void {
     this.frontFace = ray.direction.dot(outwardNormal) < 0.0;
     this.normal.copy(this.frontFace ? outwardNormal : outwardNormal.negate);
