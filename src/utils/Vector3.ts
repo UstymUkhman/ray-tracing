@@ -1,13 +1,9 @@
 import { clamp, random } from '@S/utils/Number';
-
-/* eslint-disable no-dupe-class-members */
-type Value<V> = V extends undefined ? Vec3 : number;
 type Vec3 = [number, number, number];
-type Arg = number | undefined;
 
 export default class Vector3
 {
-  private readonly vec = [0.0, 0.0, 0.0] as Vec3;
+  private readonly vec: Vec3 = [0.0, 0.0, 0.0];
 
   public constructor (x = 0.0, y = x, z = x) {
     this.vec[0] = x;
@@ -15,8 +11,31 @@ export default class Vector3
     this.vec[2] = z;
   }
 
+  public refract (normal: Vector3, eoe: number): this {
+    const theta = Math.min(this.clone.negate.dot(normal), 1.0);
+    this.copy(normal.clone.multiply(theta).add(this).multiply(eoe));
+
+    const angle = Math.abs(1.0 - this.lengthSquared);
+    return this.add(normal.multiply(-Math.sqrt(angle)));
+  }
+
+  public set (x: number, y: number, z: number): this {
+    this.vec[0] = x;
+    this.vec[1] = y;
+    this.vec[2] = z;
+
+    return this;
+  }
+
+  /* public randomHemisphere (normal: Vector3): this {
+    this.randomUnitSphere;
+    return this.dot(normal) > 0.0 ? this : this.negate;
+  } */
+
   public multiply (t: number): this;
+  // eslint-disable-next-line no-dupe-class-members
   public multiply (v: Vector3): Vector3;
+  // eslint-disable-next-line no-dupe-class-members
   public multiply (f: Vector3 | number): Vector3
   {
     if (typeof f !== 'number')
@@ -36,7 +55,9 @@ export default class Vector3
   }
 
   public divide (t: number): this;
+  // eslint-disable-next-line no-dupe-class-members
   public divide (v: Vector3): Vector3;
+  // eslint-disable-next-line no-dupe-class-members
   public divide (f: Vector3 | number): Vector3
   {
     return typeof f === 'number'
@@ -46,32 +67,6 @@ export default class Vector3
         this.vec[1] / f.y,
         this.vec[2] / f.z
       );
-  }
-
-  public get<V extends Arg = undefined>(v?: V): Value<V>;
-  public get(v?: number): Vec3 | number {
-    return v === undefined ? this.vec : this.vec[v];
-  }
-
-  public refract (normal: Vector3, eoe: number): this {
-    const theta = Math.min(this.clone.negate.dot(normal), 1.0);
-    this.copy(normal.clone.multiply(theta).add(this).multiply(eoe));
-
-    const angle = Math.abs(1.0 - this.lengthSquared);
-    return this.add(normal.multiply(-Math.sqrt(angle)));
-  }
-
-  public set (x: number, y: number, z: number): this {
-    this.vec[0] = x;
-    this.vec[1] = y;
-    this.vec[2] = z;
-
-    return this;
-  }
-
-  public randomHemisphere (normal: Vector3): this {
-    this.randomUnitSphere;
-    return this.dot(normal) > 0.0 ? this : this.negate;
   }
 
   public random (min = 0.0, max = 1.0): this {
@@ -171,17 +166,8 @@ export default class Vector3
     return this.set(s, s, s);
   }
 
-  public get print (): string {
-    const [x, y, z] = this.vec;
-    return `Vector3 { x: ${x}, y: ${y}, z: ${z} }`;
-  }
-
   public get negate (): this {
-    this.vec[0] *= -1.0;
-    this.vec[1] *= -1.0;
-    this.vec[2] *= -1.0;
-
-    return this;
+    return this.multiply(-1.0);
   }
 
   public get sqrt (): this {

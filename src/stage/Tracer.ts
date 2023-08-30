@@ -1,4 +1,3 @@
-// import { floatToInt } from '@S/utils/Color';
 import { World } from '@S/stage/hittables';
 import { toFixed } from '@S/utils/Number';
 import Vector3 from '@S/utils/Vector3';
@@ -9,8 +8,8 @@ import Ray from '@S/stage/Ray';
 class Tracer
 {
   private last = Date.now();
-
   private readonly camera: Camera;
+
   private readonly world = new World();
   private readonly color = new Vector3();
 
@@ -56,11 +55,9 @@ class Tracer
 
         this.camera.setRay(ray, u, v);
 
-        const { x, y, z } = this.color.add(
-          ray.getColor(ray, this.world.objects, this.depth)
-        );
+        this.color.add(ray.getColor(ray, this.world.objects, this.depth));
 
-        f32[p] = x; f32[p + 1] = y; f32[p + 2] = z;
+        f32[p] = this.color.x; f32[p + 1] = this.color.y; f32[p + 2] = this.color.z;
       }
     }
 

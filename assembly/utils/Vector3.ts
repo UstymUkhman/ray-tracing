@@ -10,14 +10,6 @@ export default class Vector3
     this.vec[2] = z;
   }
 
-  public refract (normal: Vector3, eoe: f64): this {
-    const theta = Math.min(this.clone.negate.dot(normal), 1.0);
-    this.copy(normal.clone.multiplyScalar(theta).add(this).multiplyScalar(eoe));
-
-    const angle = Math.abs(1.0 - this.lengthSquared);
-    return this.add(normal.multiplyScalar(-Math.sqrt(angle)));
-  }
-
   public random (min: f64 = 0.0, max: f64 = 1.0): this {
     return this.set(
       random(min, max),
@@ -26,13 +18,21 @@ export default class Vector3
     );
   }
 
-  public randomHemisphere (normal: Vector3): this {
+  /* public randomHemisphere (normal: Vector3): this {
     this.randomUnitSphere;
     return this.dot(normal) > 0.0 ? this : this.negate;
+  } */
+
+  public refract (normal: Vector3, eoe: f64): this {
+    const theta = Math.min(this.clone.negate.dot(normal), 1.0);
+    this.copy(normal.clone.multiplyScalar(theta).add(this).multiplyScalar(eoe));
+
+    const angle = Math.abs(1.0 - this.lengthSquared);
+    return this.add(normal.multiplyScalar(-Math.sqrt(angle)));
   }
 
   public reflect (normal: Vector3): Vector3 {
-    return this.sub(normal.clone.multiplyScalar(this.dot(normal) * 2));
+    return this.sub(normal.clone.multiplyScalar(this.dot(normal) * 2.0));
   }
 
   public set (x: f64, y: f64, z: f64): this {
@@ -48,16 +48,15 @@ export default class Vector3
   }
 
   public get randomUnitSphere (): this {
-    for ( ; ; )
+    // eslint-disable-next-line no-constant-condition
+    while (true)
       if (this.random(-1.0).lengthSquared < 1.0)
         return this;
-
-    // eslint-disable-next-line no-unreachable
-    return this;
   }
 
   public get randomUnitDisk (): this {
-    for ( ; ; ) {
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
       this.random(-1.0);
       this.vec[2] = 0.0;
 
@@ -114,10 +113,6 @@ export default class Vector3
     return this.dot(this);
   }
 
-  public getComponent (v: u8): f64 {
-    return this.vec[v];
-  }
-
   public add (vec: Vector3): this {
     this.vec[0] += vec.x;
     this.vec[1] += vec.y;
@@ -140,10 +135,6 @@ export default class Vector3
       this.vec[2] * vec.z;
   }
 
-  public get(): StaticArray<f64> {
-    return this.vec;
-  }
-
   public get unitVector (): this {
     return this.divideScalar(this.length);
   }
@@ -162,16 +153,8 @@ export default class Vector3
     );
   }
 
-  public get print (): string {
-    return `Vector3 { x: ${this.vec[0]}, y: ${this.vec[1]}, z: ${this.vec[2]} }`;
-  }
-
   public get negate (): this {
-    this.vec[0] *= -1.0;
-    this.vec[1] *= -1.0;
-    this.vec[2] *= -1.0;
-
-    return this;
+    return this.multiplyScalar(-1.0);
   }
 
   public get length (): f64 {
