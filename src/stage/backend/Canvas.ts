@@ -23,7 +23,7 @@ export default abstract class Canvas
     context: BackEndContext
   ) {
     this.backEnd = context;
-    const alpha = context === '2d';
+    const alpha = context === 'Canvas2D';
     const { canvas, offscreen } = params;
 
     this.context = canvas.getContext(
@@ -39,7 +39,7 @@ export default abstract class Canvas
 
   private getOptions (context: BackEndContext, offscreen = false): Options {
     switch (context) {
-      case '2d':
+      case 'Canvas2D':
         return {
           willReadFrequently: !offscreen,
           desynchronized: offscreen,
@@ -48,7 +48,7 @@ export default abstract class Canvas
         };
 
       // TBI
-      case 'webgpu':
+      case 'WebGPU':
         return {};
 
       default:

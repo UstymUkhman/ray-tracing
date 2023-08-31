@@ -1,5 +1,5 @@
-export type BackEndContext = '2d' | 'webgl' | 'webgl2' | 'webgpu';
-export type Trace = (pixels: Float32Array) => Float32Array;
+export type BackEndContext = 'Canvas2D' | 'WebGL' | 'WebGL2' | 'WebGPU';
+export type Trace = (pixels: Float32Array) => ArrayLike<number>;
 type SceneCanvas = HTMLCanvasElement | OffscreenCanvas;
 
 export type OffscreenCanvas = HTMLCanvasElement & {
@@ -24,7 +24,7 @@ export type ImageData = {
 };
 
 export type Format = (
-  u8: Uint8ClampedArray,
   f32: Float32Array,
+  u8: Uint8ClampedArray,
   samples: number
-) => Uint8ClampedArray;
+) => ArrayLike<number>;
