@@ -31,7 +31,7 @@ class Tracer
     );
   }
 
-  public createPPMImage (pixels: Float32Array): Float32Array {
+  public createPPMImage (pixels: StaticArray<f32>): StaticArray<f32> {
     const ray = new Ray();
 
     for (let p = 0, h = this.height, lw = this.width - 1, lh = h - 1; h--; )
@@ -65,14 +65,14 @@ class Tracer
 
 const tracer = new Tracer();
 
-export function trace (pixels: Float32Array): Float32Array {
+export function trace (pixels: StaticArray<f32>): StaticArray<f32> {
   return tracer.createPPMImage(pixels);
 }
 
 export function format (
-  colors: Uint8ClampedArray,
-  pixels: Float32Array,
+  pixels: StaticArray<f32>,
+  colors: StaticArray<u8>,
   samples: u16
-): Uint8ClampedArray {
-  return floatToInt(colors, pixels, samples);
+): StaticArray<u8> {
+  return floatToInt(pixels, colors, samples);
 }

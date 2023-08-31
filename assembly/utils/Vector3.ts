@@ -76,9 +76,9 @@ export default class Vector3
   @inline
   public multiply (vec: Vector3): this {
     return this.set(
-      unchecked(this.vec[0] * vec.x),
-      unchecked(this.vec[1] * vec.y),
-      unchecked(this.vec[2] * vec.z)
+      unchecked(this.vec[0]) * vec.x,
+      unchecked(this.vec[1]) * vec.y,
+      unchecked(this.vec[2]) * vec.z
     );
   }
 
@@ -94,9 +94,9 @@ export default class Vector3
   @inline
   public divide (vec: Vector3): this {
     return this.set(
-      unchecked(this.vec[0] / vec.x),
-      unchecked(this.vec[1] / vec.y),
-      unchecked(this.vec[2] / vec.z)
+      unchecked(this.vec[0]) / vec.x,
+      unchecked(this.vec[1]) / vec.y,
+      unchecked(this.vec[2]) / vec.z
     );
   }
 
@@ -108,9 +108,9 @@ export default class Vector3
   @inline
   public cross (vec: Vector3): this {
     return this.set(
-      unchecked(this.vec[1] * vec.z - this.vec[2] * vec.y),
-      unchecked(this.vec[2] * vec.x - this.vec[0] * vec.z),
-      unchecked(this.vec[0] * vec.y - this.vec[1] * vec.x)
+      unchecked(this.vec[1]) * vec.z - unchecked(this.vec[2]) * vec.y,
+      unchecked(this.vec[2]) * vec.x - unchecked(this.vec[0]) * vec.z,
+      unchecked(this.vec[0]) * vec.y - unchecked(this.vec[1]) * vec.x
     );
   }
 
@@ -149,11 +149,9 @@ export default class Vector3
 
   @inline
   public dot (vec: Vector3): f64 {
-    return unchecked(
-      this.vec[0] * vec.x +
-      this.vec[1] * vec.y +
-      this.vec[2] * vec.z
-    );
+    return unchecked(this.vec[0]) * vec.x +
+      unchecked(this.vec[1]) * vec.y +
+      unchecked(this.vec[2]) * vec.z;
   }
 
   @inline

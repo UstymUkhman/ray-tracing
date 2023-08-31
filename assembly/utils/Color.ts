@@ -9,13 +9,14 @@ function format (color: Vector3, samples: u16): Vector3 {
 // @ts-expect-error: ts(1206)
 @inline
 export const floatToInt = (
-  colors: Uint8ClampedArray,
-  pixels: Float32Array,
+  pixels: StaticArray<f32>,
+  colors: StaticArray<u8>,
   samples: u16
-): Uint8ClampedArray => {
+): StaticArray<u8> => {
   const color = new Vector3();
 
-  for (let p = 0, lp = pixels.length; p < lp; p += 3) {
+  for (let p = 0, lp = pixels.length; p < lp; p += 3)
+  {
     format(color.set(
       unchecked(pixels[p    ]),
       unchecked(pixels[p + 1]),
