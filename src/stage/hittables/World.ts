@@ -16,7 +16,7 @@ export default class World
       new Lambertian(new Vector3(0.5))
     );
 
-    this.generateSmallSpheres();
+    // this.generateSmallSpheres();
 
     this.addSphere(
       1.0,
