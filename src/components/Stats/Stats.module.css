@@ -1,0 +1,40 @@
+.container {
+  position: relative;
+  cursor: pointer;
+}
+
+.stats {
+  background-color: rgb(0 0 0 / 0.8);
+  justify-content: space-between;
+  transition: opacity 0.5s;
+
+  flex-direction: column;
+  font-family: monospace;
+  pointer-events: none;
+  position: absolute;
+
+  list-style: none;
+  padding: 20px;
+  margin: 0px;
+  top: 0px;
+
+  & li:nth-child(4) {
+    margin-bottom: 25px;
+  }
+}
+
+.container, .stats {
+  aspect-ratio: 3 / 2;
+  display: flex;
+
+  height: 100%;
+  width: 100%;
+
+  @media only screen and (max-width: 800px) {
+    height: auto;
+
+    & > canvas {
+      width: 100vw;
+    }
+  }
+}
