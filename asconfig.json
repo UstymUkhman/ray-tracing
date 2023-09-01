@@ -18,7 +18,8 @@
     "release": {
       "textFile": "build/release.wat",
       "outFile": "build/release.wasm",
-      "runtime": "stub",
+      "uncheckedBehavior": "always",
+      "runtime": "minimal",
       "optimizeLevel": 3,
       "converge": true,
       "noAssert": true,

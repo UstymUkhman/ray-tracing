@@ -13,4 +13,6 @@ pids
 
 build/*
 node_modules
+!build/**/release.js
 !build/**/release.wat
+!build/**/release.d.ts
