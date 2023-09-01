@@ -13,7 +13,7 @@ section {
   transform: translate(-50%, -50%);
   grid-template-areas: ". ." /* ". ." */;
 
-  @media only screen and (max-width: 800px) {
+  @media (width <= 800px) {
     grid-template-areas: "." "." /* "." "." */;
 
     padding:

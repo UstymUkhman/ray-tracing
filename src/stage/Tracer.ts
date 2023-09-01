@@ -36,7 +36,10 @@ class Tracer
 
     for (let p = 0, h = this.height, lw = this.width - 1, lh = h - 1; h--; )
     {
-      Config.log && console.info(`Progress: ${toFixed((1 - h / lh) * 100)}%`);
+      Config.log && console.info(
+        `%cProgress: ${toFixed((1 - h / lh) * 100)}%`,
+        'background: #3178c6; padding: 2px 5px; color: #FFF;'
+      );
 
       for (let w = 0; w < this.width; w++, p += 3)
       {

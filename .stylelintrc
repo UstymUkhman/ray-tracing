@@ -7,6 +7,8 @@
     "selector-no-qualifying-type": null,
     "comment-empty-line-before": null,
     "at-rule-empty-line-before": null,
+    "alpha-value-notation": "number",
+
     "rule-empty-line-before": null,
     "length-zero-no-unit": null,
     "function-name-case": null,
