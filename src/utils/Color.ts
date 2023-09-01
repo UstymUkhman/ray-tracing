@@ -14,7 +14,7 @@ export const getHex = (color: number): string =>
   `#${(`000000${color.toString(16)}`).slice(-6)}`;
 
 export const floatToInt = (
-  f32: Float32Array,
+  f32: ArrayLike<number>,
   u8: Uint8ClampedArray,
   samples: number
 ): Uint8ClampedArray => {

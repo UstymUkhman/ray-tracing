@@ -24,7 +24,7 @@ export type ImageData = {
 };
 
 export type Format = (
-  f32: Float32Array,
+  f32: ArrayLike<number>,
   u8: Uint8ClampedArray,
   samples: number
 ) => ArrayLike<number>;

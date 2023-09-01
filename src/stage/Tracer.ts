@@ -67,9 +67,11 @@ export function trace (pixels: Float32Array): Float32Array {
 }
 
 export function format (
-  f32: Float32Array,
+  f32: ArrayLike<number>,
   u8: Uint8ClampedArray,
   samples: number
 ): Uint8ClampedArray {
   return floatToInt(f32, u8, samples);
 }
+
+export function collect (): void { return; }

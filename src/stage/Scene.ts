@@ -19,7 +19,9 @@ export default class Scene
   private sample = 0.0;
   private trace!: Trace;
   private format!: Format;
-  private readonly tracer;
+
+  private collect!: () => void;
+  private readonly tracer: string;
 
   private f32 = new Float32Array(
     Config.width * Config.height * 3
@@ -80,25 +82,33 @@ export default class Scene
     import(this.tracer === 'AssemblyScript'
       ? '../../build/release.js'
       : './Tracer.ts'
-    ).then(({ trace, format }) => {
+    ).then(({ trace, format, collect }) => {
+      Events.dispatch(`${this.tracer}::Start`, null, true);
+
       this.trace = trace;
       this.format = format;
+      this.collect = collect;
 
       this.createPPMImage();
-
-      Events.dispatch(
-        `${this.tracer}::Start`,
-        null, true
-      );
     });
   }
 
   private createPPMImage (download = false): void {
     if (this.worker) return this.worker.post('Create::PPMImage', { download });
 
-    this.f32 = new Float32Array(this.trace(this.f32));
-    this.u8 = new Uint8ClampedArray(this.format(this.f32, this.u8, ++this.sample));
+    if (this.tracer === 'AssemblyScript') {
+      this.f32 = Float32Array.from(
+        this.trace(this.f32)
+      );
 
+      this.u8 = Uint8ClampedArray.from(
+        this.format(this.f32, this.u8, ++this.sample)
+      );
+
+      this.collect();
+    }
+
+    else this.format(this.trace(this.f32), this.u8, ++this.sample);
     this.showPPMImage({ pixels: this.u8, sample: this.sample, download }, true);
   }
 
