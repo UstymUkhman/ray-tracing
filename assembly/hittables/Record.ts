@@ -1,5 +1,4 @@
 import { Material } from '../materials';
-import Vector3 from '../utils/Vector3';
 import Ray from '../Ray';
 
 export default class Record
@@ -9,20 +8,48 @@ export default class Record
   public material!: Material;
   public frontFace: bool = false;
 
-  public readonly point: Vector3 = new Vector3();
-  public readonly normal: Vector3 = new Vector3();
+  public readonly point: StaticArray<f64> = new StaticArray<f64>(3);
+  public readonly normal: StaticArray<f64> = new StaticArray<f64>(3);
 
   @inline
   public copy (record: Record): void {
     this.frontFace = record.frontFace;
-    this.normal.copy(record.normal);
-    this.point.copy(record.point);
+
+    const n = record.normal;
+    const p = record.point;
+
+    this.normal[0] = n[0];
+    this.normal[1] = n[1];
+    this.normal[2] = n[2];
+
+    this.point[0] = p[0];
+    this.point[1] = p[1];
+    this.point[2] = p[2];
+
     this.t = record.t;
   }
 
   @inline
-  public setFaceNormal (ray: Ray, outwardNormal: Vector3): void {
-    this.frontFace = ray.direction.dot(outwardNormal) < 0.0;
-    this.normal.copy(this.frontFace ? outwardNormal : outwardNormal.negate);
+  public setFaceNormal (
+    ray: Ray,
+    onx: f64,
+    ony: f64,
+    onz: f64
+  ): void {
+    const dx = ray.dirX;
+    const dy = ray.dirY;
+    const dz = ray.dirZ;
+
+    this.frontFace = (dx * onx + dy * ony + dz * onz) < 0.0;
+
+    if (!this.frontFace) {
+      onx = -onx;
+      ony = -ony;
+      onz = -onz;
+    }
+
+    this.normal[0] = onx;
+    this.normal[1] = ony;
+    this.normal[2] = onz;
   }
 }

@@ -1,5 +1,11 @@
 // @ts-expect-error: ts(1206)
 @inline
+export function clampf (value: f32, min: f32 = 0, max: f32 = 1): f32 {
+  return Mathf.max(min, Mathf.min(value, max));
+}
+
+// @ts-expect-error: ts(1206)
+@inline
 export function clamp (value: f64, min: f64 = 0, max: f64 = 1): f64 {
   return Math.max(min, Math.min(value, max));
 }

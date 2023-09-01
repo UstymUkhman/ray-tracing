@@ -8,13 +8,12 @@ import Ray from './Ray';
 
 class Tracer
 {
-  private readonly width: f64 = Config.width;
-  private readonly height: f64 = Config.height;
-  private readonly depth: u8 = Config.maxDepth;
-
-  private readonly color: Vector3 = new Vector3();
-  private readonly world: World = new World();
   private readonly camera: Camera;
+  private readonly world: World = new World();
+
+  private readonly width : f64 = Config.width;
+  private readonly height: f64 = Config.height;
+  private readonly depth : u8  = Config.maxDepth;
 
   public constructor ()
   {
@@ -33,6 +32,8 @@ class Tracer
 
   public createPPMImage (pixels: StaticArray<f32>): StaticArray<f32> {
     const ray = new Ray();
+    const depth = this.depth;
+    const objects =  this.world.objects;
 
     for (let p = 0, h = this.height, lw = this.width - 1, lh = h - 1; h--; )
     {
@@ -40,22 +41,24 @@ class Tracer
 
       for (let w = 0, l = this.width; w < l; ++w, p += 3)
       {
-        this.color.set(
-          unchecked(pixels[p    ]),
-          unchecked(pixels[p + 1]),
-          unchecked(pixels[p + 2])
-        );
+        let x = pixels[p    ];
+        let y = pixels[p + 1];
+        let z = pixels[p + 2];
 
         const u = (w + Math.random()) / lw;
         const v = (h + Math.random()) / lh;
 
         this.camera.setRay(ray, u, v);
 
-        this.color.add(ray.getColor(ray, this.world.objects, this.depth));
+        const color = ray.getColor(ray, objects, depth);
 
-        unchecked(pixels[p    ] = this.color.xf32);
-        unchecked(pixels[p + 1] = this.color.yf32);
-        unchecked(pixels[p + 2] = this.color.zf32);
+        x += <f32>color.x;
+        y += <f32>color.y;
+        z += <f32>color.z;
+
+        pixels[p    ] = x;
+        pixels[p + 1] = y;
+        pixels[p + 2] = z;
       }
     }
 

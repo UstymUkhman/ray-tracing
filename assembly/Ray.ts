@@ -6,53 +6,65 @@ export default class Ray
 {
   private readonly color: Vector3 = new Vector3(1.0);
 
-  private readonly far: f64 = Infinity;
-  private readonly near: f64 = 0.001;
+  public origX: f64 = 0.0;
+  public origY: f64 = 0.0;
+  public origZ: f64 = 0.0;
 
-  public constructor (
-    private readonly orig: Vector3 = new Vector3(),
-    private readonly dir: Vector3 = new Vector3()
-  ) {}
+  public dirX: f64 = 0.0;
+  public dirY: f64 = 0.0;
+  public dirZ: f64 = 0.0;
 
-  public at (t: f64): Vector3 {
-    return this.orig.clone.add(this.dir.clone.multiplyScalar(t));
-  }
-
-  public getColor (ray: Ray, scene: Hittable, depth: u8): Vector3 {
+  public getColor (ray: Ray, scene: Hittable, depth: u8): Vector3
+  {
     if (depth === 0) return this.color.reset();
 
-    if (scene.hit(ray, this.near, this.far, IRecord)) {
+    if (scene.hit(ray, 0.001, Infinity, IRecord)) {
       const attenuation = new Vector3();
       const scattered = new Ray();
 
-      if (IRecord.material.scatter(ray, IRecord, scattered, attenuation))
-        return this.getColor(scattered, scene, depth - 1)
-          .multiply(attenuation);
+      if (IRecord.material.scatter(ray, IRecord, scattered, attenuation)) {
+        const color = this.getColor(scattered, scene, depth - 1);
+
+        return color.set(
+          color.x * attenuation.x,
+          color.y * attenuation.y,
+          color.z * attenuation.z
+        );
+      }
 
       return this.color.reset();
     }
 
-    const t = (ray.dir.unitVector.y + 1.0) * 0.5;
+    const length = Math.sqrt(
+      ray.dirX * ray.dirX +
+      ray.dirY * ray.dirY +
+      ray.dirZ * ray.dirZ
+    );
 
-    return this.color.reset(1.0)
-      .multiplyScalar(1.0 - t)
-      .add(new Vector3(0.5, 0.7, 1.0)
-      .multiplyScalar(t));
+    ray.dirX /= length;
+    ray.dirY /= length;
+    ray.dirZ /= length;
+
+    const t = (ray.dirY + 1.0) * 0.5;
+
+    return this.color.set(
+      1.0 * (1.0 - t) + 0.5 * t,
+      1.0 * (1.0 - t) + 0.7 * t,
+      1.0 * (1.0 - t) + 1.0 * t
+    );
   }
 
-  public set direction (dir: Vector3) {
-    this.dir.copy(dir);
+  @inline
+  public setDirection (x: f64, y: f64, z: f64): void {
+    this.dirX = x;
+    this.dirY = y;
+    this.dirZ = z;
   }
 
-  public get direction (): Vector3 {
-    return this.dir;
-  }
-
-  public set origin (orig: Vector3) {
-    this.orig.copy(orig);
-  }
-
-  public get origin (): Vector3 {
-    return this.orig;
+  @inline
+  public setOrigin (x: f64, y: f64, z: f64): void {
+    this.origX = x;
+    this.origY = y;
+    this.origZ = z;
   }
 }

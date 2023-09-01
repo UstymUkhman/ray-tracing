@@ -13,7 +13,7 @@ export default class List extends Hittable
   }
 
   public add (object: Hittable, o: i32): void {
-    unchecked(this.objects[o] = object);
+    this.objects[o] = object;
     this.length = ++o;
   }
 
@@ -26,13 +26,16 @@ export default class List extends Hittable
     let hit = false;
     let closest = tMax;
 
-    for (let o = 0, l = this.length; o < l; ++o)
-      if (unchecked(this.objects[o]).hit(ray, tMin, closest, IRecord))
+    for (let o = 0, l = this.length; o < l; ++o) {
+      const object = this.objects[o];
+
+      if (object.hit(ray, tMin, closest, IRecord))
       {
         closest = IRecord.t;
         record.copy(IRecord);
         hit = true;
       }
+    }
 
     return hit;
   }
