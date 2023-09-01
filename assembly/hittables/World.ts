@@ -5,7 +5,7 @@ import { List, Sphere } from './';
 
 export default class World
 {
-  private readonly hittables: List = new List(4 /* 488 */);
+  private readonly hittables: List = new List(488);
   private readonly color: Vector3 = new Vector3();
 
   private sphereCount: i32 = 0;
@@ -18,7 +18,7 @@ export default class World
       new Lambertian(new Vector3(0.5))
     );
 
-    // this.generateSmallSpheres();
+    this.generateSmallSpheres();
 
     this.addSphere(
       1.0,
