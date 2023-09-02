@@ -30,9 +30,6 @@ export default class Dielectric extends Material
     const dls = dx * dx + dy * dy + dz * dz;
     const length = Mathf.sqrt(dls);
 
-    const rn = record.normal;
-    const rp = record.point;
-
     dx /= length;
     dy /= length;
     dz /= length;
@@ -41,37 +38,54 @@ export default class Dielectric extends Material
     const ny = -dy;
     const nz = -dz;
 
-    const tCos = Mathf.min(nx * rn[0] + ny * rn[1] + nz * rn[2], 1.0);
-    const ratio = record.frontFace ? <f32>1.0 / this.refraction : this.refraction;
+    const tCos = Mathf.min(
+      record.normalX * nx +
+      record.normalY * ny +
+      record.normalZ * nz,
+      1.0
+    );
+
+    const ratio = record.frontFace
+      ? <f32>1.0 / this.refraction
+      : this.refraction;
 
     const reflect =
       Mathf.sqrt(1.0 - tCos * tCos) * ratio > 1.0 ||
       Mathf.random() < this.reflectance(tCos, ratio);
 
     if (reflect) {
-      const dot = (dx * rn[0] + dy * rn[0] + dz * rn[2]) * 2.0;
+      const dot = (
+        record.normalX * dx +
+        record.normalY * dy +
+        record.normalZ * dz
+      ) * 2.0;
 
-      dx -= rn[0] * dot;
-      dy -= rn[1] * dot;
-      dz -= rn[2] * dot;
+      dx -= record.normalX * dot;
+      dy -= record.normalY * dot;
+      dz -= record.normalZ * dot;
     }
 
     else {
-      dx = (rn[0] * tCos + dx) * ratio;
-      dy = (rn[1] * tCos + dy) * ratio;
-      dz = (rn[2] * tCos + dz) * ratio;
+      dx = (record.normalX * tCos + dx) * ratio;
+      dy = (record.normalY * tCos + dy) * ratio;
+      dz = (record.normalZ * tCos + dz) * ratio;
 
       const lengthSquared = dx * dx + dy * dy + dz * dz;
       const angle = Mathf.abs(1.0 - lengthSquared);
       const nsq = -Mathf.sqrt(angle);
 
-      dx += rn[0] * nsq;
-      dy += rn[1] * nsq;
-      dz += rn[2] * nsq;
+      dx += record.normalX * nsq;
+      dy += record.normalY * nsq;
+      dz += record.normalZ * nsq;
     }
 
-    scattered.setOrigin(rp[0], rp[1], rp[2]);
-    scattered.setDirection(dx, dy, dz);
+    scattered.origX = record.pointX;
+    scattered.origY = record.pointY;
+    scattered.origZ = record.pointZ;
+
+    scattered.dirX = dx;
+    scattered.dirY = dy;
+    scattered.dirZ = dz;
 
     attenuation.x = 1.0;
     attenuation.y = 1.0;

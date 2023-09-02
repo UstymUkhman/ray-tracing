@@ -105,7 +105,7 @@ export default class Scene
         this.format(this.f32, this.u8, ++this.sample)
       );
 
-      this.collect();
+      !(this.sample % 80.0) && this.collect();
     }
 
     else this.format(this.trace(this.f32), this.u8, ++this.sample);

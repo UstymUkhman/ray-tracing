@@ -10,14 +10,11 @@ class Tracer
 {
   private readonly camera: Camera;
   private readonly world: World = new World();
-
-  private readonly width : f64 = Config.width;
-  private readonly height: f64 = Config.height;
   private readonly depth : u8  = Config.maxDepth;
 
   public constructor ()
   {
-    const ratio = Config.width / Config.height;
+    const ratio = f32(Config.width) / f32(Config.height);
 
     this.camera = new Camera(
       new Vector3(13.0, 2.0, 3.0),
@@ -33,28 +30,32 @@ class Tracer
   public createPPMImage (pixels: StaticArray<f32>): StaticArray<f32> {
     const ray = new Ray();
     const depth = this.depth;
+
+    const width = Config.width;
+    const height = Config.height;
+
     const objects =  this.world.objects;
 
-    for (let p = 0, h = this.height, lw = this.width - 1, lh = h - 1; h--; )
+    for (let p: u32 = 0, h = height, lw = width - 1, lh = h - 1; h--; )
     {
       if (Config.log) console.info(`Progress: ${toFixed((1 - h / lh) * 100)}%`);
 
-      for (let w = 0, l = this.width; w < l; ++w, p += 3)
+      for (let w: u16 = 0, l = width; w < l; ++w, p += 3)
       {
         let x = pixels[p    ];
         let y = pixels[p + 1];
         let z = pixels[p + 2];
 
-        const u = (w + Math.random()) / lw;
-        const v = (h + Math.random()) / lh;
+        const u = (w + Mathf.random()) / lw;
+        const v = (h + Mathf.random()) / lh;
 
         this.camera.setRay(ray, u, v);
 
         const color = ray.getColor(ray, objects, depth);
 
-        x += <f32>color.x;
-        y += <f32>color.y;
-        z += <f32>color.z;
+        x += color.x;
+        y += color.y;
+        z += color.z;
 
         pixels[p    ] = x;
         pixels[p + 1] = y;

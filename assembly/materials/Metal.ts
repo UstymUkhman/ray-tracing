@@ -30,18 +30,19 @@ export default class Metal extends Material
     const dls = dx * dx + dy * dy + dz * dz;
     const length = Mathf.sqrt(dls);
 
-    const rn = record.normal;
-    const rp = record.point;
-
     dx /= length;
     dy /= length;
     dz /= length;
 
-    const dot = (dx * rn[0] + dy * rn[1] + dz * rn[2]) * 2.0;
+    const dot = (
+      dx * record.normalX +
+      dy * record.normalY +
+      dz * record.normalZ
+    ) * 2.0;
 
-    const rx = dx - rn[0] * dot;
-    const ry = dy - rn[1] * dot;
-    const rz = dz - rn[2] * dot;
+    const rx = dx - record.normalX * dot;
+    const ry = dy - record.normalY * dot;
+    const rz = dz - record.normalZ * dot;
 
     let x: f32 = 0.0;
     let y: f32 = 0.0;
@@ -61,10 +62,24 @@ export default class Metal extends Material
     y = y * this.fuzz + ry;
     z = z * this.fuzz + rz;
 
-    attenuation.copy(this.albedo);
-    scattered.setDirection(x, y, z);
-    scattered.setOrigin(rp[0], rp[1], rp[2]);
+    scattered.origX = record.pointX;
+    scattered.origY = record.pointY;
+    scattered.origZ = record.pointZ;
 
-    return (x * rn[0] + y * rn[1] + z * rn[2]) > 0.0;
+    const albedo = this.albedo;
+
+    attenuation.x = albedo.x;
+    attenuation.y = albedo.y;
+    attenuation.z = albedo.z;
+
+    scattered.dirX = x;
+    scattered.dirY = y;
+    scattered.dirZ = z;
+
+    return (
+      x * record.normalX +
+      y * record.normalY +
+      z * record.normalZ
+    ) > 0.0;
   }
 }

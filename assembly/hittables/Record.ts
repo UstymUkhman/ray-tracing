@@ -3,29 +3,30 @@ import Ray from '../Ray';
 
 export default class Record
 {
-  public t: f32 = 0.0;
-
-  public material!: Material;
   public frontFace: bool = false;
+  public material!: Material;
 
-  // Convert These:
-  public readonly point: StaticArray<f32> = new StaticArray<f32>(3);
-  public readonly normal: StaticArray<f32> = new StaticArray<f32>(3);
+  public normalX: f32 = 0.0;
+  public normalY: f32 = 0.0;
+  public normalZ: f32 = 0.0;
+
+  public pointX: f32 = 0.0;
+  public pointY: f32 = 0.0;
+  public pointZ: f32 = 0.0;
+
+  public t: f32 = 0.0;
 
   @inline
   public copy (record: Record): void {
     this.frontFace = record.frontFace;
 
-    const n = record.normal;
-    const p = record.point;
+    this.normalX = record.normalX;
+    this.normalY = record.normalY;
+    this.normalZ = record.normalZ;
 
-    this.normal[0] = n[0];
-    this.normal[1] = n[1];
-    this.normal[2] = n[2];
-
-    this.point[0] = p[0];
-    this.point[1] = p[1];
-    this.point[2] = p[2];
+    this.pointX = record.pointX;
+    this.pointY = record.pointY;
+    this.pointZ = record.pointZ;
 
     this.t = record.t;
   }
@@ -49,8 +50,8 @@ export default class Record
       onz = -onz;
     }
 
-    this.normal[0] = onx;
-    this.normal[1] = ony;
-    this.normal[2] = onz;
+    this.normalX = onx;
+    this.normalY = ony;
+    this.normalZ = onz;
   }
 }

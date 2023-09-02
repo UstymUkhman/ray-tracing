@@ -100,16 +100,12 @@ export default class Camera
     const ory = origin.y;
     const orz = origin.z;
 
-    ray.setDirection(
-      lcx + hx + vx - orx - ofx,
-      lcy + hy + vy - ory - ofy,
-      lcz + hz + vz - orz - ofz
-    );
+    ray.origX = ofx + orx;
+    ray.origY = ofy + ory;
+    ray.origZ = ofz + orz;
 
-    ray.setOrigin(
-      ofx + orx,
-      ofy + ory,
-      ofz + orz
-    );
+    ray.dirX = lcx + hx + vx - orx - ofx;
+    ray.dirY = lcy + hy + vy - ory - ofy;
+    ray.dirZ = lcz + hz + vz - orz - ofz;
   }
 }

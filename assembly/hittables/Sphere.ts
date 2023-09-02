@@ -60,11 +60,13 @@ export default class Sphere extends Hittable
     const ry = oy + dy * root;
     const rz = oz + dz * root;
 
-    const p = record.point;
+    record.pointX = rx;
+    record.pointY = ry;
+    record.pointZ = rz;
 
-    const px = p[0] = rx;
-    const py = p[1] = ry;
-    const pz = p[2] = rz;
+    const px = rx;
+    const py = ry;
+    const pz = rz;
 
     const onx = (px - cx) / this.radius;
     const ony = (py - cy) / this.radius;

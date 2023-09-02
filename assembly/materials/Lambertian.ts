@@ -36,30 +36,38 @@ export default class Lambertian extends Material
     } while (ls < 1.0);
 
     const length = Mathf.sqrt(ls);
-    const rn = record.normal;
-    const rp = record.point;
 
     x /= length;
     y /= length;
     z /= length;
 
-    let sdx = rn[0] + x;
-    let sdy = rn[1] + y;
-    let sdz = rn[2] + z;
+    let sdx = record.normalX + x;
+    let sdy = record.normalY + y;
+    let sdz = record.normalZ + z;
 
     if (
       Mathf.abs(sdx) < 1e-8 &&
       Mathf.abs(sdy) < 1e-8 &&
       Mathf.abs(sdz) < 1e-8
     ) {
-      sdx = rn[0];
-      sdy = rn[1];
-      sdz = rn[2];
+      sdx = record.normalX;
+      sdy = record.normalY;
+      sdz = record.normalZ;
     }
 
-    scattered.setOrigin(rp[0], rp[1], rp[2]);
-    scattered.setDirection(sdx, sdy, sdz);
-    attenuation.copy(this.albedo);
+    scattered.dirX = sdx;
+    scattered.dirY = sdy;
+    scattered.dirZ = sdz;
+
+    scattered.origX = record.pointX;
+    scattered.origY = record.pointY;
+    scattered.origZ = record.pointZ;
+
+    const albedo = this.albedo;
+
+    attenuation.x = albedo.x;
+    attenuation.y = albedo.y;
+    attenuation.z = albedo.z;
 
     return true;
   }

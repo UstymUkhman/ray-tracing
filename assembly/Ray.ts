@@ -68,18 +68,4 @@ export default class Ray
 
     return c;
   }
-
-  @inline
-  public setDirection (x: f32, y: f32, z: f32): void {
-    this.dirX = x;
-    this.dirY = y;
-    this.dirZ = z;
-  }
-
-  @inline
-  public setOrigin (x: f32, y: f32, z: f32): void {
-    this.origX = x;
-    this.origY = y;
-    this.origZ = z;
-  }
 }

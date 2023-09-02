@@ -54,15 +54,6 @@ export default class Vector3
     return this;
   }
 
-  @inline // @operator('=')
-  public copy (vec: Vector3): this {
-    this.x = vec.x;
-    this.y = vec.y;
-    this.z = vec.z;
-
-    return this;
-  }
-
   @inline
   public get lengthSquared (): f32 {
     return this.dot(this);
