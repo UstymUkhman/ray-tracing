@@ -1,9 +1,9 @@
-import { getRGB } from '@S/utils/Color';
-import Canvas from '@S/stage/backend/Canvas';
-import type { SceneParams } from '@S/stage/types';
-import Vertex from '@S/shaders/webgl/main.vert?raw';
-import type { BackEndContext } from '@S/stage/types';
-import Fragment from '@S/shaders/webgl/main.frag?raw';
+import { getRGB } from '@/utils/Color';
+import Canvas from '@/stage/backend/Canvas';
+import type { SceneParams } from '@/stage/types';
+import Vertex from '@/shaders/webgl/main.vert?raw';
+import type { BackEndContext } from '@/stage/types';
+import Fragment from '@/shaders/webgl/main.frag?raw';
 
 type ShaderType =
   | WebGLRenderingContextBase['FRAGMENT_SHADER']

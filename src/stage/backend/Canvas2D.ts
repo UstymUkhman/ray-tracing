@@ -1,6 +1,6 @@
-import { getHex } from '@S/utils/Color';
-import Canvas from '@S/stage/backend/Canvas';
-import type { SceneParams } from '@S/stage/types';
+import { getHex } from '@/utils/Color';
+import Canvas from '@/stage/backend/Canvas';
+import type { SceneParams } from '@/stage/types';
 
 export default class Canvas2D extends Canvas
 {

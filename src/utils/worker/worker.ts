@@ -1,10 +1,12 @@
-import type { Trace, Format } from '@S/stage/types';
-import Config from '@S/stage/Config';
-import Scene from '@S/stage/Scene';
+import type { Format } from '@/stage/types';
+import type { Trace } from '@/stage/types';
+import Config from '@/stage/Config';
+import Scene from '@/stage/Scene';
 
 let sample = 0.0;
 let trace: Trace;
 let format: Format;
+let collect: () => void;
 
 let f32 = new Float32Array(
   Config.width * Config.height * 3
@@ -31,6 +33,7 @@ self.onmessage = async (message): Promise<Scene | void> => {
           : '../../stage/Tracer.ts'
       );
 
+      collect = Tracer.collect;
       format = Tracer.format;
       trace = Tracer.trace;
 
@@ -40,7 +43,9 @@ self.onmessage = async (message): Promise<Scene | void> => {
     case 'Create::PPMImage': {
       f32 = new Float32Array(trace(f32));
       u8 = new Uint8ClampedArray(format(f32, u8, ++sample));
+
       params = { sample, pixels: u8, ...params };
+      !(sample % 80.0) && collect();
 
       break;
     }

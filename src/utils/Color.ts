@@ -1,4 +1,4 @@
-import Vector3 from '@S/utils/Vector3';
+import Vector3 from '@/utils/Vector3';
 
 export const getRGB = (color: number, format: 0xff | 1 = 1):
   Map<'r' | 'g' | 'b', number> => new Map([

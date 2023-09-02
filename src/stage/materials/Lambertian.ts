@@ -1,7 +1,7 @@
-import Ray from '@S/stage/Ray';
+import Ray from '@/stage/Ray';
 import Material from './Material';
-import Vector3 from '@S/utils/Vector3';
-import type { Hits } from '@S/stage/hittables/types';
+import Vector3 from '@/utils/Vector3';
+import type { Hits } from '@/stage/hittables/types';
 
 export default class Lambertian extends Material
 {

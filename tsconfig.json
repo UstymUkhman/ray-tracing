@@ -4,6 +4,7 @@
     "allowSyntheticDefaultImports": true,
     "typeRoots": ["node_modules/@types"],
     "jsxImportSource": "solid-js",
+    "paths": { "@/*": ["src/*"] },
 
     "verbatimModuleSyntax": true,
     "noUnusedParameters": false,
@@ -32,12 +33,7 @@
 
     "baseUrl": ".",
     "strict": true,
-    "noEmit": true,
-
-    "paths": {
-      "@B/*": ["build/*"],
-      "@S/*": ["src/*"]
-    }
+    "noEmit": true
   },
 
   "include": [

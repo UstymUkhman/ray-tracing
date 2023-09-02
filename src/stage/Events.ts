@@ -1,9 +1,9 @@
-import type { Callback as ECallback } from '@S/utils/Events';
-import type { Callback as WCallback } from '@S/utils/worker';
+import type { Callback as ECallback } from '@/utils/Events';
+import type { Callback as WCallback } from '@/utils/worker';
 
-import type WebWorker from '@S/utils/worker';
-import Worker from '@S/utils/worker/worker';
-import { Emitter } from '@S/utils/Events';
+import type WebWorker from '@/utils/worker';
+import Worker from '@/utils/worker/worker';
+import { Emitter } from '@/utils/Events';
 
 class WorkerEvents
 {

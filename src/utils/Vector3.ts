@@ -1,4 +1,4 @@
-import { clamp, random } from '@S/utils/Number';
+import { clamp, random } from '@/utils/Number';
 type Vec3 = [number, number, number];
 
 export default class Vector3

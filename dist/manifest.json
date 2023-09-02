@@ -8,7 +8,7 @@
 
   "short_name": "Ray Tracing",
   "name": "Ray Tracing in One Weekend",
-  "description": "Ray Tracing in One Weekend with (Assembly & Type)Script",
+  "description": "Ray Tracing in One Weekend with TypeScript and AssemblyScript.",
 
   "prefer_related_applications": false,
   "background_color": "#222222",

@@ -1,10 +1,10 @@
-import type { OffscreenCanvas } from '@S/stage/types';
-import type { Event } from '@S/utils/Events';
-import WebWorker from '@S/utils/worker';
-import Config from '@S/stage/Config';
-import Client from '@S/stage/Client';
-import Events from '@S/stage/Events';
-import Scene from '@S/stage/Scene';
+import type { OffscreenCanvas } from '@/stage/types';
+import type { Event } from '@/utils/Events';
+import WebWorker from '@/utils/worker';
+import Config from '@/stage/Config';
+import Client from '@/stage/Client';
+import Events from '@/stage/Events';
+import Scene from '@/stage/Scene';
 
 export default class Stage
 {

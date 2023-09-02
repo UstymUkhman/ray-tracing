@@ -1,11 +1,11 @@
 import { createSignal, onCleanup } from 'solid-js';
-import type { ImageData } from '@S/stage/types';
-import type { Event } from '@S/utils/Events';
+import type { ImageData } from '@/stage/types';
+import type { Event } from '@/utils/Events';
 import type { JSXElement } from 'solid-js';
-import { toFixed } from '@S/utils/Number';
-import Config from '@S/stage/Config';
+import { toFixed } from '@/utils/Number';
+import Config from '@/stage/Config';
 import CSS from './Stats.module.css';
-import Events from '@S/stage/Events';
+import Events from '@/stage/Events';
 
 type StatsProps = {
   children: JSXElement;

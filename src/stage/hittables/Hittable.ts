@@ -1,4 +1,4 @@
-import type Ray from '@S/stage/Ray';
+import type Ray from '@/stage/Ray';
 import type { Hits } from './types';
 
 export default abstract class Hittable

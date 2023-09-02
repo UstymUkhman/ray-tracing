@@ -1,8 +1,8 @@
 import { createSignal, onMount } from 'solid-js';
-import { Stats } from '@S/components';
-import Config from '@S/stage/Config';
-import Stage from '@S/stage';
-import '@S/app/app.css';
+import { Stats } from '@/components';
+import Config from '@/stage/Config';
+import Stage from '@/stage';
+import '@/app/app.css';
 
 export const App = () =>
 {

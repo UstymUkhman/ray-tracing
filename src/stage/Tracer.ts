@@ -1,10 +1,10 @@
-import { floatToInt } from '@S/utils/Color';
-import { World } from '@S/stage/hittables';
-import { toFixed } from '@S/utils/Number';
-import Vector3 from '@S/utils/Vector3';
-import Camera from '@S/stage/Camera';
-import Config from '@S/stage/Config';
-import Ray from '@S/stage/Ray';
+import { floatToInt } from '@/utils/Color';
+import { World } from '@/stage/hittables';
+import { toFixed } from '@/utils/Number';
+import Vector3 from '@/utils/Vector3';
+import Camera from '@/stage/Camera';
+import Config from '@/stage/Config';
+import Ray from '@/stage/Ray';
 
 class Tracer
 {
@@ -73,5 +73,3 @@ export function format (
 ): Uint8ClampedArray {
   return floatToInt(f32, u8, samples);
 }
-
-export function collect (): void { return; }

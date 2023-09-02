@@ -1,10 +1,10 @@
 {
   "name": "ray-tracing",
   "homepage": "https://github.com/UstymUkhman/ray-tracing#readme",
-  "description": "Ray Tracing in One Weekend with (Assembly & Type)Script",
+  "description": "Ray Tracing in One Weekend with TypeScript and AssemblyScript.",
   "packageManager": "^npm@9.8.0",
   "main": "src/main.ts",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "license": "MIT",
   "private": false,
   "type": "module",
@@ -22,15 +22,18 @@
     "url": "https://github.com/UstymUkhman/"
   },
   "keywords": [
-    "vite",
+    "wasm",
     "webgl",
     "webgl2",
-    "solidjs",
+    "webgpu",
     "canvas2d",
+    "benchmark",
     "typescript",
+    "webassembly",
     "ray-tracing",
     "path-tracing",
-    "assemblyscript"
+    "assemblyscript",
+    "raytracing-in-one-weekend"
   ],
   "scripts": {
     "start": "vite",
@@ -61,6 +64,7 @@
     "stylelint-config-standard": "^33.0.0",
     "typescript": "^5.0.4",
     "vite": "^4.3.5",
+    "vite-plugin-glsl": "^1.1.2",
     "vite-plugin-solid": "^2.7.0"
   },
   "engines": {
