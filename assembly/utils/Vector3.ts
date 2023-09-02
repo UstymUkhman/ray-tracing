@@ -1,15 +1,16 @@
 import { random } from './Number';
 
+@final
 export default class Vector3
 {
   public constructor (
-    public x: f64 = 0.0,
-    public y: f64 = x,
-    public z: f64 = x
+    public x: f32 = 0.0,
+    public y: f32 = x,
+    public z: f32 = x
   ) {}
 
   @inline
-  public random (min: f64 = 0.0, max: f64 = 1.0): this {
+  public random (min: f32 = 0.0, max: f32 = 1.0): this {
     this.x = random(min, max);
     this.y = random(min, max);
     this.z = random(min, max);
@@ -17,7 +18,7 @@ export default class Vector3
     return this;
   }
 
-  @inline
+  @inline // @operator('*')
   public multiply (vec: Vector3): this {
     this.x = this.x * vec.x;
     this.y = this.y * vec.y;
@@ -26,8 +27,8 @@ export default class Vector3
     return this;
   }
 
-  @inline
-  public multiplyScalar (t: f64): this {
+  @inline // @operator('*')
+  public multiplyScalar (t: f32): this {
     this.x *= t;
     this.y *= t;
     this.z *= t;
@@ -35,8 +36,8 @@ export default class Vector3
     return this;
   }
 
-  @inline
-  public divideScalar (t: f64): this {
+  @inline // @operator('/')
+  public divideScalar (t: f32): this {
     return this.multiplyScalar(1.0 / t);
   }
 
@@ -53,16 +54,7 @@ export default class Vector3
     return this;
   }
 
-  @inline
-  public reset (s: f64 = 0.0): this {
-    this.x = s;
-    this.y = s;
-    this.z = s;
-
-    return this;
-  }
-
-  @inline
+  @inline // @operator('=')
   public copy (vec: Vector3): this {
     this.x = vec.x;
     this.y = vec.y;
@@ -72,11 +64,11 @@ export default class Vector3
   }
 
   @inline
-  public get lengthSquared (): f64 {
+  public get lengthSquared (): f32 {
     return this.dot(this);
   }
 
-  @inline
+  @inline // @operator('-')
   public sub (vec: Vector3): this {
     this.x -= vec.x;
     this.y -= vec.y;
@@ -86,10 +78,8 @@ export default class Vector3
   }
 
   @inline
-  public dot (vec: Vector3): f64 {
-    return this.x * vec.x +
-      this.y * vec.y +
-      this.z * vec.z;
+  private dot (vec: Vector3): f32 {
+    return this.x * vec.x + this.y * vec.y + this.z * vec.z;
   }
 
   @inline
@@ -99,15 +89,11 @@ export default class Vector3
 
   @inline
   public get clone (): Vector3 {
-    return new Vector3(
-      this.x,
-      this.y,
-      this.z
-    );
+    return new Vector3(this.x, this.y, this.z);
   }
 
   @inline
-  public get length (): f64 {
-    return Math.sqrt(this.lengthSquared);
+  public get length (): f32 {
+    return Mathf.sqrt(this.lengthSquared);
   }
 }

@@ -3,13 +3,14 @@ import Ray from '../Ray';
 
 export default class Record
 {
-  public t: f64 = 0.0;
+  public t: f32 = 0.0;
 
   public material!: Material;
   public frontFace: bool = false;
 
-  public readonly point: StaticArray<f64> = new StaticArray<f64>(3);
-  public readonly normal: StaticArray<f64> = new StaticArray<f64>(3);
+  // Convert These:
+  public readonly point: StaticArray<f32> = new StaticArray<f32>(3);
+  public readonly normal: StaticArray<f32> = new StaticArray<f32>(3);
 
   @inline
   public copy (record: Record): void {
@@ -32,9 +33,9 @@ export default class Record
   @inline
   public setFaceNormal (
     ray: Ray,
-    onx: f64,
-    ony: f64,
-    onz: f64
+    onx: f32,
+    ony: f32,
+    onz: f32
   ): void {
     const dx = ray.dirX;
     const dy = ray.dirY;

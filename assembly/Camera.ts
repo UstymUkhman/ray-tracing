@@ -13,22 +13,22 @@ export default class Camera
   private u: Vector3 = new Vector3();
   private v: Vector3 = new Vector3();
 
-  private readonly lensRadius: f64;
+  private readonly lensRadius: f32;
 
-  private readonly height: f64;
-  private readonly width: f64;
+  private readonly height: f32;
+  private readonly width: f32;
 
   public constructor (
     origin: Vector3,
     lookAt: Vector3,
     vUp: Vector3,
-    fov: f64,
-    ratio: f64,
-    aperture: f64,
-    focusDist: f64
+    fov: f32,
+    ratio: f32,
+    aperture: f32,
+    focusDist: f32
   ) {
     const w = origin.clone.sub(lookAt).unitVector;
-    const height = Math.tan(degToRad(fov) * 0.5);
+    const height = Mathf.tan(degToRad(fov) * 0.5);
 
     this.u = vUp.cross(w).unitVector;
     this.v = w.clone.cross(this.u);
@@ -54,7 +54,7 @@ export default class Camera
   }
 
   @inline
-  public setRay (ray: Ray, s: f64, t: f64): void
+  public setRay (ray: Ray, s: f32, t: f32): void
   {
     const lowerLeftCorner = this.lowerLeftCorner;
 

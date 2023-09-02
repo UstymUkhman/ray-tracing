@@ -21,11 +21,11 @@ export default class Lambertian extends Material
     scattered: Ray,
     attenuation: Vector3
   ): bool {
-    let x = 0.0;
-    let y = 0.0;
-    let z = 0.0;
+    let x: f32 = 0.0;
+    let y: f32 = 0.0;
+    let z: f32 = 0.0;
 
-    let ls = 0.0;
+    let ls: f32 = 0.0;
 
     do {
       x = random(-1.0, 1.0);
@@ -35,7 +35,7 @@ export default class Lambertian extends Material
       ls = x * x + y * y + z * z;
     } while (ls < 1.0);
 
-    const length = Math.sqrt(ls);
+    const length = Mathf.sqrt(ls);
     const rn = record.normal;
     const rp = record.point;
 
@@ -48,9 +48,9 @@ export default class Lambertian extends Material
     let sdz = rn[2] + z;
 
     if (
-      Math.abs(sdx) < 1e-8 &&
-      Math.abs(sdy) < 1e-8 &&
-      Math.abs(sdz) < 1e-8
+      Mathf.abs(sdx) < 1e-8 &&
+      Mathf.abs(sdy) < 1e-8 &&
+      Mathf.abs(sdz) < 1e-8
     ) {
       sdx = rn[0];
       sdy = rn[1];

@@ -7,7 +7,7 @@ import { Material } from '../materials';
 export default class Sphere extends Hittable
 {
   public constructor (
-    private readonly radius: f64,
+    private readonly radius: f32,
     private readonly center: Vector3,
     private readonly material: Material
   ) {
@@ -17,8 +17,8 @@ export default class Sphere extends Hittable
   @inline
   public override hit (
     ray: Ray,
-    tMin: f64,
-    tMax: f64,
+    tMin: f32,
+    tMax: f32,
     record: Record
   ): bool {
     const dx = ray.dirX;
@@ -46,7 +46,7 @@ export default class Sphere extends Hittable
 
     if (d < 0) return false;
 
-    const sqrtD = Math.sqrt(d);
+    const sqrtD = Mathf.sqrt(d);
     let root = (-halfB - sqrtD) / a;
 
     if (root < tMin || root > tMax) {

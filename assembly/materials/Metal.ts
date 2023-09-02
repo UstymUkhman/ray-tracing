@@ -6,14 +6,14 @@ import { random } from '../utils/Number';
 
 export default class Metal extends Material
 {
-  private readonly fuzz: f64;
+  private readonly fuzz: f32;
   private readonly albedo: Vector3;
 
-  public constructor (color: Vector3, fuzz: f64)
+  public constructor (color: Vector3, fuzz: f32)
   {
     super();
     this.albedo = color.clone;
-    this.fuzz = Math.min(fuzz, 1.0);
+    this.fuzz = Mathf.min(fuzz, 1.0);
   }
 
   @inline
@@ -28,7 +28,7 @@ export default class Metal extends Material
     let dz = inRay.dirZ;
 
     const dls = dx * dx + dy * dy + dz * dz;
-    const length = Math.sqrt(dls);
+    const length = Mathf.sqrt(dls);
 
     const rn = record.normal;
     const rp = record.point;
@@ -43,11 +43,11 @@ export default class Metal extends Material
     const ry = dy - rn[1] * dot;
     const rz = dz - rn[2] * dot;
 
-    let x = 0.0;
-    let y = 0.0;
-    let z = 0.0;
+    let x: f32 = 0.0;
+    let y: f32 = 0.0;
+    let z: f32 = 0.0;
 
-    let ls = 0.0;
+    let ls: f32 = 0.0;
 
     do {
       x = random(-1.0, 1.0);

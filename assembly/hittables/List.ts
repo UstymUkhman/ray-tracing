@@ -7,26 +7,26 @@ export default class List extends Hittable
 {
   private readonly objects: StaticArray<Hittable>;
 
-  public constructor (private length: i32) {
+  public constructor (private length: u16) {
     super();
     this.objects = new StaticArray(length);
   }
 
-  public add (object: Hittable, o: i32): void {
+  public add (object: Hittable, o: u16): void {
     this.objects[o] = object;
     this.length = ++o;
   }
 
   public override hit (
     ray: Ray,
-    tMin: f64,
-    tMax: f64,
+    tMin: f32,
+    tMax: f32,
     record: Record
   ): bool {
     let hit = false;
     let closest = tMax;
 
-    for (let o = 0, l = this.length; o < l; ++o) {
+    for (let o: u16 = 0, l = this.length; o < l; ++o) {
       const object = this.objects[o];
 
       if (object.hit(ray, tMin, closest, IRecord))
