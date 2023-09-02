@@ -25,11 +25,11 @@ export default class Ray
       if (IRecord.material.scatter(ray, IRecord, scattered, attenuation)) {
         const color = this.getColor(scattered, scene, depth - 1);
 
-        return color.set(
-          color.x * attenuation.x,
-          color.y * attenuation.y,
-          color.z * attenuation.z
-        );
+        color.x *= attenuation.x;
+        color.y *= attenuation.y;
+        color.z *= attenuation.z;
+
+        return color;
       }
 
       return this.color.reset();
@@ -47,11 +47,11 @@ export default class Ray
 
     const t = (ray.dirY + 1.0) * 0.5;
 
-    return this.color.set(
-      1.0 * (1.0 - t) + 0.5 * t,
-      1.0 * (1.0 - t) + 0.7 * t,
-      1.0 * (1.0 - t) + 1.0 * t
-    );
+    this.color.x = 1.0 * (1.0 - t) + 0.5 * t;
+    this.color.y = 1.0 * (1.0 - t) + 0.7 * t;
+    this.color.z = 1.0 * (1.0 - t) + 1.0 * t;
+
+    return this.color;
   }
 
   @inline

@@ -41,14 +41,14 @@ export default class Sphere extends Hittable
       }
     }
 
-    record.t = root;
-    record.point.copy(ray.at(record.t));
+    record.point.copy(ray.at(root));
 
     const outwardNormal = record.point.clone
       .sub(this.center).divide(this.radius);
 
     record.setFaceNormal(ray, outwardNormal);
     record.material = this.material;
+    record.t = root;
 
     return true;
   }
