@@ -1,20 +1,7 @@
-export type BackEndContext = 'Canvas2D' | 'WebGL' | 'WebGL2' | 'WebGPU';
 export type Trace = (pixels: Float32Array) => ArrayLike<number>;
-type SceneCanvas = HTMLCanvasElement | OffscreenCanvas;
 
 export type OffscreenCanvas = HTMLCanvasElement & {
   transferControlToOffscreen: () => Transferable
-};
-
-import type WebWorker from '@/utils/worker';
-
-export type SceneParams = {
-  backEnd: BackEndContext,
-  offscreen?: boolean,
-  canvas: SceneCanvas,
-  pixelRatio: number,
-  worker?: WebWorker,
-  tracer?: string
 };
 
 export type ImageData = {

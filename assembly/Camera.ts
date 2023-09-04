@@ -54,8 +54,7 @@ export default class Camera
   }
 
   @inline
-  public setRay (ray: Ray, s: f32, t: f32): void
-  {
+  public setRay (ray: Ray, s: f32, t: f32): void {
     const lowerLeftCorner = this.lowerLeftCorner;
 
     const horizontal = this.horizontal;

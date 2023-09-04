@@ -10,8 +10,6 @@ export default ({ mode }: { mode: string }) =>
 
     worker: { format: 'es' },
 
-    plugins: [solid(), glsl()],
-
     build: { target: 'esnext' },
 
     resolve: {
@@ -29,6 +27,11 @@ export default ({ mode }: { mode: string }) =>
         localsConvention: 'camelCaseOnly'
       }
     },
+
+    plugins: [solid(), glsl({
+      compress: mode === 'production',
+      root: 'src/shaders/'
+    })],
 
     server: {
       host: '0.0.0.0',

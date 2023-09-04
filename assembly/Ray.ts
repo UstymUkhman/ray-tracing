@@ -14,8 +14,7 @@ export default class Ray
   public dirY: f32 = 0.0;
   public dirZ: f32 = 0.0;
 
-  public getColor (ray: Ray, scene: Hittable, depth: u8): Vector3
-  {
+  public getColor (ray: Ray, scene: Hittable, depth: u8): Vector3 {
     if (!depth) {
       const c = this.color;
 
