@@ -1,43 +1,44 @@
 type RenderingContext = CanvasRenderingContext2D | WebGLRenderingContext;
 type Options = CanvasRenderingContext2DSettings | WebGLContextAttributes;
-
-import type { BackEndContext } from '@/stage/types';
-import type { SceneParams } from '@/stage/types';
+import type { Context, SceneParams } from '@/stage/scene/types';
 
 export default abstract class Canvas
 {
-  public abstract drawImage (image: Uint8ClampedArray): void;
+  public abstract drawImage (image?: Uint8ClampedArray): void;
   protected readonly context: RenderingContext;
-  public readonly backEnd: BackEndContext;
-
   protected readonly clearColor = 0.0;
   protected readonly channels: number;
-  public abstract clear (): void;
 
+  public abstract clear (): void;
   public readonly height: number;
   public readonly width: number;
   private readonly side: number;
 
-  public constructor(
-    params: SceneParams,
-    context: BackEndContext
-  ) {
-    this.backEnd = context;
-    const alpha = context === 'Canvas2D';
-    const { canvas, offscreen } = params;
+  public constructor(params: SceneParams) {
+    const { canvas, context, offscreen } = params;
+    this.channels = +(context === 'Canvas2D') + 3.0;
 
     this.context = canvas.getContext(
-      context, this.getOptions(context, offscreen)
+      this.getContextId(context),
+      this.getOptions(context, offscreen)
     ) as RenderingContext;
 
     this.width = canvas.width;
     this.height = canvas.height;
-
-    this.channels = +alpha + 3.0;
     this.side = this.width * this.channels;
   }
 
-  private getOptions (context: BackEndContext, offscreen = false): Options {
+  private getContextId (context: Context): OffscreenRenderingContextId {
+    switch (context) {
+      case 'WebGPU': return 'webgpu';
+      case 'WebGL2': return 'webgl2';
+      case 'WebGL':  return 'webgl';
+      default:       return '2d';
+
+    }
+  }
+
+  private getOptions (context: Context, offscreen = false): Options {
     switch (context) {
       case 'Canvas2D':
         return {

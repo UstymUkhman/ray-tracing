@@ -1,5 +1,5 @@
 export default {
-  backEnd: 'WebGL2',
+  context: 'WebGL2',
   pixelRatio: 1.0,
   maxDepth: 50.0,
   samples: 500.0,

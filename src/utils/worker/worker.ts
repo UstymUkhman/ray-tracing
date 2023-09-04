@@ -1,7 +1,7 @@
 import type { Format } from '@/stage/types';
 import type { Trace } from '@/stage/types';
+import { CPUScene } from '@/stage/scene';
 import Config from '@/stage/Config';
-import Scene from '@/stage/Scene';
 
 let sample = 0.0;
 let trace: Trace;
@@ -18,13 +18,13 @@ let u8 = new Uint8ClampedArray(
 
 self.onerror = error => console.error(error);
 
-self.onmessage = async (message): Promise<Scene | void> => {
+self.onmessage = async (message): Promise<CPUScene | void> => {
   const { event } = message.data;
   let { params } = message.data;
 
   switch (event) {
     case 'Transfer::Offscreen':
-      return new Scene({ offscreen: true, ...params });
+      return new CPUScene({ offscreen: true, ...params });
 
     case 'Create::Tracer': {
       const Tracer = await import(

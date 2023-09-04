@@ -1,15 +1,12 @@
+import { Events, CPUScene, GPUScene } from '@/stage/scene';
 import type { OffscreenCanvas } from '@/stage/types';
 import type { Event } from '@/utils/Events';
+import { download } from '@/utils/Image';
 import WebWorker from '@/utils/worker';
 import Config from '@/stage/Config';
-import Client from '@/stage/Client';
-import Events from '@/stage/Events';
-import Scene from '@/stage/Scene';
 
 export default class Stage
 {
-  private readonly client = new Client();
-
   public readonly offscreen = !DEBUG && (
     typeof HTMLCanvasElement !== 'undefined' && !!(
       HTMLCanvasElement.prototype as OffscreenCanvas
@@ -18,14 +15,17 @@ export default class Stage
 
   public constructor (scenes: HTMLCanvasElement[]) {
     scenes.forEach(canvas => {
-      const worker = new WebWorker();
-      const { tracer } = canvas.dataset;
+      const { tracer, processing } = canvas.dataset;
+      const { context, pixelRatio = devicePixelRatio } = Config;
 
+      if (processing === 'GPU')
+        return new GPUScene({ canvas, tracer, context, pixelRatio });
+
+      const worker = new WebWorker();
       Events.createWorkerEvents(worker, this.offscreen);
-      const { backEnd, pixelRatio = devicePixelRatio } = Config;
 
       if (!this.offscreen)
-        new Scene({ canvas, worker, tracer, backEnd, pixelRatio });
+        return new CPUScene({ canvas, worker, tracer, context, pixelRatio });
 
       else {
         Events.add('PPMImage::Download', this.downloadPPMImage.bind(this));
@@ -48,10 +48,10 @@ export default class Stage
           this.startStats.bind(this, 'TypeScript')
         );
 
-        worker.transfer(
+        return worker.transfer(
           (canvas as OffscreenCanvas)
             .transferControlToOffscreen(),
-          { tracer, backEnd, pixelRatio }
+          { tracer, context, pixelRatio }
         );
       }
     });
@@ -65,8 +65,7 @@ export default class Stage
   }
 
   private downloadPPMImage (event: Event): void {
-    const { image } = event.data as { image: string };
-    this.client.downloadImage(image);
+    download((event.data as { image: string }).image);
   }
 
   private startStats (tracer: string): void {

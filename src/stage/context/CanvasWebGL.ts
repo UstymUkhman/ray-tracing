@@ -1,9 +1,8 @@
-import { getRGB } from '@/utils/Color';
-import Canvas from '@/stage/backend/Canvas';
-import type { SceneParams } from '@/stage/types';
-import Vertex from '@/shaders/webgl/main.vert?raw';
-import type { BackEndContext } from '@/stage/types';
+import type { SceneParams } from '@/stage/scene/types';
 import Fragment from '@/shaders/webgl/main.frag?raw';
+import Vertex from '@/shaders/webgl/main.vert?raw';
+import Canvas from '@/stage/context/Canvas';
+import { getRGB } from '@/utils/Color';
 
 type ShaderType =
   | WebGLRenderingContextBase['FRAGMENT_SHADER']
@@ -20,11 +19,10 @@ export default class CanvasWebGL extends Canvas
   private texture!: WebGLTexture;
   private program!: WebGLProgram;
 
-  public constructor(
-    params: SceneParams, context = 'webgl',
-    fragment = Fragment, vertex = Vertex
-  ) {
-    super(params, context as BackEndContext);
+  public constructor(params: SceneParams, fragment = Fragment, vertex = Vertex)
+  {
+    super(params);
+
     this.createProgram(fragment, vertex);
     this.createScene();
   }

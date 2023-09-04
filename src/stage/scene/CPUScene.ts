@@ -3,18 +3,18 @@ import {
   CanvasWebGL,
   CanvasWebGL2
   // CanvasWebGPU,
-} from '@/stage/backend';
+} from '@/stage/context';
 
 import Config from '@/stage/Config';
-import Events from '@/stage/Events';
+import { Events } from '@/stage/scene';
 import type WebWorker from '@/utils/worker';
 
 import { DELTA_UPDATE } from '@/utils/Number';
-import type { Canvas } from '@/stage/backend';
-import type { Trace, Format } from '@/stage/types';
-import type { SceneParams, ImageData } from '@/stage/types';
+import type { Canvas } from '@/stage/context';
+import type { SceneParams } from '@/stage/scene/types';
+import type { Trace, Format, ImageData } from '@/stage/types';
 
-export default class Scene
+export default class CPUScene
 {
   private sample = 0.0;
   private trace!: Trace;
@@ -31,7 +31,7 @@ export default class Scene
     Config.width * Config.height * 3
   );
 
-  private readonly canvas!: Canvas;
+  private readonly canvas: Canvas;
   private readonly worker?: WebWorker;
   private readonly samples = Config.samples;
 
@@ -47,7 +47,7 @@ export default class Scene
   }
 
   private createCanvas (params: SceneParams): Canvas {
-    switch (params.backEnd) {
+    switch (params.context) {
       // TBI
       // case 'WebGPU':
       //   return new CanvasWebGPU(params);
@@ -80,8 +80,8 @@ export default class Scene
 
   private loadTracer (): void {
     import(this.tracer === 'AssemblyScript'
-      ? '../../build/release.js'
-      : './Tracer.ts'
+      ? '../../../build/release.js'
+      : '../Tracer.ts'
     ).then(({ trace, format, collect }) => {
       Events.dispatch(`${this.tracer}::Start`, null, true);
 
