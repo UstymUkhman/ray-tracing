@@ -12,17 +12,17 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   -webkit-overflow-scrolling: touch;
-  font-family: 'Inter', sans-serif;
 
   font-variant-ligatures: none;
   overscroll-behavior: contain;
   -webkit-touch-callout: none;
   backface-visibility: hidden;
-
   background-color: #222222;
+
   -webkit-user-select: none;
   text-size-adjust: none;
   letter-spacing: normal;
+  font-family: monospace;
 
   line-height: normal;
   font-weight: normal;

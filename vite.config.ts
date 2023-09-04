@@ -4,22 +4,22 @@ import { defineConfig } from 'vite';
 import solid from 'vite-plugin-solid';
 import { version } from './package.json';
 
-export default ({ mode }: { mode: string }) =>
+export default ({ mode }: { mode: string }, compress = mode === 'production') =>
   defineConfig({
     base: './',
 
-    worker: { format: 'es' },
-
     build: { target: 'esnext' },
+
+    worker: {
+      format: 'es',
+      plugins: [glsl({ compress })]
+    },
+
+    plugins: [solid(), glsl({ compress })],
 
     resolve: {
       alias: { '@': resolve('src') },
       conditions: ['development', 'browser']
-    },
-
-    define: {
-      DEBUG: mode !== 'production' && false,
-      VERSION: JSON.stringify(version)
     },
 
     css: {
@@ -28,10 +28,10 @@ export default ({ mode }: { mode: string }) =>
       }
     },
 
-    plugins: [solid(), glsl({
-      compress: mode === 'production',
-      root: 'src/shaders/'
-    })],
+    define: {
+      VERSION: JSON.stringify(version),
+      DEBUG: !compress && false
+    },
 
     server: {
       host: '0.0.0.0',

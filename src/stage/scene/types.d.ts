@@ -8,5 +8,5 @@ export type SceneParams = {
   pixelRatio: number,
   worker?: WebWorker,
   context: Context,
-  tracer: string
+  tracer?: string
 };

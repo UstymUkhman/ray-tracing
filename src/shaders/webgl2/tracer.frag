@@ -10,8 +10,6 @@
 #include ./utils/number;
 #include ./utils/vector3;
 
-uniform sampler2D tex;
-
 in  vec2 uv;
 out vec4 fragColor;
 
