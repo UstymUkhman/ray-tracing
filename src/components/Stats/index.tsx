@@ -3,9 +3,9 @@ import type { ImageData } from '@/stage/types';
 import type { Event } from '@/utils/Events';
 import type { JSXElement } from 'solid-js';
 import { toFixed } from '@/utils/Number';
-import Config from '@/stage/Config';
+import { Events } from '@/stage/scene';
 import CSS from './Stats.module.css';
-import Events from '@/stage/Events';
+import Config from '@/stage/Config';
 
 type StatsProps = {
   children: JSXElement;
@@ -23,8 +23,8 @@ export default (props: StatsProps) =>
   const [lastRender, setLastRender] = createSignal(0);
   const [totalRender, setTotalRender] = createSignal(0);
 
-  const { tracer } = (props.children as HTMLCanvasElement).dataset;
-  const processing = `${(tracer?.includes('Web') && 'G') || 'C'}PU`;
+  const children = props.children as HTMLCanvasElement;
+  const { tracer, processing } = children.dataset;
 
   const toggleVisible = () => setVisible(!visible());
 
@@ -60,18 +60,24 @@ export default (props: StatsProps) =>
         </li>
 
         <li>
-          <strong>Back-End: </strong>
-          <em>{Config.backEnd}</em>
+          <strong>Context: </strong>
+          <em>{Config.context}</em>
         </li>
 
         <li>
           <strong>Language: </strong>
-          <em>{tracer}</em>
+          <em>{processing === 'CPU'
+            ? tracer : tracer === 'WebGL2'
+            ? 'OpenGL ES 3.0' : 'WGSL'
+          }</em>
         </li>
 
         <li>
           <strong>Environment: </strong>
-          <em>{props.offscreen ? 'OffscreenCanvas' : 'Web Worker'}</em>
+          <em>{processing === 'GPU'
+            ? 'Client' : props.offscreen
+            ? 'OffscreenCanvas' : 'Web Worker'
+          }</em>
         </li>
 
         <li>
@@ -81,12 +87,12 @@ export default (props: StatsProps) =>
 
         <li>
           <strong>Last Render Time: </strong>
-          <em>{lastRender()} sec.</em>
+          <em>~{lastRender()} sec.</em>
         </li>
 
         <li>
           <strong>Total Render Time: </strong>
-          <em>{totalRender()} sec.</em>
+          <em>~{totalRender()} sec.</em>
         </li>
       </ul>
     </div>
