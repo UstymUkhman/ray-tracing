@@ -2,9 +2,9 @@
   "scope": "/",
   "start_url": "/",
 
-  "display": "standalone",
+  "display": "browser",
   "author": "Ustym Ukhman",
-  "orientation": "landscape",
+  "orientation": "portrait",
 
   "short_name": "Ray Tracing",
   "name": "Ray Tracing in One Weekend",
@@ -47,9 +47,14 @@
     "density": "4.0"
   }, {
     "src": ".\/favicons\/favicon-512x512.png",
-    "purpose": "any maskable",
     "type": "image\/png",
     "sizes": "512x512",
     "density": "10.6"
+  }, {
+    "src": ".\/favicons\/favicon-512x512.svg",
+    "purpose": "any maskable",
+    "type": "image\/svg",
+    "sizes": "512x512",
+    "density": "1.0"
   }]
 }

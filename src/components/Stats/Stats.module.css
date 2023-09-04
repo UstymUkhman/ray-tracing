@@ -6,14 +6,14 @@
 .stats {
   background-color: rgb(0 0 0 / 0.8);
   justify-content: space-between;
+
   transition: opacity 0.5s;
-
   flex-direction: column;
-  font-family: monospace;
   pointer-events: none;
-  position: absolute;
 
+  position: absolute;
   list-style: none;
+
   padding: 20px;
   margin: 0px;
   top: 0px;

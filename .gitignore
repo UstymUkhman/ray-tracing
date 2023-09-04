@@ -13,6 +13,9 @@ pids
 
 build/*
 node_modules
+dist/apple-*.png
+public/apple-*.png
+
 !build/**/release.js
 !build/**/release.wat
 !build/**/release.d.ts
