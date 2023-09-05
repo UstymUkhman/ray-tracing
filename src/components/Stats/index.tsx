@@ -9,7 +9,7 @@ import Config from '@/stage/Config';
 
 type StatsProps = {
   children: JSXElement;
-  offscreen: boolean;
+  offscreen?: boolean;
 };
 
 export default (props: StatsProps) =>
@@ -24,7 +24,7 @@ export default (props: StatsProps) =>
   const [totalRender, setTotalRender] = createSignal(0);
 
   const children = props.children as HTMLCanvasElement;
-  const { tracer, processing } = children.dataset;
+  const { tracer, processing, context } = children.dataset;
 
   const toggleVisible = () => setVisible(!visible());
 
@@ -61,7 +61,7 @@ export default (props: StatsProps) =>
 
         <li>
           <strong>Context: </strong>
-          <em>{Config.context}</em>
+          <em>{context}</em>
         </li>
 
         <li>
