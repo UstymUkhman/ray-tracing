@@ -28,10 +28,10 @@ export default class Camera
     aperture: number,
     focusDist: number
   ) {
-    const w = origin.clone.sub(lookAt).unitVector;
+    const w = origin.clone.sub(lookAt).normalize;
     const height = Math.tan(degToRad(fov) * 0.5);
 
-    this.u = vUp.cross(w).unitVector;
+    this.u = vUp.cross(w).normalize;
     this.v = w.clone.cross(this.u);
 
     this.origin = origin;

@@ -21,7 +21,7 @@ export default class Dielectric extends Material
     scattered: Ray,
     attenuation: Vector3
   ): boolean {
-    const direction = inRay.direction.unitVector;
+    const direction = inRay.direction.normalize;
     const tCos = Math.min(direction.clone.negate.dot(record.normal), 1.0);
     const ratio = record.frontFace ? 1.0 / this.refraction : this.refraction;
 

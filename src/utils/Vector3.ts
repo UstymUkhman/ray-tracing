@@ -81,8 +81,8 @@ export default class Vector3
     return this.sub(normal.clone.multiply(this.dot(normal) * 2.0));
   }
 
-  public get randomUnitVector (): Vector3 {
-    return this.randomUnitSphere.unitVector;
+  public get randomNormalized (): Vector3 {
+    return this.randomUnitSphere.normalize;
   }
 
   public get randomUnitSphere (): this {
@@ -146,7 +146,7 @@ export default class Vector3
       Math.abs(this.vec[2]) < 1e-8;
   }
 
-  public get unitVector (): this {
+  public get normalize (): this {
     return this.divide(this.length);
   }
 

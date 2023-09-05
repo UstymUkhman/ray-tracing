@@ -74,7 +74,7 @@ export default class Vector3
   }
 
   @inline
-  public get unitVector (): this {
+  public get normalize (): this {
     return this.divideScalar(this.length);
   }
 

@@ -20,7 +20,7 @@ export default class Lambertian extends Material
     scattered: Ray,
     attenuation: Vector3
   ): boolean {
-    const scatteredDirection = record.normal.clone.add(this.direction.randomUnitVector);
+    const scatteredDirection = record.normal.clone.add(this.direction.randomNormalized);
     scatteredDirection.nearZero && scatteredDirection.copy(record.normal);
 
     scattered.direction = scatteredDirection;

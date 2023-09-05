@@ -32,7 +32,7 @@ export default class Ray
       return this.color.reset();
     }
 
-    const t = (ray.dir.unitVector.y + 1.0) * 0.5;
+    const t = (ray.dir.normalize.y + 1.0) * 0.5;
 
     return this.color.reset(1.0)
       .multiply(1.0 - t)
