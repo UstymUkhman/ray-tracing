@@ -1,5 +1,5 @@
 import type { SceneParams } from '@/stage/scene/types';
-import Tracer from '@/shaders/webgl2/tracer.frag';
+import Tracer from '@/shaders/webgl2/Tracer.frag';
 import { CanvasWebGL2 } from '@/stage/context';
 import type { Canvas } from '@/stage/context';
 

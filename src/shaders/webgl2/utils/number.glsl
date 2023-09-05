@@ -1,3 +1,4 @@
+#define INFINITY 1.0 / 0.0
 #define PI 3.14159265358979323846
 
 float random (in vec2 co) {
