@@ -1,9 +1,9 @@
 import { Events, CPUScene, GPUScene } from '@/stage/scene';
 import type { OffscreenCanvas } from '@/stage/types';
+import type { Context } from '@/stage/scene/types';
 import type { Event } from '@/utils/Events';
 import { download } from '@/utils/Image';
 import WebWorker from '@/utils/worker';
-import Config from '@/stage/Config';
 
 export default class Stage
 {
@@ -15,17 +15,17 @@ export default class Stage
 
   public constructor (scenes: HTMLCanvasElement[]) {
     scenes.forEach(canvas => {
-      const { tracer, processing } = canvas.dataset;
-      const { context, pixelRatio = devicePixelRatio } = Config;
+      const { processing, tracer } = canvas.dataset;
+      const context = canvas.dataset.context as Context;
 
       if (processing === 'GPU')
-        return new GPUScene({ canvas, tracer, context, pixelRatio });
+        return new GPUScene({ canvas, tracer, context });
 
       const worker = new WebWorker();
       Events.createWorkerEvents(worker, this.offscreen);
 
       if (!this.offscreen)
-        return new CPUScene({ canvas, worker, tracer, context, pixelRatio });
+        return new CPUScene({ canvas, worker, tracer, context });
 
       else {
         Events.add('PPMImage::Download', this.downloadPPMImage.bind(this));
@@ -51,7 +51,7 @@ export default class Stage
         return worker.transfer(
           (canvas as OffscreenCanvas)
             .transferControlToOffscreen(),
-          { tracer, context, pixelRatio }
+          { tracer, context }
         );
       }
     });

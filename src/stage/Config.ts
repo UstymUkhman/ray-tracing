@@ -1,6 +1,5 @@
-export default {
-  context: 'WebGL2',
-  pixelRatio: 1.0,
+export default
+{
   maxDepth: 50.0,
   samples: 500.0,
   height: 240.0,
