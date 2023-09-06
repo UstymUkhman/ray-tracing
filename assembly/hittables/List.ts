@@ -1,6 +1,5 @@
 import Ray from '../Ray';
-import { IRecord } from './';
-import Record from './Record';
+import { Record } from './';
 import Hittable from './Hittable';
 
 export default class List extends Hittable
@@ -20,8 +19,7 @@ export default class List extends Hittable
   public override hit (
     ray: Ray,
     tMin: f32,
-    tMax: f32,
-    record: Record
+    tMax: f32
   ): bool {
     let hit = false;
     let closest = tMax;
@@ -29,10 +27,8 @@ export default class List extends Hittable
     for (let o: u16 = 0, l = this.length; o < l; ++o) {
       const object = this.objects[o];
 
-      if (object.hit(ray, tMin, closest, IRecord))
-      {
-        closest = IRecord.t;
-        record.copy(IRecord);
+      if (object.hit(ray, tMin, closest)) {
+        closest = Record.t;
         hit = true;
       }
     }

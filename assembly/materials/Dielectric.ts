@@ -1,7 +1,7 @@
 import Ray from '../Ray';
 import Material from './Material';
+import { Record } from '../hittables';
 import Vector3 from '../utils/Vector3';
-import Record from '../hittables/Record';
 
 export default class Dielectric extends Material
 {
@@ -19,7 +19,6 @@ export default class Dielectric extends Material
   @inline
   public override scatter (
     inRay: Ray,
-    record: Record,
     scattered: Ray,
     attenuation: Vector3
   ): bool {
@@ -39,13 +38,13 @@ export default class Dielectric extends Material
     const nz = -dz;
 
     const tCos = Mathf.min(
-      record.normalX * nx +
-      record.normalY * ny +
-      record.normalZ * nz,
+      Record.normalX * nx +
+      Record.normalY * ny +
+      Record.normalZ * nz,
       1.0
     );
 
-    const ratio = record.frontFace
+    const ratio = Record.frontFace
       ? <f32>1.0 / this.refraction
       : this.refraction;
 
@@ -55,33 +54,33 @@ export default class Dielectric extends Material
 
     if (reflect) {
       const dot = (
-        record.normalX * dx +
-        record.normalY * dy +
-        record.normalZ * dz
+        Record.normalX * dx +
+        Record.normalY * dy +
+        Record.normalZ * dz
       ) * 2.0;
 
-      dx -= record.normalX * dot;
-      dy -= record.normalY * dot;
-      dz -= record.normalZ * dot;
+      dx -= Record.normalX * dot;
+      dy -= Record.normalY * dot;
+      dz -= Record.normalZ * dot;
     }
 
     else {
-      dx = (record.normalX * tCos + dx) * ratio;
-      dy = (record.normalY * tCos + dy) * ratio;
-      dz = (record.normalZ * tCos + dz) * ratio;
+      dx = (Record.normalX * tCos + dx) * ratio;
+      dy = (Record.normalY * tCos + dy) * ratio;
+      dz = (Record.normalZ * tCos + dz) * ratio;
 
       const lengthSquared = dx * dx + dy * dy + dz * dz;
       const angle = Mathf.abs(1.0 - lengthSquared);
       const nsq = -Mathf.sqrt(angle);
 
-      dx += record.normalX * nsq;
-      dy += record.normalY * nsq;
-      dz += record.normalZ * nsq;
+      dx += Record.normalX * nsq;
+      dy += Record.normalY * nsq;
+      dz += Record.normalZ * nsq;
     }
 
-    scattered.origX = record.pointX;
-    scattered.origY = record.pointY;
-    scattered.origZ = record.pointZ;
+    scattered.origX = Record.pointX;
+    scattered.origY = Record.pointY;
+    scattered.origZ = Record.pointZ;
 
     scattered.dirX = dx;
     scattered.dirY = dy;

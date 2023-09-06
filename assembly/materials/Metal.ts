@@ -1,7 +1,7 @@
 import Ray from '../Ray';
 import Material from './Material';
+import { Record } from '../hittables';
 import Vector3 from '../utils/Vector3';
-import Record from '../hittables/Record';
 import { random } from '../utils/Number';
 
 export default class Metal extends Material
@@ -19,7 +19,6 @@ export default class Metal extends Material
   @inline
   public override scatter (
     inRay: Ray,
-    record: Record,
     scattered: Ray,
     attenuation: Vector3
   ): bool {
@@ -35,14 +34,14 @@ export default class Metal extends Material
     dz /= length;
 
     const dot = (
-      dx * record.normalX +
-      dy * record.normalY +
-      dz * record.normalZ
+      dx * Record.normalX +
+      dy * Record.normalY +
+      dz * Record.normalZ
     ) * 2.0;
 
-    const rx = dx - record.normalX * dot;
-    const ry = dy - record.normalY * dot;
-    const rz = dz - record.normalZ * dot;
+    const rx = dx - Record.normalX * dot;
+    const ry = dy - Record.normalY * dot;
+    const rz = dz - Record.normalZ * dot;
 
     let x: f32 = 0.0;
     let y: f32 = 0.0;
@@ -62,9 +61,9 @@ export default class Metal extends Material
     y = y * this.fuzz + ry;
     z = z * this.fuzz + rz;
 
-    scattered.origX = record.pointX;
-    scattered.origY = record.pointY;
-    scattered.origZ = record.pointZ;
+    scattered.origX = Record.pointX;
+    scattered.origY = Record.pointY;
+    scattered.origZ = Record.pointZ;
 
     const albedo = this.albedo;
 
@@ -77,9 +76,9 @@ export default class Metal extends Material
     scattered.dirZ = z;
 
     return (
-      x * record.normalX +
-      y * record.normalY +
-      z * record.normalZ
+      x * Record.normalX +
+      y * Record.normalY +
+      z * Record.normalZ
     ) > 0.0;
   }
 }

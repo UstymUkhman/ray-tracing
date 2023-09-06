@@ -1,6 +1,6 @@
 import { Hittable } from './hittables';
-import { IRecord } from './hittables';
 import Vector3 from './utils/Vector3';
+import { Record } from './hittables';
 
 export default class Ray
 {
@@ -25,11 +25,11 @@ export default class Ray
       return c;
     }
 
-    if (scene.hit(ray, 0.001, Infinity, IRecord)) {
+    if (scene.hit(ray, 0.001, Infinity)) {
       const attenuation = new Vector3();
       const scattered = new Ray();
 
-      if (IRecord.material.scatter(ray, IRecord, scattered, attenuation)) {
+      if (Record.material.scatter(ray, scattered, attenuation)) {
         const color = this.getColor(scattered, scene, depth - 1);
 
         color.x *= attenuation.x;

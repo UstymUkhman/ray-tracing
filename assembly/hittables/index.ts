@@ -1,5 +1,5 @@
-import Record from './Record';
-export const IRecord = new Record();
+import HitRecord from './Record';
+export const Record = new HitRecord();
 
 export { default as List } from './List';
 export { default as World } from './World';

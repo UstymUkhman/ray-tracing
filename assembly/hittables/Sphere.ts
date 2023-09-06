@@ -1,5 +1,5 @@
 import Ray from '../Ray';
-import Record from './Record';
+import { Record } from './';
 import Hittable from './Hittable';
 import Vector3 from '../utils/Vector3';
 import { Material } from '../materials';
@@ -18,8 +18,7 @@ export default class Sphere extends Hittable
   public override hit (
     ray: Ray,
     tMin: f32,
-    tMax: f32,
-    record: Record
+    tMax: f32
   ): bool {
     const dx = ray.dirX;
     const dy = ray.dirY;
@@ -60,9 +59,9 @@ export default class Sphere extends Hittable
     const ry = oy + dy * root;
     const rz = oz + dz * root;
 
-    record.pointX = rx;
-    record.pointY = ry;
-    record.pointZ = rz;
+    Record.pointX = rx;
+    Record.pointY = ry;
+    Record.pointZ = rz;
 
     const px = rx;
     const py = ry;
@@ -72,10 +71,9 @@ export default class Sphere extends Hittable
     const ony = (py - cy) / this.radius;
     const onz = (pz - cz) / this.radius;
 
-    record.setFaceNormal(ray, onx, ony, onz);
-    record.material = this.material;
-
-    record.t = root;
+    Record.setFaceNormal(ray, onx, ony, onz);
+    Record.material = this.material;
+    Record.t = root;
 
     return true;
   }

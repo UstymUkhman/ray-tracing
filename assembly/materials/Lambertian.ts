@@ -1,7 +1,7 @@
 import Ray from '../Ray';
 import Material from './Material';
+import { Record } from '../hittables';
 import Vector3 from '../utils/Vector3';
-import Record from '../hittables/Record';
 import { random } from '../utils/Number';
 
 export default class Lambertian extends Material
@@ -17,7 +17,6 @@ export default class Lambertian extends Material
   @inline
   public override scatter (
     inRay: Ray,
-    record: Record,
     scattered: Ray,
     attenuation: Vector3
   ): bool {
@@ -41,27 +40,27 @@ export default class Lambertian extends Material
     y /= length;
     z /= length;
 
-    let sdx = record.normalX + x;
-    let sdy = record.normalY + y;
-    let sdz = record.normalZ + z;
+    let sdx = Record.normalX + x;
+    let sdy = Record.normalY + y;
+    let sdz = Record.normalZ + z;
 
     if (
       Mathf.abs(sdx) < 1e-8 &&
       Mathf.abs(sdy) < 1e-8 &&
       Mathf.abs(sdz) < 1e-8
     ) {
-      sdx = record.normalX;
-      sdy = record.normalY;
-      sdz = record.normalZ;
+      sdx = Record.normalX;
+      sdy = Record.normalY;
+      sdz = Record.normalZ;
     }
 
     scattered.dirX = sdx;
     scattered.dirY = sdy;
     scattered.dirZ = sdz;
 
-    scattered.origX = record.pointX;
-    scattered.origY = record.pointY;
-    scattered.origZ = record.pointZ;
+    scattered.origX = Record.pointX;
+    scattered.origY = Record.pointY;
+    scattered.origZ = Record.pointZ;
 
     const albedo = this.albedo;
 

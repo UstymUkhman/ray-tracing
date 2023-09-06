@@ -17,21 +17,6 @@ export default class Record
   public t: f32 = 0.0;
 
   @inline
-  public copy (record: Record): void {
-    this.frontFace = record.frontFace;
-
-    this.normalX = record.normalX;
-    this.normalY = record.normalY;
-    this.normalZ = record.normalZ;
-
-    this.pointX = record.pointX;
-    this.pointY = record.pointY;
-    this.pointZ = record.pointZ;
-
-    this.t = record.t;
-  }
-
-  @inline
   public setFaceNormal (
     ray: Ray,
     onx: f32,
