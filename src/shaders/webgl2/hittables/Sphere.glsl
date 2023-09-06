@@ -26,9 +26,8 @@ bool sphereHit (
   if (root < tMin || root > tMax) {
     root = (-halfB + sqrtD) / a;
 
-    if (root < tMin || root > tMax) {
+    if (root < tMin || root > tMax)
       return false;
-    }
   }
 
   record.t = root;

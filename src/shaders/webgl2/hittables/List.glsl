@@ -17,12 +17,10 @@ bool listHit (
   bool hit = false;
   float closest = tMax;
 
-  for (uint o = 0u, l = hittables.length; o < l; ++o)
-  {
+  for (uint o = 0u, l = hittables.length; o < l; ++o) {
     Sphere sphere = hittables.objects[o];
 
-    if (sphereHit(ray, tMin, tMax, sphere))
-    {
+    if (sphereHit(ray, tMin, tMax, sphere)) {
       closest = record.t;
       hit = true;
     }
