@@ -4,9 +4,9 @@
  (type $i32_=>_none (func (param i32)))
  (type $none_=>_none (func))
  (type $i32_i32_=>_i32 (func (param i32 i32) (result i32)))
- (type $i32_i32_=>_none (func (param i32 i32)))
- (type $i32_i32_f32_i32_=>_i32 (func (param i32 i32 f32 i32) (result i32)))
  (type $i32_i32_i32_i32_=>_none (func (param i32 i32 i32 i32)))
+ (type $i32_i32_=>_none (func (param i32 i32)))
+ (type $i32_i32_f32_=>_i32 (func (param i32 i32 f32) (result i32)))
  (type $i32_i32_i64_=>_none (func (param i32 i32 i64)))
  (type $f32_f32_f32_=>_i32 (func (param f32 f32 f32) (result i32)))
  (type $f32_=>_i32 (func (param f32) (result i32)))
@@ -17,14 +17,13 @@
  (type $none_=>_i32 (func (result i32)))
  (type $i32_i32_i32_i32_=>_i32 (func (param i32 i32 i32 i32) (result i32)))
  (type $f32_f32_=>_f32 (func (param f32 f32) (result f32)))
- (type $i32_i32_i32_i32_i32_=>_none (func (param i32 i32 i32 i32 i32)))
  (import "env" "abort" (func $~lib/builtins/abort (param i32 i32 i32 i32)))
  (import "env" "seed" (func $~lib/builtins/seed (result f64)))
  (global $~lib/rt/tlsf/ROOT (mut i32) (i32.const 0))
  (global $~lib/rt/tcms/fromSpace (mut i32) (i32.const 0))
  (global $~lib/rt/tcms/white (mut i32) (i32.const 0))
  (global $~lib/rt/tcms/total (mut i32) (i32.const 0))
- (global $assembly/hittables/index/IRecord (mut i32) (i32.const 0))
+ (global $assembly/hittables/index/Record (mut i32) (i32.const 0))
  (global $~argumentsLength (mut i32) (i32.const 0))
  (global $~lib/math/random_seeded (mut i32) (i32.const 0))
  (global $~lib/math/random_state0_32 (mut i32) (i32.const 0))
@@ -2023,7 +2022,7 @@
  )
  (func $assembly/Ray/Ray#getColor (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (result i32)
   (local $4 f32)
-  (local $5 i32)
+  (local $5 f32)
   (local $6 f32)
   (local $7 i32)
   (local $8 i32)
@@ -2031,8 +2030,6 @@
   (local $10 f32)
   (local $11 f32)
   (local $12 f32)
-  (local $13 f32)
-  (local $14 f32)
   block $folding-inner0
    local.get $3
    i32.const 255
@@ -2042,7 +2039,6 @@
    local.get $2
    local.get $1
    f32.const inf
-   global.get $assembly/hittables/index/IRecord
    call $assembly/hittables/Hittable/Hittable#hit@override
    if
     i32.const 0
@@ -2052,7 +2048,7 @@
     local.set $8
     call $assembly/Ray/Ray#constructor
     local.set $7
-    global.get $assembly/hittables/index/IRecord
+    global.get $assembly/hittables/index/Record
     i32.load $0 offset=4
     local.tee $9
     i32.eqz
@@ -2064,8 +2060,6 @@
      call $~lib/builtins/abort
      unreachable
     end
-    global.get $assembly/hittables/index/IRecord
-    local.set $5
     block $__inlined_func$assembly/materials/Material/Material#scatter@override
      block $default
       block $case2
@@ -2086,66 +2080,74 @@
         f32.mul
         local.get $1
         f32.load $0 offset=20
-        local.tee $6
-        local.get $6
+        local.tee $5
+        local.get $5
         f32.mul
         f32.add
         local.get $1
         f32.load $0 offset=24
-        local.tee $10
-        local.get $10
+        local.tee $6
+        local.get $6
         f32.mul
         f32.add
         f32.sqrt
-        local.set $11
+        local.set $10
+        local.get $4
+        local.get $10
+        f32.div
+        local.tee $4
+        global.get $assembly/hittables/index/Record
+        local.tee $1
+        f32.load $0 offset=8
+        local.tee $11
         local.get $4
         local.get $11
-        f32.div
-        local.tee $12
-        local.get $5
-        f32.load $0 offset=8
-        local.tee $13
         f32.mul
-        local.get $6
-        local.get $11
-        f32.div
-        local.tee $6
         local.get $5
+        local.get $10
+        f32.div
+        local.tee $4
+        local.get $1
         f32.load $0 offset=12
-        local.tee $14
+        local.tee $5
         f32.mul
         f32.add
+        local.get $6
         local.get $10
-        local.get $11
         f32.div
-        local.tee $10
-        local.get $5
+        local.tee $6
+        local.get $1
         f32.load $0 offset=16
-        local.tee $11
+        local.tee $10
         f32.mul
         f32.add
         f32.const 2
         f32.mul
-        local.set $4
-        local.get $12
-        local.get $13
-        local.get $4
+        local.tee $11
         f32.mul
         f32.sub
         local.set $12
-        local.get $6
-        local.get $14
         local.get $4
-        f32.mul
-        f32.sub
-        local.set $6
-        local.get $10
+        local.get $5
         local.get $11
-        local.get $4
         f32.mul
         f32.sub
         local.set $4
+        local.get $6
+        local.get $10
+        local.get $11
+        f32.mul
+        f32.sub
+        local.set $5
         loop $do-loop|0
+         call $~lib/math/NativeMathf.random
+         f32.const 2
+         f32.mul
+         f32.const -1
+         f32.add
+         local.tee $6
+         local.get $6
+         f32.mul
          call $~lib/math/NativeMathf.random
          f32.const 2
          f32.mul
@@ -2154,6 +2156,7 @@
          local.tee $10
          local.get $10
          f32.mul
+         f32.add
          call $~lib/math/NativeMathf.random
          f32.const 2
          f32.mul
@@ -2163,83 +2166,75 @@
          local.get $11
          f32.mul
          f32.add
-         call $~lib/math/NativeMathf.random
-         f32.const 2
-         f32.mul
-         f32.const -1
-         f32.add
-         local.tee $13
-         local.get $13
-         f32.mul
-         f32.add
          f32.const 1
          f32.lt
          br_if $do-loop|0
         end
-        local.get $10
+        local.get $6
         local.get $9
         f32.load $0
-        local.tee $10
+        local.tee $6
         f32.mul
         local.get $12
         f32.add
         local.set $12
         local.get $7
-        local.get $5
+        global.get $assembly/hittables/index/Record
+        local.tee $1
         f32.load $0 offset=20
         f32.store $0 offset=4
         local.get $7
-        local.get $5
+        local.get $1
         f32.load $0 offset=24
         f32.store $0 offset=8
         local.get $7
-        local.get $5
+        local.get $1
         f32.load $0 offset=28
         f32.store $0 offset=12
         local.get $8
         local.get $9
         i32.load $0 offset=4
-        local.tee $1
+        local.tee $9
         f32.load $0
         f32.store $0
         local.get $8
-        local.get $1
+        local.get $9
         f32.load $0 offset=4
         f32.store $0 offset=4
         local.get $8
-        local.get $1
+        local.get $9
         f32.load $0 offset=8
         f32.store $0 offset=8
         local.get $7
         local.get $12
         f32.store $0 offset=16
         local.get $7
-        local.get $11
         local.get $10
-        f32.mul
         local.get $6
-        f32.add
-        local.tee $6
-        f32.store $0 offset=20
-        local.get $7
-        local.get $13
-        local.get $10
         f32.mul
         local.get $4
         f32.add
         local.tee $4
+        f32.store $0 offset=20
+        local.get $7
+        local.get $11
+        local.get $6
+        f32.mul
+        local.get $5
+        f32.add
+        local.tee $5
         f32.store $0 offset=24
         local.get $12
-        local.get $5
+        local.get $1
         f32.load $0 offset=8
         f32.mul
-        local.get $6
-        local.get $5
+        local.get $4
+        local.get $1
         f32.load $0 offset=12
         f32.mul
         f32.add
-        local.get $4
         local.get $5
+        local.get $1
         f32.load $0 offset=16
         f32.mul
         f32.add
@@ -2275,22 +2270,22 @@
         local.get $10
         f32.mul
         f32.add
-        local.tee $11
+        local.tee $5
         f32.const 1
         f32.lt
         br_if $do-loop|00
        end
-       local.get $5
+       global.get $assembly/hittables/index/Record
+       local.tee $1
        f32.load $0 offset=8
        local.get $4
-       local.get $11
+       local.get $5
        f32.sqrt
        local.tee $11
        f32.div
        f32.add
-       local.set $12
-       local.get $7
-       local.get $5
+       local.set $5
+       local.get $1
        f32.load $0 offset=12
        local.get $6
        local.get $11
@@ -2300,12 +2295,12 @@
        f32.abs
        f32.const 9.99999993922529e-09
        f32.lt
-       local.get $12
+       local.get $5
        f32.abs
        f32.const 9.99999993922529e-09
        f32.lt
        i32.and
-       local.get $5
+       local.get $1
        f32.load $0 offset=16
        local.get $10
        local.get $11
@@ -2316,18 +2311,20 @@
        f32.const 9.99999993922529e-09
        f32.lt
        i32.and
-       if (result f32)
-        local.get $5
-        f32.load $0 offset=12
-        local.set $4
-        local.get $5
+       if
+        global.get $assembly/hittables/index/Record
+        local.tee $1
+        f32.load $0 offset=8
+        local.set $5
+        local.get $1
         f32.load $0 offset=16
         local.set $6
-        local.get $5
-        f32.load $0 offset=8
-       else
-        local.get $12
+        local.get $1
+        f32.load $0 offset=12
+        local.set $4
        end
+       local.get $7
+       local.get $5
        f32.store $0 offset=16
        local.get $7
        local.get $4
@@ -2336,15 +2333,16 @@
        local.get $6
        f32.store $0 offset=24
        local.get $7
-       local.get $5
+       global.get $assembly/hittables/index/Record
+       local.tee $1
        f32.load $0 offset=20
        f32.store $0 offset=4
        local.get $7
-       local.get $5
+       local.get $1
        f32.load $0 offset=24
        f32.store $0 offset=8
        local.get $7
-       local.get $5
+       local.get $1
        f32.load $0 offset=28
        f32.store $0 offset=12
        local.get $8
@@ -2367,7 +2365,6 @@
       end
       local.get $9
       local.get $1
-      local.get $5
       local.get $7
       local.get $8
       call $assembly/materials/Dielectric/Dielectric#scatter
@@ -2419,33 +2416,33 @@
    f32.mul
    local.get $1
    f32.load $0 offset=20
-   local.tee $6
-   local.get $6
+   local.tee $5
+   local.get $5
    f32.mul
    f32.add
    local.get $1
    f32.load $0 offset=24
-   local.tee $6
-   local.get $6
+   local.tee $5
+   local.get $5
    f32.mul
    f32.add
    f32.sqrt
-   local.set $6
+   local.set $5
    local.get $1
    local.get $4
-   local.get $6
+   local.get $5
    f32.div
    f32.store $0 offset=16
    local.get $1
    local.get $1
    f32.load $0 offset=20
-   local.get $6
+   local.get $5
    f32.div
    f32.store $0 offset=20
    local.get $1
    local.get $1
    f32.load $0 offset=24
-   local.get $6
+   local.get $5
    f32.div
    f32.store $0 offset=24
    local.get $0
@@ -2460,21 +2457,21 @@
    f32.mul
    local.tee $4
    f32.sub
-   local.tee $6
+   local.tee $5
    local.get $4
    f32.const 0.5
    f32.mul
    f32.add
    f32.store $0
    local.get $0
-   local.get $6
+   local.get $5
    local.get $4
    f32.const 0.699999988079071
    f32.mul
    f32.add
    f32.store $0 offset=4
    local.get $0
-   local.get $6
+   local.get $5
    local.get $4
    f32.add
    f32.store $0 offset=8
@@ -3322,7 +3319,7 @@
     i32.store $0 offset=8
    end
   end
-  global.get $assembly/hittables/index/IRecord
+  global.get $assembly/hittables/index/Record
   local.tee $0
   if
    global.get $~lib/rt/tcms/white
@@ -3536,129 +3533,129 @@
   local.get $4
   global.set $~lib/rt/tcms/white
  )
- (func $assembly/hittables/Sphere/Sphere#hit (param $0 i32) (param $1 i32) (param $2 f32) (param $3 i32) (result i32)
+ (func $assembly/hittables/Sphere/Sphere#hit (param $0 i32) (param $1 i32) (param $2 f32) (result i32)
+  (local $3 f32)
   (local $4 f32)
   (local $5 f32)
   (local $6 f32)
-  (local $7 i32)
+  (local $7 f32)
   (local $8 f32)
   (local $9 f32)
   (local $10 f32)
   (local $11 f32)
   (local $12 f32)
   (local $13 f32)
-  (local $14 f32)
+  (local $14 i32)
   (local $15 f32)
   (local $16 f32)
   (local $17 f32)
-  (local $18 f32)
   local.get $1
   f32.load $0 offset=16
-  local.tee $11
-  local.get $11
+  local.tee $9
+  local.get $9
   f32.mul
   local.get $1
   f32.load $0 offset=20
-  local.tee $12
-  local.get $12
+  local.tee $10
+  local.get $10
   f32.mul
   f32.add
   local.get $1
   f32.load $0 offset=24
-  local.tee $13
-  local.get $13
+  local.tee $11
+  local.get $11
   f32.mul
   f32.add
-  local.set $14
+  local.set $12
   local.get $1
   f32.load $0 offset=4
-  local.tee $15
+  local.tee $13
   local.get $0
   i32.load $0 offset=4
-  local.tee $7
+  local.tee $14
   f32.load $0
-  local.tee $5
+  local.tee $4
   f32.sub
-  local.tee $16
-  local.get $11
+  local.tee $15
+  local.get $9
   f32.mul
   local.get $1
   f32.load $0 offset=8
-  local.tee $6
-  local.get $7
+  local.tee $5
+  local.get $14
   f32.load $0 offset=4
-  local.tee $8
+  local.tee $6
   f32.sub
-  local.tee $4
-  local.get $12
+  local.tee $3
+  local.get $10
   f32.mul
   f32.add
   local.get $1
   f32.load $0 offset=12
-  local.tee $9
-  local.get $7
-  f32.load $0 offset=8
-  local.tee $10
-  f32.sub
-  local.tee $17
-  local.get $13
-  f32.mul
-  f32.add
-  local.tee $18
-  local.get $18
-  f32.mul
+  local.tee $7
   local.get $14
-  local.get $16
-  local.get $16
-  f32.mul
-  local.get $4
-  local.get $4
+  f32.load $0 offset=8
+  local.tee $8
+  f32.sub
+  local.tee $16
+  local.get $11
   f32.mul
   f32.add
+  local.tee $17
   local.get $17
-  local.get $17
+  f32.mul
+  local.get $12
+  local.get $15
+  local.get $15
+  f32.mul
+  local.get $3
+  local.get $3
+  f32.mul
+  f32.add
+  local.get $16
+  local.get $16
   f32.mul
   f32.add
   local.get $0
   f32.load $0
-  local.tee $4
-  local.get $4
+  local.tee $3
+  local.get $3
   f32.mul
   f32.sub
   f32.mul
   f32.sub
-  local.tee $4
+  local.tee $3
   f32.const 0
   f32.lt
   if
    i32.const 0
    return
   end
-  local.get $18
+  local.get $17
   f32.neg
-  local.get $4
+  local.get $3
   f32.sqrt
-  local.tee $16
+  local.tee $15
   f32.sub
-  local.get $14
+  local.get $12
   f32.div
-  local.tee $4
+  local.tee $3
   local.get $2
   f32.gt
-  local.get $4
+  local.get $3
   f32.const 1.0000000474974513e-03
   f32.lt
   i32.or
   if
-   local.get $16
-   local.get $18
+   local.get $15
+   local.get $17
    f32.sub
-   local.get $14
+   local.get $12
    f32.div
-   local.tee $4
+   local.tee $3
    local.get $2
    f32.gt
-   local.get $4
+   local.get $3
    f32.const 1.0000000474974513e-03
    f32.lt
    i32.or
@@ -3667,56 +3664,57 @@
     return
    end
   end
+  global.get $assembly/hittables/index/Record
+  local.tee $14
+  local.get $13
+  local.get $9
   local.get $3
-  local.get $15
-  local.get $11
-  local.get $4
   f32.mul
   f32.add
   local.tee $2
   f32.store $0 offset=20
+  local.get $14
+  local.get $5
+  local.get $10
   local.get $3
-  local.get $6
-  local.get $12
-  local.get $4
   f32.mul
   f32.add
-  local.tee $6
+  local.tee $5
   f32.store $0 offset=24
+  local.get $14
+  local.get $7
+  local.get $11
   local.get $3
-  local.get $9
-  local.get $13
-  local.get $4
   f32.mul
   f32.add
-  local.tee $9
+  local.tee $7
   f32.store $0 offset=28
-  local.get $3
+  local.get $14
   local.get $1
   f32.load $0 offset=16
   local.get $2
-  local.get $5
+  local.get $4
   f32.sub
   local.get $0
   f32.load $0
   local.tee $2
   f32.div
-  local.tee $5
+  local.tee $4
   f32.mul
   local.get $1
   f32.load $0 offset=20
+  local.get $5
   local.get $6
-  local.get $8
   f32.sub
   local.get $2
   f32.div
-  local.tee $6
+  local.tee $5
   f32.mul
   f32.add
   local.get $1
   f32.load $0 offset=24
-  local.get $9
-  local.get $10
+  local.get $7
+  local.get $8
   f32.sub
   local.get $2
   f32.div
@@ -3726,35 +3724,36 @@
   f32.const 0
   f32.lt
   i32.store8 $0
-  local.get $3
+  local.get $14
   i32.load8_u $0
   i32.eqz
   if
-   local.get $6
-   f32.neg
-   local.set $6
    local.get $5
    f32.neg
    local.set $5
+   local.get $4
+   f32.neg
+   local.set $4
    local.get $2
    f32.neg
    local.set $2
   end
-  local.get $3
-  local.get $5
+  local.get $14
+  local.get $4
   f32.store $0 offset=8
-  local.get $3
-  local.get $6
+  local.get $14
+  local.get $5
   f32.store $0 offset=12
-  local.get $3
+  local.get $14
   local.get $2
   f32.store $0 offset=16
-  local.get $3
+  global.get $assembly/hittables/index/Record
+  local.tee $1
   local.get $0
   i32.load $0 offset=8
   i32.store $0 offset=4
+  local.get $1
   local.get $3
-  local.get $4
   f32.store $0 offset=32
   i32.const 1
  )
@@ -4189,68 +4188,69 @@
    f32.demote_f64
   end
  )
- (func $assembly/materials/Dielectric/Dielectric#scatter (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32)
+ (func $assembly/materials/Dielectric/Dielectric#scatter (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32)
+  (local $4 f32)
   (local $5 f32)
   (local $6 f32)
   (local $7 f32)
   (local $8 f32)
   (local $9 f32)
   (local $10 f32)
-  (local $11 f32)
   local.get $1
   f32.load $0 offset=16
-  local.tee $5
-  local.get $5
+  local.tee $4
+  local.get $4
   f32.mul
   local.get $1
   f32.load $0 offset=20
-  local.tee $6
-  local.get $6
+  local.tee $5
+  local.get $5
   f32.mul
   f32.add
   local.get $1
   f32.load $0 offset=24
-  local.tee $7
-  local.get $7
+  local.tee $6
+  local.get $6
   f32.mul
   f32.add
   f32.sqrt
-  local.set $8
+  local.set $7
   f32.const 1
-  local.get $2
+  global.get $assembly/hittables/index/Record
+  local.tee $1
   f32.load $0 offset=8
+  local.get $4
+  local.get $7
+  f32.div
+  local.tee $4
+  f32.neg
+  f32.mul
+  local.get $1
+  f32.load $0 offset=12
   local.get $5
-  local.get $8
+  local.get $7
   f32.div
   local.tee $5
   f32.neg
   f32.mul
-  local.get $2
-  f32.load $0 offset=12
+  f32.add
+  local.get $1
+  f32.load $0 offset=16
   local.get $6
-  local.get $8
+  local.get $7
   f32.div
   local.tee $6
-  f32.neg
-  f32.mul
-  f32.add
-  local.get $2
-  f32.load $0 offset=16
-  local.get $7
-  local.get $8
-  f32.div
-  local.tee $7
   f32.neg
   f32.mul
   f32.add
   f32.const 1
   f32.min
-  local.tee $8
-  local.get $8
+  local.tee $7
+  local.get $7
   f32.mul
   f32.sub
   f32.sqrt
-  local.get $2
+  local.get $1
   i32.load8_u $0
   if (result f32)
    f32.const 1
@@ -4261,7 +4261,7 @@
    local.get $0
    f32.load $0
   end
-  local.tee $9
+  local.tee $8
   f32.mul
   f32.const 1
   f32.gt
@@ -4270,178 +4270,180 @@
    local.get $0
   else
    call $~lib/math/NativeMathf.random
-   local.set $10
+   local.set $9
    f32.const 1
-   local.get $9
+   local.get $8
    f32.sub
-   local.get $9
+   local.get $8
    f32.const 1
    f32.add
    f32.div
    f32.const 2
    call $~lib/math/NativeMathf.pow
-   local.set $11
-   local.get $10
+   local.set $10
+   local.get $9
    f32.const 1
-   local.get $8
+   local.get $7
    f32.sub
    f32.const 5
    call $~lib/math/NativeMathf.pow
    f32.const 1
-   local.get $11
+   local.get $10
    f32.sub
    f32.mul
-   local.get $11
+   local.get $10
    f32.add
    f32.lt
   end
   if (result f32)
-   local.get $2
+   local.get $4
+   global.get $assembly/hittables/index/Record
+   local.tee $0
    f32.load $0 offset=8
-   local.tee $8
+   local.tee $7
+   local.get $7
+   local.get $4
+   f32.mul
+   local.get $0
+   f32.load $0 offset=12
+   local.tee $7
    local.get $5
    f32.mul
-   local.get $2
-   f32.load $0 offset=12
-   local.tee $9
-   local.get $6
-   f32.mul
    f32.add
-   local.get $2
+   local.get $0
    f32.load $0 offset=16
-   local.tee $10
-   local.get $7
+   local.tee $8
+   local.get $6
    f32.mul
    f32.add
    f32.const 2
    f32.mul
-   local.set $11
+   local.tee $9
+   f32.mul
+   f32.sub
+   local.set $4
    local.get $5
-   local.get $8
-   local.get $11
+   local.get $7
+   local.get $9
    f32.mul
    f32.sub
    local.set $5
    local.get $6
+   local.get $8
    local.get $9
-   local.get $11
-   f32.mul
-   f32.sub
-   local.set $6
-   local.get $7
-   local.get $10
-   local.get $11
    f32.mul
    f32.sub
   else
-   local.get $2
+   global.get $assembly/hittables/index/Record
+   local.tee $0
    f32.load $0 offset=8
-   local.tee $10
+   local.tee $9
+   local.get $7
+   f32.mul
+   local.get $4
+   f32.add
    local.get $8
+   f32.mul
+   local.tee $4
+   local.get $9
+   f32.const 1
+   local.get $4
+   local.get $4
+   f32.mul
+   local.get $0
+   f32.load $0 offset=12
+   local.tee $9
+   local.get $7
    f32.mul
    local.get $5
    f32.add
-   local.get $9
+   local.get $8
    f32.mul
    local.tee $5
-   local.get $10
-   f32.const 1
-   local.get $5
    local.get $5
    f32.mul
-   local.get $2
-   f32.load $0 offset=12
+   f32.add
+   local.get $0
+   f32.load $0 offset=16
    local.tee $10
-   local.get $8
+   local.get $7
    f32.mul
    local.get $6
    f32.add
-   local.get $9
+   local.get $8
    f32.mul
    local.tee $6
    local.get $6
-   f32.mul
-   f32.add
-   local.get $2
-   f32.load $0 offset=16
-   local.tee $11
-   local.get $8
-   f32.mul
-   local.get $7
-   f32.add
-   local.get $9
-   f32.mul
-   local.tee $7
-   local.get $7
    f32.mul
    f32.add
    f32.sub
    f32.abs
    f32.sqrt
    f32.neg
-   local.tee $8
+   local.tee $7
+   f32.mul
+   f32.add
+   local.set $4
+   local.get $5
+   local.get $9
+   local.get $7
    f32.mul
    f32.add
    local.set $5
    local.get $6
    local.get $10
-   local.get $8
-   f32.mul
-   f32.add
-   local.set $6
    local.get $7
-   local.get $11
-   local.get $8
    f32.mul
    f32.add
   end
-  local.set $7
-  local.get $3
+  local.set $6
   local.get $2
+  global.get $assembly/hittables/index/Record
+  local.tee $0
   f32.load $0 offset=20
   f32.store $0 offset=4
-  local.get $3
   local.get $2
+  local.get $0
   f32.load $0 offset=24
   f32.store $0 offset=8
-  local.get $3
   local.get $2
+  local.get $0
   f32.load $0 offset=28
   f32.store $0 offset=12
-  local.get $3
-  local.get $5
-  f32.store $0 offset=16
-  local.get $3
-  local.get $6
-  f32.store $0 offset=20
-  local.get $3
-  local.get $7
-  f32.store $0 offset=24
+  local.get $2
   local.get $4
+  f32.store $0 offset=16
+  local.get $2
+  local.get $5
+  f32.store $0 offset=20
+  local.get $2
+  local.get $6
+  f32.store $0 offset=24
+  local.get $3
   f32.const 1
   f32.store $0
-  local.get $4
+  local.get $3
   f32.const 1
   f32.store $0 offset=4
-  local.get $4
+  local.get $3
   f32.const 1
   f32.store $0 offset=8
  )
- (func $assembly/hittables/Hittable/Hittable#hit@override (param $0 i32) (param $1 i32) (param $2 f32) (param $3 i32) (result i32)
+ (func $assembly/hittables/Hittable/Hittable#hit@override (param $0 i32) (param $1 i32) (param $2 f32) (result i32)
+  (local $3 i32)
   (local $4 i32)
   (local $5 i32)
-  (local $6 i32)
   block $default
    block $case1
     local.get $0
     i32.const 8
     i32.sub
     i32.load $0
-    local.tee $6
+    local.tee $5
     i32.const 13
     i32.ne
     if
-     local.get $6
+     local.get $5
      i32.const 17
      i32.eq
      br_if $case1
@@ -4449,67 +4451,33 @@
     end
     local.get $0
     i32.load16_u $0 offset=4
-    local.set $6
+    local.set $5
     loop $for-loop|0
+     local.get $3
      local.get $5
-     local.get $6
      i32.lt_u
      if
       local.get $0
       i32.load $0
-      local.get $5
+      local.get $3
       i32.const 2
       i32.shl
       i32.add
       i32.load $0
       local.get $1
       local.get $2
-      global.get $assembly/hittables/index/IRecord
       call $assembly/hittables/Hittable/Hittable#hit@override
       if
-       global.get $assembly/hittables/index/IRecord
-       local.tee $4
-       f32.load $0 offset=32
-       local.set $2
-       local.get $3
-       local.get $4
-       i32.load8_u $0
-       i32.store8 $0
-       local.get $3
-       local.get $4
-       f32.load $0 offset=8
-       f32.store $0 offset=8
-       local.get $3
-       local.get $4
-       f32.load $0 offset=12
-       f32.store $0 offset=12
-       local.get $3
-       local.get $4
-       f32.load $0 offset=16
-       f32.store $0 offset=16
-       local.get $3
-       local.get $4
-       f32.load $0 offset=20
-       f32.store $0 offset=20
-       local.get $3
-       local.get $4
-       f32.load $0 offset=24
-       f32.store $0 offset=24
-       local.get $3
-       local.get $4
-       f32.load $0 offset=28
-       f32.store $0 offset=28
-       local.get $3
-       local.get $4
-       f32.load $0 offset=32
-       f32.store $0 offset=32
        i32.const 1
        local.set $4
+       global.get $assembly/hittables/index/Record
+       f32.load $0 offset=32
+       local.set $2
       end
-      local.get $5
+      local.get $3
       i32.const 1
       i32.add
-      local.set $5
+      local.set $3
       br $for-loop|0
      end
     end
@@ -4519,7 +4487,6 @@
    local.get $0
    local.get $1
    local.get $2
-   local.get $3
    call $assembly/hittables/Sphere/Sphere#hit
    return
   end
@@ -5537,7 +5504,7 @@
   f32.const 0
   f32.store $0 offset=32
   local.get $0
-  global.set $assembly/hittables/index/IRecord
+  global.set $assembly/hittables/index/Record
   i32.const 9
   i32.const 9
   call $~lib/rt/tcms/__new

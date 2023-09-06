@@ -11,10 +11,10 @@ section {
 
   position: absolute;
   transform: translate(-50%, -50%);
-  grid-template-areas: ". ." /* ". ." */;
+  grid-template-areas: ". ." ". .";
 
   @media (width <= 800px) {
-    grid-template-areas: "." "." /* "." "." */;
+    grid-template-areas: "." "." "." ".";
 
     padding:
       calc(max(100dvh - 990px, 20px) * 0.5)
@@ -25,6 +25,8 @@ section {
 
     transform: unset;
     inset: unset;
+
+    height: 100%;
     width: 100%;
   }
 }

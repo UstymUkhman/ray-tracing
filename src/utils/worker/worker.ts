@@ -45,7 +45,7 @@ self.onmessage = async (message): Promise<CPUScene | void> => {
       u8 = new Uint8ClampedArray(format(f32, u8, ++sample));
 
       params = { sample, pixels: u8, ...params };
-      !(sample % 80.0) && collect();
+      !(sample % 1e2) && collect();
 
       break;
     }

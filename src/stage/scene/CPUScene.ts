@@ -105,7 +105,7 @@ export default class CPUScene
         this.format(this.f32, this.u8, ++this.sample)
       );
 
-      !(this.sample % 80.0) && this.collect();
+      !(this.sample % 1e2) && this.collect();
     }
 
     else this.format(this.trace(this.f32), this.u8, ++this.sample);
