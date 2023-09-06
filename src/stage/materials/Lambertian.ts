@@ -1,7 +1,7 @@
 import Ray from '@/stage/Ray';
 import Material from './Material';
 import Vector3 from '@/utils/Vector3';
-import type { Hits } from '@/stage/hittables/types';
+import { Record } from '@/stage/hittables';
 
 export default class Lambertian extends Material
 {
@@ -16,15 +16,14 @@ export default class Lambertian extends Material
 
   public override scatter (
     inRay: Ray,
-    record: Hits,
     scattered: Ray,
     attenuation: Vector3
   ): boolean {
-    const scatteredDirection = record.normal.clone.add(this.direction.randomNormalized);
-    scatteredDirection.nearZero && scatteredDirection.copy(record.normal);
+    const scatteredDirection = Record.normal.clone.add(this.direction.randomNormalized);
+    scatteredDirection.nearZero && scatteredDirection.copy(Record.normal);
 
     scattered.direction = scatteredDirection;
-    scattered.origin = record.point;
+    scattered.origin = Record.point;
 
     attenuation.copy(this.albedo);
     return true;

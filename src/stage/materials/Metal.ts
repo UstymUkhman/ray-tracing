@@ -1,7 +1,7 @@
 import Ray from '@/stage/Ray';
 import Material from './Material';
 import Vector3 from '@/utils/Vector3';
-import type { Hits } from '@/stage/hittables/types';
+import { Record } from '@/stage/hittables';
 
 export default class Metal extends Material
 {
@@ -18,18 +18,17 @@ export default class Metal extends Material
 
   public override scatter (
     inRay: Ray,
-    record: Hits,
     scattered: Ray,
     attenuation: Vector3
   ): boolean {
-    const reflected = inRay.direction.normalize.reflect(record.normal);
+    const reflected = inRay.direction.normalize.reflect(Record.normal);
     this.direction.randomUnitSphere.multiply(this.fuzz).add(reflected);
 
     scattered.direction = this.direction;
-    scattered.origin = record.point;
+    scattered.origin = Record.point;
 
     attenuation.copy(this.albedo);
 
-    return this.direction.dot(record.normal) > 0.0;
+    return this.direction.dot(Record.normal) > 0.0;
   }
 }

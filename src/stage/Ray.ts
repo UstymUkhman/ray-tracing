@@ -21,11 +21,11 @@ export default class Ray
   public getColor (ray: Ray, scene: Hittable, depth: number): Vector3 {
     if (!depth) return this.color.reset();
 
-    if (scene.hit(ray, this.near, this.far, Record)) {
+    if (scene.hit(ray, this.near, this.far)) {
       const attenuation = new Vector3();
       const scattered = new Ray();
 
-      if (Record.material.scatter(ray, Record, scattered, attenuation))
+      if (Record.material.scatter(ray, scattered, attenuation))
         return this.getColor(scattered, scene, depth - 1.0)
           .multiply(attenuation);
 

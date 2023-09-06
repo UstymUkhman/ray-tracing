@@ -1,6 +1,6 @@
+import Record from './Record';
 import Hittable from './Hittable';
 import type Ray from '@/stage/Ray';
-import type { Hits } from './types';
 import Vector3 from '@/utils/Vector3';
 import type { Material } from '@/stage/materials';
 
@@ -17,8 +17,7 @@ export default class Sphere extends Hittable
   public override hit (
     ray: Ray,
     tMin: number,
-    tMax: number,
-    record: Hits
+    tMax: number
   ): boolean {
     const oc = ray.origin.clone.sub(this.center);
 
@@ -41,14 +40,14 @@ export default class Sphere extends Hittable
       }
     }
 
-    record.point.copy(ray.at(root));
+    Record.point.copy(ray.at(root));
 
-    const outwardNormal = record.point.clone
+    const outwardNormal = Record.point.clone
       .sub(this.center).divide(this.radius);
 
-    record.setFaceNormal(ray, outwardNormal);
-    record.material = this.material;
-    record.t = root;
+    Record.setFaceNormal(ray, outwardNormal);
+    Record.material = this.material;
+    Record.t = root;
 
     return true;
   }

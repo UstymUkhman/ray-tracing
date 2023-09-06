@@ -1,7 +1,6 @@
 import Record from './Record';
 import Hittable from './Hittable';
 import type Ray from '@/stage/Ray';
-import type { Hits } from './types';
 
 export default class List extends Hittable
 {
@@ -18,19 +17,16 @@ export default class List extends Hittable
   public override hit (
     ray: Ray,
     tMin: number,
-    tMax: number,
-    record: Hits
+    tMax: number
   ): boolean {
     let hit = false;
     let closest = tMax;
 
-    for (let o = 0, l = this.objects.length; o < l; o++) {
-      if (this.objects[o].hit(ray, tMin, closest, Record)) {
+    for (let o = 0, l = this.objects.length; o < l; o++)
+      if (this.objects[o].hit(ray, tMin, closest)) {
         closest = Record.t;
-        record.copy(Record);
         hit = true;
       }
-    }
 
     return hit;
   }

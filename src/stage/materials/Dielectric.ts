@@ -1,7 +1,7 @@
 import Ray from '@/stage/Ray';
 import Material from './Material';
 import Vector3 from '@/utils/Vector3';
-import type { Hits } from '@/stage/hittables/types';
+import { Record } from '@/stage/hittables';
 
 export default class Dielectric extends Material
 {
@@ -17,24 +17,23 @@ export default class Dielectric extends Material
 
   public override scatter (
     inRay: Ray,
-    record: Hits,
     scattered: Ray,
     attenuation: Vector3
   ): boolean {
     const direction = inRay.direction.normalize;
-    const tCos = Math.min(direction.clone.negate.dot(record.normal), 1.0);
-    const ratio = record.frontFace ? 1.0 / this.refraction : this.refraction;
+    const tCos = Math.min(direction.clone.negate.dot(Record.normal), 1.0);
+    const ratio = Record.frontFace ? 1.0 / this.refraction : this.refraction;
 
     const reflect =
       Math.sqrt(1.0 - tCos * tCos) * ratio > 1.0 ||
       Math.random() < this.reflectance(tCos, ratio);
 
     reflect
-      ? direction.reflect(record.normal)
-      : direction.refract(record.normal, ratio);
+      ? direction.reflect(Record.normal)
+      : direction.refract(Record.normal, ratio);
 
     scattered.direction = direction;
-    scattered.origin = record.point;
+    scattered.origin = Record.point;
 
     attenuation.reset(1.0);
 

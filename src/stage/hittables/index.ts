@@ -1,4 +1,3 @@
-export type { Hits } from './types';
 export { default as List } from './List';
 export { default as World } from './World';
 export { default as Sphere } from './Sphere';
