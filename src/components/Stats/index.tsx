@@ -68,7 +68,7 @@ export default (props: StatsProps) =>
           <strong>Language: </strong>
           <em>{processing === 'CPU'
             ? tracer : tracer === 'WebGL2'
-            ? 'OpenGL ES 3.0' : 'WGSL'
+            ? 'GLSL ES 3.0' : 'WGSL'
           }</em>
         </li>
 
