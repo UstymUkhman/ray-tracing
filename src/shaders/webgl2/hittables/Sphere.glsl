@@ -2,6 +2,7 @@ struct Sphere
 {
   vec3 center;
   float radius;
+  Material material;
 };
 
 bool sphereHit (
@@ -32,9 +33,8 @@ bool sphereHit (
 
   record.t = root;
   record.point = at(ray, root);
-
-  vec3 outwardNormal = (record.point - sphere.center) / sphere.radius;
-  setFaceNormal(ray, outwardNormal);
+  record.material = sphere.material;
+  setFaceNormal(ray, (record.point - sphere.center) / sphere.radius);
 
   return true;
 }

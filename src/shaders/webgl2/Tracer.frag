@@ -13,9 +13,13 @@
 #include ./utils/Number;
 #include ./utils/Vector3;
 
+#include ./materials/Material;
 #include ./hittables/Record;
 #include ./hittables/Sphere;
 #include ./hittables/List;
+
+#include ./materials/Lambertian;
+#include ./materials/Metal;
 #include ./utils/Color;
 
 in  vec2 uv;
@@ -25,8 +29,15 @@ void main (void)
 {
   createCamera();
 
-  listAdd(Sphere(vec3(0.0, -100.5, -1.0), 100.0));
-  listAdd(Sphere(vec3(0.0, 0.0, -1.0), 0.5));
+  Material ground = Material(LAMBERTIAN, vec3(0.8, 0.8, 0.0), 0.0);
+  Material center = Material(LAMBERTIAN, vec3(0.7, 0.3, 0.3), 0.0);
+  Material left   = Material(METAL, vec3(0.8, 0.8, 0.8), 0.3);
+  Material right  = Material(METAL, vec3(0.8, 0.6, 0.2), 1.0);
+
+  listAdd(Sphere(vec3(0.0, -100.5, -1.0), 100.0, ground));
+  listAdd(Sphere(vec3(-1.0, 0.0, -1.0), 0.5, left));
+  listAdd(Sphere(vec3(1.0, 0.0, -1.0), 0.5, right));
+  listAdd(Sphere(vec3(0.0, 0.0, -1.0), 0.5, center));
 
   vec2 res = vec2(config.width, config.height);
   vec2 coord = vec2(uv.x, 1.0 - uv.y) * res;

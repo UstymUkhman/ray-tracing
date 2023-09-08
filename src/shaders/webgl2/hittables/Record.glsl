@@ -4,6 +4,7 @@ struct Record
   vec3 point;
   vec3 normal;
   bool frontFace;
+  Material material;
 } record;
 
 void setFaceNormal (

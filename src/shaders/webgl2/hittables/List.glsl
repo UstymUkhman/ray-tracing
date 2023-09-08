@@ -1,6 +1,6 @@
 struct List
 {
-  Sphere objects[2];
+  Sphere objects[4];
   uint length;
 } hittables;
 

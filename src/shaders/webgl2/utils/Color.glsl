@@ -20,10 +20,26 @@ vec3 getColor (in Ray ray, in vec2 seed, uint depth)
 
   for (uint d = depth; d > 0u; --d)
   {
-    if (listHit(ray, 0.001, INFINITY)) {
-      vec3 target = record.point + record.normal + randomUnitSphere(seed);
-      ray = Ray(record.point, target - record.point);
-      color *= vec3(0.5);
+    if (listHit(ray, 0.001, INFINITY))
+    {
+      Ray scattered;
+      vec3 attenuation;
+      bool scatter = false;
+
+      switch (record.material.type)
+      {
+        case METAL:
+          scatter = metalScatter(attenuation, record.material, scattered, seed, ray);
+        break;
+
+        default:
+          scatter = lambertianScatter(attenuation, record.material, scattered, seed);
+      }
+
+      if (scatter) {
+        color *= attenuation;
+        ray = scattered;
+      }
     }
 
     else {
