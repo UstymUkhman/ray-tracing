@@ -6,7 +6,7 @@ bool metalScatter (
   in Ray ray
 ) {
   vec3 reflected = reflect(normalize(ray.direction), record.normal);
-  reflected += randomUnitSphere(seed) * material.fuzz;
+  reflected += randomUnitSphere(seed) * material.extra;
 
   scattered = Ray(record.point, reflected);
   attenuation = material.albedo;

@@ -32,6 +32,10 @@ vec3 getColor (in Ray ray, in vec2 seed, uint depth)
           scatter = metalScatter(attenuation, record.material, scattered, seed, ray);
         break;
 
+        case DIELECTRIC:
+          scatter = dielectricScatter(attenuation, record.material, scattered, seed, ray);
+        break;
+
         default:
           scatter = lambertianScatter(attenuation, record.material, scattered, seed);
       }

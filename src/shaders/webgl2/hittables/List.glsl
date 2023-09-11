@@ -1,6 +1,6 @@
 struct List
 {
-  Sphere objects[4];
+  Sphere objects[5];
   uint length;
 } hittables;
 
@@ -20,7 +20,7 @@ bool listHit (
   for (uint o = 0u, l = hittables.length; o < l; ++o) {
     Sphere sphere = hittables.objects[o];
 
-    if (sphereHit(ray, tMin, tMax, sphere)) {
+    if (sphereHit(ray, tMin, closest, sphere)) {
       closest = record.t;
       hit = true;
     }
