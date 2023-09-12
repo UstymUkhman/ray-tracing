@@ -9,6 +9,6 @@ struct Config
 config = Config(
   360.0,
   240.0,
-  500u,
-  50u
+  100u, // 500u,
+  10u // 50u
 );

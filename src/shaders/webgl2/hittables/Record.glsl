@@ -1,3 +1,5 @@
+#include ../materials/Material;
+
 struct Record
 {
   float t;

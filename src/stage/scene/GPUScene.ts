@@ -1,5 +1,6 @@
 import type { SceneParams } from '@/stage/scene/types';
 import Tracer from '@/shaders/webgl2/Tracer.frag';
+import Vertex from '@/shaders/webgl2/main.vert';
 import { CanvasWebGL2 } from '@/stage/context';
 import type { Canvas } from '@/stage/context';
 
@@ -20,7 +21,14 @@ export default class GPUScene
       //   return new CanvasWebGPU(params);
 
       default:
-        return new CanvasWebGL2(params, Tracer);
+        return new CanvasWebGL2(
+          params,
+          Tracer,
+          Vertex.replace(
+            '#version 300 es',
+            '#version 300 es\n#define CAMERA'
+          )
+        );
     }
   }
 }

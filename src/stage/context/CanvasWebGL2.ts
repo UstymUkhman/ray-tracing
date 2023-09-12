@@ -1,5 +1,5 @@
-import Vertex from '@/shaders/webgl2/main.vert?raw';
-import Fragment from '@/shaders/webgl2/main.frag?raw';
+import Vertex from '@/shaders/webgl2/main.vert';
+import Fragment from '@/shaders/webgl2/main.frag';
 import CanvasWebGL from '@/stage/context/CanvasWebGL';
 import type { SceneParams } from '@/stage/scene/types';
 
@@ -7,9 +7,9 @@ export default class CanvasWebGL2 extends CanvasWebGL
 {
   private readonly cpuScene: boolean = true;
 
-  public constructor(params: SceneParams, fragment = Fragment)
+  public constructor(params: SceneParams, fragment = Fragment, vertex = Vertex)
   {
-    super(params, fragment, Vertex);
+    super(params, fragment, vertex);
     this.cpuScene = params.tracer !== 'WebGL2';
   }
 

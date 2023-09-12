@@ -1,3 +1,7 @@
+#include ./Ray;
+#include ./Config;
+#include ./utils/Vector3;
+
 struct Camera
 {
   vec3 u;
@@ -7,9 +11,9 @@ struct Camera
   vec3 horizontal;
   float lensRadius;
   vec3 lowerLeftCorner;
-} camera;
+};
 
-void createCamera (
+Camera createCamera (
   const in vec3 origin,
   const in vec3 lookAt,
   const in vec3 vUp,
@@ -28,7 +32,7 @@ void createCamera (
   vec3 vertical = v * height * focusDist;
   vec3 horizontal = u * width * focusDist;
 
-  camera = Camera(
+  return Camera(
     u,
     v,
     origin,
@@ -42,7 +46,7 @@ void createCamera (
   );
 }
 
-Ray getRay (in float s, in float t, in vec2 seed)
+Ray getRay (Camera camera, in float s, in float t, in vec2 seed)
 {
   vec3 randomDisk = randomUnitDisk(seed) * camera.lensRadius;
   vec3 offset = camera.u * randomDisk.x + camera.v * randomDisk.y;

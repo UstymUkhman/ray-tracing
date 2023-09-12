@@ -1,3 +1,5 @@
+#include ./Record;
+
 struct Sphere
 {
   vec3 center;

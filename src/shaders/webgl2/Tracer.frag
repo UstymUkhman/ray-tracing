@@ -6,26 +6,11 @@
   precision highp float;
 #endif
 
-#include ./Ray;
-#include ./Config;
-
-#include ./utils/Number;
-#include ./utils/Vector3;
-
-#include ./materials/Material;
-#include ./hittables/Record;
-#include ./hittables/Sphere;
-#include ./hittables/List;
-#include ./hittables/World;
-
-#include ./materials/Lambertian;
-#include ./materials/Dielectric;
-#include ./materials/Metal;
-
-#include ./utils/Color;
 #include ./Camera;
+#include ./utils/Color;
 
 in  vec2 uv;
+in  Camera camera;
 out vec4 fragColor;
 
 void main (void)
@@ -34,16 +19,6 @@ void main (void)
   vec2 coord = vec2(uv.x, 1.0 - uv.y) * res;
 
   createWorld(coord);
-
-  createCamera(
-    vec3(13.0, 2.0, 3.0),
-    vec3(0.0, 0.0, 0.0),
-    vec3(0.0, 1.0, 0.0),
-    res,
-    20.0,
-    0.1,
-    10.0
-  );
 
   vec3 color = vec3(0.0);
   uint depth = config.maxDepth;
@@ -56,8 +31,8 @@ void main (void)
     float u = (coord.x + random(seed)) / res.x;
     float v = (coord.y + random(seed)) / res.y;
 
-    Ray ray = getRay(u, v, seed);
-    color += getColor(ray, seed, depth);
+    Ray ray = getRay(camera, u, v, seed);
+    color += getColor(ray, depth, seed);
   }
 
   outputColor(color, samples);
