@@ -8,7 +8,6 @@
 
 #include ./Ray;
 #include ./Config;
-#include ./Camera;
 
 #include ./utils/Number;
 #include ./utils/Vector3;
@@ -17,29 +16,34 @@
 #include ./hittables/Record;
 #include ./hittables/Sphere;
 #include ./hittables/List;
+#include ./hittables/World;
 
 #include ./materials/Lambertian;
 #include ./materials/Dielectric;
 #include ./materials/Metal;
+
 #include ./utils/Color;
+#include ./Camera;
 
 in  vec2 uv;
 out vec4 fragColor;
 
 void main (void)
 {
-  createCamera();
+  createWorld();
 
-  Material ground = Material(LAMBERTIAN, vec3(0.8, 0.8, 0.0), 0.0);
-  Material center = Material(LAMBERTIAN, vec3(0.1, 0.2, 0.5), 0.0);
-  Material left   = Material(DIELECTRIC, vec3(1.0), 1.5);
-  Material right  = Material(METAL, vec3(0.8, 0.6, 0.2), 0.0);
+  const vec3 origin = vec3(3.0, 3.0, 2.0);
+  const vec3 lookAt = vec3(0.0, 0.0, -1.0);
 
-  listAdd(Sphere(vec3(0.0, -100.5, -1.0), 100.0, ground));
-  listAdd(Sphere(vec3(-1.0, 0.0, -1.0), 0.5, left));
-  listAdd(Sphere(vec3(-1.0, 0.0, -1.0), -0.4, left));
-  listAdd(Sphere(vec3(1.0, 0.0, -1.0), 0.5, right));
-  listAdd(Sphere(vec3(0.0, 0.0, -1.0), 0.5, center));
+  createCamera(
+    origin,
+    lookAt,
+    vec3(0.0, 1.0, 0.0),
+    20.0,
+    config.width / config.height,
+    2.0,
+    length(origin - lookAt)
+  );
 
   vec2 res = vec2(config.width, config.height);
   vec2 coord = vec2(uv.x, 1.0 - uv.y) * res;
@@ -55,10 +59,10 @@ void main (void)
     float u = (coord.x + random(seed)) / res.x;
     float v = (coord.y + random(seed)) / res.y;
 
-    Ray ray = getRay(u, v);
+    Ray ray = getRay(u, v, seed);
     color += getColor(ray, seed, depth);
   }
 
-  calcColor(color, samples);
+  outputColor(color, samples);
   fragColor = vec4(color, 1.0);
 }

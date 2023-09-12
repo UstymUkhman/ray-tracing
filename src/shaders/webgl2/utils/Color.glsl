@@ -1,11 +1,5 @@
 #define SKY vec3(0.5, 0.7, 1.0)
 
-void calcColor (inout vec3 color, const uint samples)
-{
-  color /= float(samples);
-  color = sqrt(color);
-}
-
 vec3 skyColor (in Ray ray)
 {
   vec3 direction = normalize(ray.direction);
@@ -53,4 +47,10 @@ vec3 getColor (in Ray ray, in vec2 seed, uint depth)
   }
 
   return color;
+}
+
+void outputColor (inout vec3 color, const uint samples)
+{
+  color /= float(samples);
+  color = sqrt(color);
 }
