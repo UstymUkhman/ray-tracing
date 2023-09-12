@@ -30,23 +30,20 @@ out vec4 fragColor;
 
 void main (void)
 {
-  createWorld();
-
-  const vec3 origin = vec3(3.0, 3.0, 2.0);
-  const vec3 lookAt = vec3(0.0, 0.0, -1.0);
-
-  createCamera(
-    origin,
-    lookAt,
-    vec3(0.0, 1.0, 0.0),
-    20.0,
-    config.width / config.height,
-    2.0,
-    length(origin - lookAt)
-  );
-
   vec2 res = vec2(config.width, config.height);
   vec2 coord = vec2(uv.x, 1.0 - uv.y) * res;
+
+  createWorld(coord);
+
+  createCamera(
+    vec3(13.0, 2.0, 3.0),
+    vec3(0.0, 0.0, 0.0),
+    vec3(0.0, 1.0, 0.0),
+    res,
+    20.0,
+    0.1,
+    10.0
+  );
 
   vec3 color = vec3(0.0);
   uint depth = config.maxDepth;

@@ -13,34 +13,32 @@ void createCamera (
   const in vec3 origin,
   const in vec3 lookAt,
   const in vec3 vUp,
+  const in vec2 res,
   const in float fov,
-  in float ratio,
   const in float aperture,
   const in float focusDist
 ) {
-  float theta = degToRad(fov);
-  float h = tan(theta / 2.0);
-  float height = 2.0 * h;
-
-  vec2 viewport = vec2(ratio * height, height);
+  float height = tan(degToRad(fov) * 0.5) * 2.0;
+  float width = res.x / res.y * height;
 
   vec3 w = normalize(origin - lookAt);
   vec3 u = normalize(cross(vUp, w));
   vec3 v = cross(w, u);
 
-  vec3 vertical = viewport.y * v * focusDist;
-  vec3 horizontal = viewport.x * u * focusDist;
+  vec3 vertical = v * height * focusDist;
+  vec3 horizontal = u * width * focusDist;
 
   camera = Camera(
-    u, v,
+    u,
+    v,
     origin,
     vertical,
     horizontal,
-    aperture / 2.0,
+    aperture * 0.5,
     origin -
-    focusDist * w -
-    vertical / 2.0 -
-    horizontal / 2.0
+      horizontal * 0.5 -
+      vertical * 0.5 -
+      focusDist * w
   );
 }
 

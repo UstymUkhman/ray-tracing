@@ -1,15 +1,15 @@
-struct List
+struct Hittable
 {
-  Sphere objects[5];
+  Sphere objects[4];
   uint length;
-} hittables;
+} objects;
 
-void listAdd (const in Sphere object)
+void addObject (const in Sphere object)
 {
-  hittables.objects[hittables.length++] = object;
+  objects.objects[objects.length++] = object;
 }
 
-bool listHit (
+bool hitObject (
   const in Ray ray,
   const in float tMin,
   const in float tMax
@@ -17,8 +17,8 @@ bool listHit (
   bool hit = false;
   float closest = tMax;
 
-  for (uint o = 0u, l = hittables.length; o < l; ++o) {
-    Sphere sphere = hittables.objects[o];
+  for (uint o = 0u, l = objects.length; o < l; ++o) {
+    Sphere sphere = objects.objects[o];
 
     if (sphereHit(ray, tMin, closest, sphere)) {
       closest = record.t;

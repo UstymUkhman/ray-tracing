@@ -7,8 +7,8 @@ struct Config
 }
 
 config = Config(
-  600.0,
-  400.0,
-  100u,
+  360.0,
+  240.0,
+  500u,
   50u
 );

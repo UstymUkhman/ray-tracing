@@ -14,9 +14,9 @@ export const App = () =>
 
   onMount(() => setOffscreen(
     new Stage([
-      webgl2 //,
-      // typescript,
-      // assemblyscript
+      webgl2,
+      typescript,
+      assemblyscript
     ]).offscreen
   ));
 

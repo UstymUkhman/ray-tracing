@@ -4,7 +4,6 @@ vec3 skyColor (in Ray ray)
 {
   vec3 direction = normalize(ray.direction);
   float t = (direction.y + 1.0) * 0.5;
-
   return (1.0 - t) * vec3(1.0) + SKY * t;
 }
 
@@ -14,7 +13,7 @@ vec3 getColor (in Ray ray, in vec2 seed, uint depth)
 
   for (uint d = depth; d > 0u; --d)
   {
-    if (listHit(ray, 0.001, INFINITY))
+    if (hitObject(ray, 0.001, INFINITY))
     {
       Ray scattered;
       vec3 attenuation;
@@ -49,7 +48,7 @@ vec3 getColor (in Ray ray, in vec2 seed, uint depth)
   return color;
 }
 
-void outputColor (inout vec3 color, const uint samples)
+void outputColor (inout vec3 color, const in uint samples)
 {
   color /= float(samples);
   color = sqrt(color);
