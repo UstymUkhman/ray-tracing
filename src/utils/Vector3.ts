@@ -1,5 +1,5 @@
 import { clamp, random } from '@/utils/Number';
-type Vec3 = [number, number, number];
+export type Vec3 = [number, number, number];
 
 export default class Vector3
 {
@@ -196,5 +196,9 @@ export default class Vector3
 
   public get z (): number {
     return this.vec[2];
+  }
+
+  public get (): Vec3 {
+    return [...this.vec];
   }
 }

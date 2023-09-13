@@ -30,4 +30,12 @@ export default class List extends Hittable
 
     return hit;
   }
+
+  public get hittables (): Hittable[] {
+    return this.objects;
+  }
+
+  public dispose (): void {
+    this.objects.length = 0.0;
+  }
 }

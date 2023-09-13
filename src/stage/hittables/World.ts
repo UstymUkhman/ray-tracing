@@ -1,11 +1,11 @@
 import { type Material, Lambertian, Metal, Dielectric } from '@/stage/materials';
-import { List, Sphere } from '@/stage/hittables';
+import { type Hittable, List, Sphere } from '@/stage/hittables';
 import { random } from '@/utils/Number';
 import Vector3 from '@/utils/Vector3';
 
 export default class World
 {
-  private readonly hittables = new List();
+  private readonly list = new List();
   private readonly color = new Vector3();
 
   public constructor ()
@@ -16,7 +16,7 @@ export default class World
       new Lambertian(new Vector3(0.5))
     );
 
-    this.generateSmallSpheres();
+    // this.generateSmallSpheres();
 
     this.addSphere(
       1.0,
@@ -39,7 +39,7 @@ export default class World
 
   private addSphere (radius: number, center: Vector3, material: Material): void
   {
-    this.hittables.add(new Sphere(radius, center, material));
+    this.list.add(new Sphere(radius, center, material));
   }
 
   private generateSmallSpheres (): void
@@ -84,7 +84,16 @@ export default class World
     }
   }
 
+  public get hittables (): Hittable[] {
+    return this.list.hittables;
+  }
+
   public get objects (): List {
-    return this.hittables;
+    return this.list;
+  }
+
+  public dispose (): void {
+    this.list.dispose();
+    this.color.reset();
   }
 }

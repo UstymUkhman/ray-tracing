@@ -7,9 +7,9 @@ import type { Material } from '@/stage/materials';
 export default class Sphere extends Hittable
 {
   public constructor (
-    private readonly radius: number,
-    private readonly center: Vector3,
-    private readonly material: Material
+    public readonly radius: number,
+    public readonly center: Vector3,
+    public readonly material: Material
   ) {
     super();
   }

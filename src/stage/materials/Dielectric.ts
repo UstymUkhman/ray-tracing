@@ -5,7 +5,7 @@ import { Record } from '@/stage/hittables';
 
 export default class Dielectric extends Material
 {
-  public constructor (private readonly refraction: number) {
+  public constructor (public readonly refraction: number) {
     super();
   }
 

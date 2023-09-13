@@ -21,8 +21,8 @@ void generateSmallSpheres (in vec2 seed)
 
       float len = length(center - offset);
 
-      /* if (len > 0.9)
-      { */
+      if (len > 0.9)
+      {
         float rand = random(seed * len);
 
         if (rand < 0.8)
@@ -40,7 +40,7 @@ void generateSmallSpheres (in vec2 seed)
         {
           addSphere(0.2, center, Material(DIELECTRIC, vec3(1.0), 1.5));
         }
-      /* } */
+      }
     }
   }
 }
@@ -53,7 +53,7 @@ void createWorld (in vec2 seed)
     Material(LAMBERTIAN, vec3(0.5), 0.0)
   );
 
-  // generateSmallSpheres(seed);
+  generateSmallSpheres(seed);
 
   addSphere(
     1.0,

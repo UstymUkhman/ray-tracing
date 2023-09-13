@@ -5,8 +5,9 @@ import { Record } from '@/stage/hittables';
 
 export default class Metal extends Material
 {
-  private readonly fuzz: number;
-  private readonly albedo: Vector3;
+  public readonly fuzz: number;
+  public readonly albedo: Vector3;
+
   private readonly direction = new Vector3();
 
   public constructor (color: Vector3, fuzz: number)

@@ -13,12 +13,26 @@ in  vec2 uv;
 in  Camera camera;
 out vec4 fragColor;
 
+uniform Sphere spheres[4];
+
+void addSpheres (void)
+{
+  for (uint s = 0u; s < 4u; s++)
+  {
+    vec3 center = spheres[s].center;
+    float radius = spheres[s].radius;
+    Material material = spheres[s].material;
+
+    addObject(Sphere(center, radius, material));
+  }
+}
+
 void main (void)
 {
   vec2 res = vec2(config.width, config.height);
   vec2 coord = vec2(uv.x, 1.0 - uv.y) * res;
 
-  createWorld(coord);
+  addSpheres();
 
   vec3 color = vec3(0.0);
   uint depth = config.maxDepth;

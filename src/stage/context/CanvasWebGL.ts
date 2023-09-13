@@ -10,14 +10,14 @@ type ShaderType =
 
 export default class CanvasWebGL extends Canvas
 {
-  protected declare readonly context: WebGLRenderingContext;
+  private texture!: WebGLTexture;
+  protected program!: WebGLProgram;
 
   private textureData = new Uint8ClampedArray(
     this.width * this.height * this.channels
   );
 
-  private texture!: WebGLTexture;
-  private program!: WebGLProgram;
+  protected declare readonly context: WebGLRenderingContext;
 
   public constructor(params: SceneParams, fragment = Fragment, vertex = Vertex)
   {

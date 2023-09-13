@@ -1,4 +1,4 @@
-#include ../hittables/World;
+#include ../hittables/List;
 #include ../materials/Metal;
 #include ../materials/Dielectric;
 #include ../materials/Lambertian;
