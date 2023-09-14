@@ -8,7 +8,7 @@ export default class World
   private readonly list = new List();
   private readonly color = new Vector3();
 
-  public constructor ()
+  public constructor (spheres = 11)
   {
     this.addSphere(
       1000.0,
@@ -16,7 +16,7 @@ export default class World
       new Lambertian(new Vector3(0.5))
     );
 
-    // this.generateSmallSpheres();
+    this.generateSmallSpheres(spheres);
 
     this.addSphere(
       1.0,
@@ -42,11 +42,11 @@ export default class World
     this.list.add(new Sphere(radius, center, material));
   }
 
-  private generateSmallSpheres (): void
+  private generateSmallSpheres (s: number): void
   {
-    for (let i = -11; i < 11; i++)
+    for (let i = -s; i < s; i++)
     {
-      for (let j = -11; j < 11; j++)
+      for (let j = -s; j < s; j++)
       {
         const center = new Vector3(
           Math.random() * 0.9 + i,

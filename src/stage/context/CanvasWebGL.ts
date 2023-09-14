@@ -13,7 +13,7 @@ export default class CanvasWebGL extends Canvas
   private texture!: WebGLTexture;
   protected program!: WebGLProgram;
 
-  private textureData = new Uint8ClampedArray(
+  protected readonly textureData = new Uint8ClampedArray(
     this.width * this.height * this.channels
   );
 
@@ -91,9 +91,20 @@ export default class CanvasWebGL extends Canvas
     this.context.useProgram(this.program);
   }
 
-  private updateTexture(): void {
+  protected setTextureParameters (): void {
+    this.context.texParameteri(this.context.TEXTURE_2D, this.context.TEXTURE_WRAP_S, this.context.CLAMP_TO_EDGE);
+    this.context.texParameteri(this.context.TEXTURE_2D, this.context.TEXTURE_WRAP_T, this.context.CLAMP_TO_EDGE);
+
+    this.context.texParameteri(this.context.TEXTURE_2D, this.context.TEXTURE_MIN_FILTER, this.context.NEAREST);
+    this.context.texParameteri(this.context.TEXTURE_2D, this.context.TEXTURE_MAG_FILTER, this.context.NEAREST);
+  }
+
+  protected setActiveTexture (
+    data: Uint8ClampedArray | null = this.textureData,
+    texture = this.texture
+  ): void {
     this.context.activeTexture(this.context.TEXTURE0);
-    this.context.bindTexture(this.context.TEXTURE_2D, this.texture);
+    this.context.bindTexture(this.context.TEXTURE_2D, texture);
 
     this.context.texImage2D(
       this.context.TEXTURE_2D,
@@ -104,7 +115,7 @@ export default class CanvasWebGL extends Canvas
       0.0,
       this.context.RGB,
       this.context.UNSIGNED_BYTE,
-      this.textureData
+      data
     );
   }
 
@@ -129,22 +140,16 @@ export default class CanvasWebGL extends Canvas
     this.texture = this.context.createTexture() as WebGLTexture;
 
     this.setBufferData();
-    this.updateTexture();
-
-    this.context.texParameteri(this.context.TEXTURE_2D, this.context.TEXTURE_WRAP_S, this.context.CLAMP_TO_EDGE);
-    this.context.texParameteri(this.context.TEXTURE_2D, this.context.TEXTURE_WRAP_T, this.context.CLAMP_TO_EDGE);
-
-    this.context.texParameteri(this.context.TEXTURE_2D, this.context.TEXTURE_MIN_FILTER, this.context.NEAREST);
-    this.context.texParameteri(this.context.TEXTURE_2D, this.context.TEXTURE_MAG_FILTER, this.context.NEAREST);
-  }
-
-  public override drawImage (pixels: Uint8ClampedArray): void {
-    this.textureData = pixels;
-    this.updateTexture();
-    this.context.drawArrays(this.context.TRIANGLES, 0.0, 6.0);
+    this.setActiveTexture();
+    this.setTextureParameters();
   }
 
   public override clear (): void {
     this.context.clear(this.context.COLOR_BUFFER_BIT);
+  }
+
+  public override drawImage (pixels: Uint8ClampedArray): void {
+    this.setActiveTexture(pixels);
+    this.context.drawArrays(this.context.TRIANGLES, 0.0, 6.0);
   }
 }

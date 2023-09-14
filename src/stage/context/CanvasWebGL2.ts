@@ -1,22 +1,73 @@
 import { type Lambertian, Metal, Dielectric } from '@/stage/materials';
+import type { SphereUniform } from '@/stage/context/types';
 import { type Sphere, World } from '@/stage/hittables';
 import type { SceneParams } from '@/stage/scene/types';
 import CanvasWebGL from '@/stage/context/CanvasWebGL';
 import Fragment from '@/shaders/webgl2/main.frag';
 import Vertex from '@/shaders/webgl2/main.vert';
 import type { Vec3 } from '@/utils/Vector3';
+import Config from '@/stage/Config';
 
 export default class CanvasWebGL2 extends CanvasWebGL
 {
-  protected declare readonly context: WebGL2RenderingContext;
+  private samples = 0.0;
 
-  public constructor(params: SceneParams, fragment = Fragment, vertex = Vertex) {
-    super(params, fragment, vertex);
+  private texture1!: WebGLTexture;
+  private texture2!: WebGLTexture;
+
+  private frameBuffer1!: WebGLFramebuffer;
+  private frameBuffer2!: WebGLFramebuffer;
+
+  protected declare readonly context: WebGL2RenderingContext;
+  private readonly draw = this.drawImage.bind(this, undefined);
+  private readonly samplesUniform!: WebGLUniformLocation | null;
+
+  public constructor(params: SceneParams, fragment = Fragment) {
+    if (params.tracer !== 'WebGL2')
+      super(params, fragment, Vertex);
+
+    else {
+      const world = new World(7);
+      const spheres = world.hittables.length;
+
+      super(
+        params,
+
+        fragment.replace(
+          '#version 300 es',
+          `#version 300 es\n#define SPHERES ${spheres}u`
+        ),
+
+        Vertex.replace(
+          '#version 300 es',
+          '#version 300 es\n#define CAMERA'
+        )
+      );
+
+      this.createWorld(world);
+      this.createFrameBufferTextures();
+      this.samplesUniform = this.context.getUniformLocation(this.program, 'samples');
+      // console.log(this.context.getParameter(this.context.MAX_FRAGMENT_UNIFORM_VECTORS));
+    }
   }
 
-  public createWorld (): void {
-    const world = new World();
-    const spheres: USphere[] = [];
+  private bindFrameBufferTextures (
+    frameBuffer: WebGLFramebuffer,
+    texture: WebGLTexture
+  ): void {
+    this.context.bindFramebuffer(this.context.FRAMEBUFFER, frameBuffer);
+
+    this.context.framebufferTexture2D(
+      this.context.FRAMEBUFFER,
+      this.context.COLOR_ATTACHMENT0,
+      this.context.TEXTURE_2D,
+      texture,
+      0.0
+    );
+  }
+
+  private createWorld (world: World): void {
+    const spheres: SphereUniform[] = [];
 
     for (let h = 0, l = world.hittables.length; h < l; h++) {
       const sphere = world.hittables[h] as Sphere;
@@ -52,7 +103,23 @@ export default class CanvasWebGL2 extends CanvasWebGL
     this.updateUniforms(spheres);
   }
 
-  private updateUniforms (spheres: USphere[]): void {
+  private createFrameBufferTextures (): void {
+    this.texture1 = this.context.createTexture() as WebGLTexture;
+    this.setActiveTexture(this.textureData, this.texture1);
+    this.setTextureParameters();
+
+    this.texture2 = this.context.createTexture() as WebGLTexture;
+    this.setActiveTexture(null, this.texture2);
+    this.setTextureParameters();
+
+    this.frameBuffer1 = this.context.createFramebuffer() as WebGLFramebuffer;
+    this.bindFrameBufferTextures(this.frameBuffer1, this.texture1);
+
+    this.frameBuffer2 = this.context.createFramebuffer() as WebGLFramebuffer;
+    this.bindFrameBufferTextures(this.frameBuffer2, this.texture2);
+  }
+
+  private updateUniforms (spheres: SphereUniform[]): void {
     for (let s = 0, l = spheres.length; s < l; s++)
     {
       const albedo = this.context.getUniformLocation(this.program, `spheres[${s}].material.albedo`);
@@ -72,19 +139,25 @@ export default class CanvasWebGL2 extends CanvasWebGL
   }
 
   public override drawImage (pixels?: Uint8ClampedArray): void {
-    pixels
-      ? super.drawImage(pixels)
-      : this.context.drawArrays(this.context.TRIANGLES, 0.0, 6.0);
+    if (pixels) return super.drawImage(pixels);
+
+    this.context.uniform1ui(this.samplesUniform, ++this.samples);
+    this.samples < Config.samples && requestAnimationFrame(this.draw);
+
+    this.context.bindFramebuffer(this.context.FRAMEBUFFER, this.frameBuffer2);
+    this.context.bindTexture(this.context.TEXTURE_2D, this.texture1);
+    this.context.drawArrays(this.context.TRIANGLES, 0.0, 6.0);
+
+    this.context.bindFramebuffer(this.context.FRAMEBUFFER, null);
+    this.context.bindTexture(this.context.TEXTURE_2D, this.texture2);
+    this.context.drawArrays(this.context.TRIANGLES, 0.0, 6.0);
+
+    const frameBuffer = this.frameBuffer1;
+    this.frameBuffer1 = this.frameBuffer2;
+    this.frameBuffer2 = frameBuffer;
+
+    const texture = this.texture1;
+    this.texture1 = this.texture2;
+    this.texture2 = texture;
   }
 }
-
-type USphere = {
-  radius: number;
-  center: Vec3;
-
-  material: {
-    type: number;
-    albedo: Vec3;
-    extra: number;
-  }
-};

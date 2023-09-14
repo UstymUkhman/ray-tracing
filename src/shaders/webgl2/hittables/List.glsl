@@ -2,7 +2,7 @@
 
 struct Hittable
 {
-  Sphere objects[4];
+  Sphere objects[SPHERES];
   uint length;
 } list;
 

@@ -13,11 +13,13 @@ in  vec2 uv;
 in  Camera camera;
 out vec4 fragColor;
 
-uniform Sphere spheres[4];
+uniform uint samples;
+uniform sampler2D frame;
+uniform Sphere spheres[SPHERES];
 
 void addSpheres (void)
 {
-  for (uint s = 0u; s < 4u; s++)
+  for (uint s = 0u; s < SPHERES; s++)
   {
     vec3 center = spheres[s].center;
     float radius = spheres[s].radius;
@@ -29,25 +31,21 @@ void addSpheres (void)
 
 void main (void)
 {
+  vec2 mappedUV = vec2(uv.x, 1.0 - uv.y);
+  vec3 color = texture(frame, mappedUV).rgb;
   vec2 res = vec2(config.width, config.height);
-  vec2 coord = vec2(uv.x, 1.0 - uv.y) * res;
 
   addSpheres();
+  inputColor(color, samples);
 
-  vec3 color = vec3(0.0);
-  uint depth = config.maxDepth;
-  uint samples = config.samples;
+  vec2 coord = mappedUV * res;
+  vec2 seed = uv * coord * float(samples);
 
-  for (uint s = 0u; s < samples; s++)
-  {
-    vec2 seed = uv * coord * float(s);
+  float u = (coord.x + random(seed)) / res.x;
+  float v = (coord.y + random(seed)) / res.y;
 
-    float u = (coord.x + random(seed)) / res.x;
-    float v = (coord.y + random(seed)) / res.y;
-
-    Ray ray = getRay(camera, u, v, seed);
-    color += getColor(ray, depth, seed);
-  }
+  Ray ray = getRay(camera, u, v, seed);
+  color += getColor(ray, config.maxDepth, seed);
 
   outputColor(color, samples);
   fragColor = vec4(color, 1.0);

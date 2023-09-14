@@ -3,18 +3,19 @@
 #include ../materials/Dielectric;
 #include ../materials/Lambertian;
 
+#define WHITE vec3(1.0, 1.0, 1.0)
 #define SKY vec3(0.5, 0.7, 1.0)
 
 vec3 skyColor (in Ray ray)
 {
   vec3 direction = normalize(ray.direction);
   float t = (direction.y + 1.0) * 0.5;
-  return (1.0 - t) * vec3(1.0) + SKY * t;
+  return (1.0 - t) * WHITE + SKY * t;
 }
 
 vec3 getColor (in Ray ray, uint depth, in vec2 seed)
 {
-  vec3 color = vec3(1.0);
+  vec3 color = WHITE;
 
   for (uint d = depth; d > 0u; --d)
   {
@@ -51,6 +52,12 @@ vec3 getColor (in Ray ray, uint depth, in vec2 seed)
   }
 
   return color;
+}
+
+void inputColor (inout vec3 color, const in uint samples)
+{
+  color *= color;
+  color *= float(samples - 1u);
 }
 
 void outputColor (inout vec3 color, const in uint samples)
