@@ -8,14 +8,14 @@ float reflectance (in float cosine, in float ratio)
 
 bool dielectricScatter (
   out vec3 attenuation,
-  in Material material,
   out Ray scattered,
+  in vec4 material,
   in vec2 seed,
   in Ray ray
 ) {
   vec3 direction = normalize(ray.direction);
   float tCos = min(dot(-direction, record.normal), 1.0);
-  float ratio = record.frontFace ? 1.0 / material.extra : material.extra;
+  float ratio = record.frontFace ? 1.0 / material.a : material.a;
 
   bool willReflect =
     sqrt(1.0 - tCos * tCos) * ratio > 1.0 ||
@@ -26,7 +26,7 @@ bool dielectricScatter (
     : refract(direction, record.normal, ratio);
 
   scattered = Ray(record.point, direction);
-  attenuation = material.albedo;
+  attenuation = material.rgb;
 
   return true;
 }

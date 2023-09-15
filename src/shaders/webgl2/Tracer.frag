@@ -20,13 +20,7 @@ uniform Sphere spheres[SPHERES];
 void addSpheres (void)
 {
   for (uint s = 0u; s < SPHERES; s++)
-  {
-    vec3 center = spheres[s].center;
-    float radius = spheres[s].radius;
-    Material material = spheres[s].material;
-
-    addObject(Sphere(center, radius, material));
-  }
+    addObject(Sphere(spheres[s].transform, spheres[s].material));
 }
 
 void main (void)

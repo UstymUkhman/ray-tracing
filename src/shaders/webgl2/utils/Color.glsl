@@ -10,6 +10,7 @@ vec3 skyColor (in Ray ray)
 {
   vec3 direction = normalize(ray.direction);
   float t = (direction.y + 1.0) * 0.5;
+
   return (1.0 - t) * WHITE + SKY * t;
 }
 
@@ -25,19 +26,11 @@ vec3 getColor (in Ray ray, uint depth, in vec2 seed)
       vec3 attenuation;
       bool scatter = false;
 
-      switch (record.material.type)
-      {
-        case METAL:
-          scatter = metalScatter(attenuation, record.material, scattered, seed, ray);
-        break;
-
-        case DIELECTRIC:
-          scatter = dielectricScatter(attenuation, record.material, scattered, seed, ray);
-        break;
-
-        default:
-          scatter = lambertianScatter(attenuation, record.material, scattered, seed);
-      }
+      scatter = record.material.a > 1.0
+        ? dielectricScatter(attenuation, scattered, record.material, seed, ray)
+        : record.material.a > -1.0
+          ? metalScatter(attenuation, scattered, record.material, seed, ray)
+          : lambertianScatter(attenuation, scattered, record.material, seed);
 
       if (scatter) {
         color *= attenuation;

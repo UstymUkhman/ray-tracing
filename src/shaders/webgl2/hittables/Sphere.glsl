@@ -2,9 +2,16 @@
 
 struct Sphere
 {
-  vec3 center;
-  float radius;
-  Material material;
+  // xyz -> center
+  //   w -> radius
+  vec4 transform;
+
+  // rgb -> albedo color
+  //   a -> extra properties
+  // Like dielectric refraction (> 1.0)
+  // and metal fuzziness (> 0.0 && < 1.0).
+  // [For "lambertian" it always equals -1.0]
+  vec4 material;
 };
 
 bool sphereHit (
@@ -13,12 +20,13 @@ bool sphereHit (
   const in float tMax,
   const in Sphere sphere
 ) {
-  vec3 oc = ray.origin - sphere.center;
+  vec3 oc = ray.origin - sphere.transform.xyz;
 
   float a = lengthSquared(ray.direction);
   float halfB = dot(oc, ray.direction);
+  float radius = sphere.transform.w;
 
-  float c = lengthSquared(oc) - sphere.radius * sphere.radius;
+  float c = lengthSquared(oc) - radius * radius;
   float d = halfB * halfB - a * c;
 
   if (d < 0.0) return false;
@@ -36,7 +44,7 @@ bool sphereHit (
   record.t = root;
   record.point = at(ray, root);
   record.material = sphere.material;
-  setFaceNormal(ray, (record.point - sphere.center) / sphere.radius);
+  setFaceNormal(ray, (record.point - sphere.transform.xyz) / radius);
 
   return true;
 }

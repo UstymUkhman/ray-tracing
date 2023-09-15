@@ -5,8 +5,8 @@ struct Record
   float t;
   vec3 point;
   vec3 normal;
+  vec4 material;
   bool frontFace;
-  Material material;
 } record;
 
 void setFaceNormal (

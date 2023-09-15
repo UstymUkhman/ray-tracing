@@ -27,7 +27,7 @@ export default class CanvasWebGL2 extends CanvasWebGL
       super(params, fragment, Vertex);
 
     else {
-      const world = new World(7);
+      const world = new World();
       const spheres = world.hittables.length;
 
       super(
@@ -47,7 +47,6 @@ export default class CanvasWebGL2 extends CanvasWebGL
       this.createWorld(world);
       this.createFrameBufferTextures();
       this.samplesUniform = this.context.getUniformLocation(this.program, 'samples');
-      // console.log(this.context.getParameter(this.context.MAX_FRAGMENT_UNIFORM_VECTORS));
     }
   }
 
@@ -74,7 +73,7 @@ export default class CanvasWebGL2 extends CanvasWebGL
 
       const material = {
         albedo: [1.0, 1.0, 1.0] as Vec3,
-        extra: 0.0,
+        extra: -1.0,
         type: 0
       };
 
@@ -122,19 +121,11 @@ export default class CanvasWebGL2 extends CanvasWebGL
   private updateUniforms (spheres: SphereUniform[]): void {
     for (let s = 0, l = spheres.length; s < l; s++)
     {
-      const albedo = this.context.getUniformLocation(this.program, `spheres[${s}].material.albedo`);
-      const extra = this.context.getUniformLocation(this.program, `spheres[${s}].material.extra`);
-      const type = this.context.getUniformLocation(this.program, `spheres[${s}].material.type`);
+      const transform = this.context.getUniformLocation(this.program, `spheres[${s}].transform`);
+      const material = this.context.getUniformLocation(this.program, `spheres[${s}].material`);
 
-      const center = this.context.getUniformLocation(this.program, `spheres[${s}].center`);
-      const radius = this.context.getUniformLocation(this.program, `spheres[${s}].radius`);
-
-      this.context.uniform3fv(albedo, spheres[s].material.albedo);
-      this.context.uniform1f(extra, spheres[s].material.extra);
-      this.context.uniform1ui(type, spheres[s].material.type);
-
-      this.context.uniform3fv(center, spheres[s].center);
-      this.context.uniform1f(radius, spheres[s].radius);
+      this.context.uniform4fv(transform, [...spheres[s].center, spheres[s].radius]);
+      this.context.uniform4fv(material, [...spheres[s].material.albedo, spheres[s].material.extra]);
     }
   }
 
