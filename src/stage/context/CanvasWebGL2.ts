@@ -6,6 +6,7 @@ import CanvasWebGL from '@/stage/context/CanvasWebGL';
 import Fragment from '@/shaders/webgl2/main.frag';
 import Vertex from '@/shaders/webgl2/main.vert';
 import type { Vec3 } from '@/utils/Vector3';
+import { Events } from '@/stage/scene';
 import Config from '@/stage/Config';
 
 export default class CanvasWebGL2 extends CanvasWebGL
@@ -150,5 +151,10 @@ export default class CanvasWebGL2 extends CanvasWebGL
     const texture = this.texture1;
     this.texture1 = this.texture2;
     this.texture2 = texture;
+
+    Events.dispatch(
+      'WebGL2::Stats::Update',
+      { sample: this.samples }
+    );
   }
 }

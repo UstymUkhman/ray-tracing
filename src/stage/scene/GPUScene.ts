@@ -1,13 +1,16 @@
 import type { SceneParams } from '@/stage/scene/types';
 import Tracer from '@/shaders/webgl2/Tracer.frag';
 import { CanvasWebGL2 } from '@/stage/context';
+import { Events } from '@/stage/scene';
 
 export default class GPUScene
 {
   private readonly canvas: CanvasWebGL2;
 
   public constructor (params: SceneParams) {
+    Events.dispatch(`${params.tracer}::Start`);
     this.canvas = this.createCanvas(params);
+
     this.canvas.clear();
     this.canvas.drawImage();
   }

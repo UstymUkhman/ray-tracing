@@ -1,6 +1,6 @@
 # Ray Tracing in One Weekend #
 
-> [Ray Tracing in One Weekend](https://raytracing.github.io/v3/books/RayTracingInOneWeekend.html) in [TypeScript](https://www.typescriptlang.org/), [AssemblyScript](https://www.assemblyscript.org/) and [WebGL](https://registry.khronos.org/webgl/specs/latest/2.0/).<br />
+> [Ray Tracing in One Weekend](https://raytracing.github.io/v3/books/RayTracingInOneWeekend.html) in [TypeScript](https://www.typescriptlang.org/), [AssemblyScript](https://www.assemblyscript.org/) and [WebGL2](https://registry.khronos.org/webgl/specs/latest/2.0/).<br />
 [WebGPU](https://www.w3.org/TR/webgpu/) version is coming soon...
 
 ![](https://img.shields.io/github/deployments/UstymUkhman/ray-tracing/github-pages?style=flat-square)

@@ -6,7 +6,7 @@ export function clamp (value: f32, min: f32 = 0, max: f32 = 1): f32 {
 
 // @ts-expect-error: ts(1206)
 @inline
-export function toFixed (value: f32, mantissa: u8 = 2): f32 {
+export function toFixed (value: f32, mantissa: u8 = 3): f32 {
   const pow10 = Mathf.pow(10.0, mantissa);
   return f32(i32(pow10 * value)) / pow10;
 }
