@@ -2,7 +2,7 @@ import {
   Canvas2D,
   CanvasWebGL,
   CanvasWebGL2
-  // CanvasWebGPU,
+  // CanvasWebGPU
 } from '@/stage/context';
 
 import Config from '@/stage/Config';

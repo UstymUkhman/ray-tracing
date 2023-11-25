@@ -1,5 +1,5 @@
-type RenderingContext = CanvasRenderingContext2D | WebGLRenderingContext;
-type Options = CanvasRenderingContext2DSettings | WebGLContextAttributes;
+type RenderingContext = CanvasRenderingContext2D | WebGLRenderingContext | GPUCanvasContext;
+type Options = CanvasRenderingContext2DSettings | WebGLContextAttributes | void;
 import type { Context, SceneParams } from '@/stage/scene/types';
 
 export default abstract class Canvas
@@ -40,6 +40,8 @@ export default abstract class Canvas
 
   private getOptions (context: Context, offscreen = false): Options {
     switch (context) {
+      case 'WebGPU': return;
+
       case 'Canvas2D':
         return {
           willReadFrequently: !offscreen,
@@ -47,10 +49,6 @@ export default abstract class Canvas
           colorSpace: 'srgb',
           alpha: false
         };
-
-      // TBI
-      case 'WebGPU':
-        return {};
 
       default:
         return {

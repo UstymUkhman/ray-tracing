@@ -1,11 +1,11 @@
-import type { SceneParams } from '@/stage/scene/types';
+import type { GPUCanvas, SceneParams } from '@/stage/scene/types';
+import { CanvasWebGL2, CanvasWebGPU } from '@/stage/context';
 import Tracer from '@/shaders/webgl2/Tracer.frag';
-import { CanvasWebGL2 } from '@/stage/context';
 import { Events } from '@/stage/scene';
 
 export default class GPUScene
 {
-  private readonly canvas: CanvasWebGL2;
+  private readonly canvas: GPUCanvas;
 
   public constructor (params: SceneParams) {
     Events.dispatch(`${params.tracer}::Start`);
@@ -15,11 +15,10 @@ export default class GPUScene
     this.canvas.drawImage();
   }
 
-  private createCanvas (params: SceneParams): CanvasWebGL2 {
+  private createCanvas (params: SceneParams): GPUCanvas {
     switch (params.context) {
-      // TBI
-      // case 'WebGPU':
-      //   return new CanvasWebGPU(params);
+      case 'WebGPU':
+        return new CanvasWebGPU(params);
 
       default:
         return new CanvasWebGL2(params, Tracer);
