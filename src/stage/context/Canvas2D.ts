@@ -9,6 +9,8 @@ export default class Canvas2D extends Canvas
 
   public constructor(params: SceneParams) {
     super(params);
+    this.clear();
+
     this.context.imageSmoothingEnabled = true;
     this.context.imageSmoothingQuality = 'high';
     this.image = this.context.getImageData(0.0, 0.0, this.width, this.height);
@@ -26,7 +28,7 @@ export default class Canvas2D extends Canvas
     this.context.putImageData(this.image, 0.0, 0.0);
   }
 
-  public override clear (): void {
+  protected override clear (): void {
     this.context.fillStyle = getHex(this.clearColor);
     this.context.clearRect(0.0, 0.0, this.width, this.height);
     this.context.fillRect(0.0, 0.0, this.width, this.height);

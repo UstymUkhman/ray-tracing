@@ -1,8 +1,8 @@
 import {
   Canvas2D,
   CanvasWebGL,
-  CanvasWebGL2
-  // CanvasWebGPU
+  CanvasWebGL2,
+  CanvasWebGPU
 } from '@/stage/context';
 
 import Config from '@/stage/Config';
@@ -42,15 +42,12 @@ export default class CPUScene
     ((this.worker = params.worker))
       ? this.createWorkerEvents()
       : this.loadTracer();
-
-    this.canvas.clear();
   }
 
   private createCanvas (params: SceneParams): Canvas {
     switch (params.context) {
-      // TBI
-      // case 'WebGPU':
-      //   return new CanvasWebGPU(params);
+      case 'WebGPU':
+        return new CanvasWebGPU(params);
 
       case 'WebGL2':
         return new CanvasWebGL2(params);

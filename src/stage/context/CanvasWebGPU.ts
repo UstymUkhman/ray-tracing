@@ -1,4 +1,5 @@
 import { Events } from '@/stage/scene';
+import { getRGB } from '@/utils/Color';
 import Canvas from '@/stage/context/Canvas';
 import type { SceneParams } from '@/stage/scene/types';
 
@@ -12,12 +13,13 @@ export default class CanvasWebGPU extends Canvas
 
   public constructor (params: SceneParams) {
     super(params);
-    this.initializeWebGPU().catch(error => {
-      Events.dispatch(
-        'WebGPU::Init::Fail',
-        error.message
-      );
-    });
+
+    this.initializeWebGPU()
+      .then(this.clear.bind(this))
+      .catch(error => Events.dispatch(
+        'WebGPU::Init::Fail', error.message
+      )
+    );
   }
 
   private async initializeWebGPU (): Promise<void> {
@@ -42,8 +44,29 @@ export default class CanvasWebGPU extends Canvas
     this.context.configure({ device: this.device, format: this.format });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  public override clear (): void {}
+  protected override clear (): void {
+    const commandEncoder = this.device.createCommandEncoder();
+    const rgb = getRGB(this.clearColor, 1.0);
+
+    const r = rgb.get('r') ?? 0.0;
+    const g = rgb.get('g') ?? 0.0;
+    const b = rgb.get('b') ?? 0.0;
+
+    const renderPass = commandEncoder.beginRenderPass({
+      colorAttachments: [{
+        view: this.context.getCurrentTexture().createView(),
+        clearValue: [r, g, b, 1.0],
+        storeOp: 'store',
+        loadOp: 'clear'
+      }]
+    });
+
+    renderPass.end();
+
+    this.device.queue.submit([
+      commandEncoder.finish()
+    ]);
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
   public override drawImage (pixels?: Uint8ClampedArray): void {}

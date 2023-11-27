@@ -10,8 +10,6 @@ export default class GPUScene
   public constructor (params: SceneParams) {
     Events.dispatch(`${params.tracer}::Start`);
     this.canvas = this.createCanvas(params);
-
-    this.canvas.clear();
     this.canvas.drawImage();
   }
 

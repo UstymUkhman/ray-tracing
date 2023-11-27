@@ -25,6 +25,7 @@ export default class CanvasWebGL extends Canvas
 
     this.createProgram(fragment, vertex);
     this.createScene();
+    this.clear();
   }
 
   private loadShader(source: string, type: ShaderType): WebGLShader | void {
@@ -144,7 +145,7 @@ export default class CanvasWebGL extends Canvas
     this.setTextureParameters();
   }
 
-  public override clear (): void {
+  protected override clear (): void {
     this.context.clear(this.context.COLOR_BUFFER_BIT);
   }
 

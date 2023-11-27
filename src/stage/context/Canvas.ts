@@ -6,10 +6,11 @@ export default abstract class Canvas
 {
   public abstract drawImage (image?: Uint8ClampedArray): void;
   protected readonly context: RenderingContext;
+
   protected readonly clearColor = 0.0;
   protected readonly channels: number;
+  protected abstract clear (): void;
 
-  public abstract clear (): void;
   public readonly height: number;
   public readonly width: number;
   private readonly side: number;
