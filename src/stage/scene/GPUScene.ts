@@ -10,16 +10,22 @@ export default class GPUScene
   public constructor (params: SceneParams) {
     Events.dispatch(`${params.tracer}::Start`);
     this.canvas = this.createCanvas(params);
-    this.canvas.drawImage();
   }
 
   private createCanvas (params: SceneParams): GPUCanvas {
     switch (params.context) {
       case 'WebGPU':
-        return new CanvasWebGPU(params);
+        return new CanvasWebGPU(params, this.onContextReady.bind(this));
 
-      default:
-        return new CanvasWebGL2(params, Tracer);
+      default: {
+        const canvas = new CanvasWebGL2(params, Tracer);
+        canvas.drawImage();
+        return canvas;
+      }
     }
+  }
+
+  private onContextReady (): void {
+    this.canvas.drawImage();
   }
 }

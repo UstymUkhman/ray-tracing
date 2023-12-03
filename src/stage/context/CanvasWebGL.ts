@@ -13,10 +13,6 @@ export default class CanvasWebGL extends Canvas
   private texture!: WebGLTexture;
   protected program!: WebGLProgram;
 
-  protected readonly textureData = new Uint8ClampedArray(
-    this.width * this.height * this.channels
-  );
-
   protected declare readonly context: WebGLRenderingContext;
 
   public constructor(params: SceneParams, fragment = Fragment, vertex = Vertex)
@@ -145,12 +141,12 @@ export default class CanvasWebGL extends Canvas
     this.setTextureParameters();
   }
 
-  protected override clear (): void {
-    this.context.clear(this.context.COLOR_BUFFER_BIT);
-  }
-
   public override drawImage (pixels: Uint8ClampedArray): void {
     this.setActiveTexture(pixels);
     this.context.drawArrays(this.context.TRIANGLES, 0.0, 6.0);
+  }
+
+  protected override clear (): void {
+    this.context.clear(this.context.COLOR_BUFFER_BIT);
   }
 }
