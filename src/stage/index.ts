@@ -19,13 +19,13 @@ export default class Stage
       const context = canvas.dataset.context as Context;
 
       if (processing === 'GPU')
-        return new GPUScene({ canvas, tracer, context });
+        return new GPUScene({ canvas, context, tracer });
 
       const worker = new WebWorker();
       Events.createWorkerEvents(worker, this.offscreen);
 
       if (!this.offscreen)
-        return new CPUScene({ canvas, worker, tracer, context });
+        return new CPUScene({ canvas, context, worker, tracer });
 
       else {
         Events.add('PPMImage::Download', this.downloadPPMImage.bind(this));

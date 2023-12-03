@@ -7,9 +7,9 @@ export type GPUCanvas = CanvasWebGL2 | CanvasWebGPU;
 
 export type SceneParams =
 {
-  offscreen?: boolean,
-  canvas: SceneCanvas,
-  worker?: WebWorker,
-  context: Context,
-  tracer?: string
+  offscreen?: boolean;
+  canvas: SceneCanvas;
+  worker?: WebWorker;
+  context: Context;
+  tracer?: string;
 };

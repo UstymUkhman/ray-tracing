@@ -6,25 +6,25 @@ import '@/app/app.css';
 
 export const App = () =>
 {
-  // let webgl2!: HTMLCanvasElement;
-  // let webgpu!: HTMLCanvasElement;
-  // let typescript!: HTMLCanvasElement;
+  let webgl2!: HTMLCanvasElement;
+  let webgpu!: HTMLCanvasElement;
+  let typescript!: HTMLCanvasElement;
   let assemblyscript!: HTMLCanvasElement;
 
   const [offscreen, setOffscreen] = createSignal(false);
 
   onMount(() => setOffscreen(
     new Stage([
-      // webgl2,
-      // webgpu,
-      // typescript,
+      webgl2,
+      webgpu,
+      typescript,
       assemblyscript
     ]).offscreen
   ));
 
   return (
     <section>
-      {/* <Stats offscreen={offscreen()}>
+      <Stats offscreen={offscreen()}>
         <canvas
           data-tracer="TypeScript"
           height={Config.height}
@@ -33,21 +33,20 @@ export const App = () =>
           width={Config.width}
           ref={typescript}
         />
-      </Stats> */}
+      </Stats>
 
       <Stats offscreen={offscreen()}>
         <canvas
           data-tracer="AssemblyScript"
           height={Config.height}
           data-processing="CPU"
-          // data-context="WebGL2"
-          data-context="WebGPU"
+          data-context="WebGL2"
           width={Config.width}
           ref={assemblyscript}
         />
       </Stats>
 
-      {/* <Stats>
+      <Stats>
         <canvas
           height={Config.height}
           data-processing="GPU"
@@ -56,9 +55,9 @@ export const App = () =>
           width={Config.width}
           ref={webgl2}
         />
-      </Stats> */}
+      </Stats>
 
-      {/* <Stats>
+      <Stats>
         <canvas
           height={Config.height}
           data-processing="GPU"
@@ -67,7 +66,7 @@ export const App = () =>
           width={Config.width}
           ref={webgpu}
         />
-      </Stats> */}
+      </Stats>
     </section>
   );
 };
