@@ -11,8 +11,8 @@ import type WebWorker from '@/utils/worker';
 
 import { DELTA_UPDATE } from '@/utils/Number';
 import type { Canvas } from '@/stage/context';
-import type { SceneParams } from '@/stage/scene/types';
 import type { Trace, Format, ImageData } from '@/stage/types';
+import type { SceneParams, Context } from '@/stage/scene/types';
 
 export default class CPUScene
 {
@@ -22,6 +22,7 @@ export default class CPUScene
 
   private collect!: () => void;
   private readonly tracer: string;
+  private readonly context: Context;
 
   private f32 = new Float32Array(
     Config.width * Config.height * 3
@@ -38,6 +39,7 @@ export default class CPUScene
   public constructor (params: SceneParams) {
     this.canvas = this.createCanvas(params);
     this.tracer = this.getTracer(params);
+    this.context = params.context;
 
     ((this.worker = params.worker))
       ? this.createWorkerEvents()
@@ -47,7 +49,12 @@ export default class CPUScene
   private createCanvas (params: SceneParams): Canvas {
     switch (params.context) {
       case 'WebGPU':
-        return new CanvasWebGPU(params);
+        return new CanvasWebGPU(
+          params,
+          params.worker
+            ? this.onCreateTracer.bind(this)
+            : this.onLoadTracer.bind(this)
+        );
 
       case 'WebGL2':
         return new CanvasWebGL2(params);
@@ -67,12 +74,15 @@ export default class CPUScene
 
   private createWorkerEvents (): void {
     this.worker?.post('Create::Tracer', { tracer: this.tracer });
+    this.worker?.add('Create::Tracer', this.onCreateTracer.bind(this));
+  }
 
-    this.worker?.add('Create::Tracer', () => {
+  private onCreateTracer (): void {
+    if (this.canvasContextReady) {
       this.worker?.add('Create::PPMImage', this.showPPMImage.bind(this));
       Events.dispatch(`${this.tracer}::Start`);
       this.createPPMImage();
-    });
+    }
   }
 
   private loadTracer (): void {
@@ -80,14 +90,18 @@ export default class CPUScene
       ? '../../../build/release.js'
       : '../Tracer.ts'
     ).then(({ trace, format, collect }) => {
-      Events.dispatch(`${this.tracer}::Start`, null, true);
-
-      this.trace = trace;
-      this.format = format;
       this.collect = collect;
-
-      this.createPPMImage();
+      this.format = format;
+      this.trace = trace;
+      this.onLoadTracer();
     });
+  }
+
+  private onLoadTracer (): void {
+    if (this.canvasContextReady) {
+      Events.dispatch(`${this.tracer}::Start`, null, true);
+      this.createPPMImage();
+    }
   }
 
   private createPPMImage (download = false): void {
@@ -128,5 +142,9 @@ export default class CPUScene
       image += `${pixels[p]} ${pixels[p + 1]} ${pixels[p + 2]}\n`;
 
     Events.dispatch('PPMImage::Download', { image }, worker);
+  }
+
+  private get canvasContextReady (): boolean {
+    return this.context === 'WebGPU' ? (this.canvas as CanvasWebGPU).ready : true;
   }
 }
