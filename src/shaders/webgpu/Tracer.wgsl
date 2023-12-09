@@ -1,3 +1,5 @@
+#include ./Config.wgsl;
+
 struct VertexOutput {
   @location(0) coords: vec2f,
   @builtin(position) position: vec4f
@@ -28,5 +30,5 @@ fn mainVert(@builtin(vertex_index) index: u32) -> VertexOutput
 @fragment
 fn mainFrag(@location(0) coords: vec2f) -> @location(0) vec4f
 {
-  return vec4f(coords, 0, 1);
+  return vec4f(coords, 0.25, 1.0);
 }

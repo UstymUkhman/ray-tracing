@@ -4,7 +4,10 @@ import { defineConfig } from 'vite';
 import solid from 'vite-plugin-solid';
 import { version } from './package.json';
 
-export default ({ mode }: { mode: string }, compress = mode === 'production') =>
+export default (
+  // { mode }: { mode: string },
+  // compress = mode === 'production'
+) =>
   defineConfig({
     base: './',
 
@@ -12,10 +15,10 @@ export default ({ mode }: { mode: string }, compress = mode === 'production') =>
 
     worker: {
       format: 'es',
-      plugins: [glsl({ compress })]
+      plugins: [glsl(/* { compress } */)]
     },
 
-    plugins: [solid(), glsl({ compress })],
+    plugins: [solid(), glsl(/* { compress } */)],
 
     resolve: {
       alias: { '@': resolve('src') },
@@ -30,7 +33,7 @@ export default ({ mode }: { mode: string }, compress = mode === 'production') =>
 
     define: {
       VERSION: JSON.stringify(version),
-      DEBUG: !compress && false
+      DEBUG: /* !compress && */ false
     },
 
     server: {
