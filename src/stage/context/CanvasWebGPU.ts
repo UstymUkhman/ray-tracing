@@ -16,17 +16,25 @@ export default class CanvasWebGPU extends Canvas
   private imageBindGroup!: GPUBindGroup;
   private imagePipeline!: GPURenderPipeline;
 
+  // GPU-Computed Image Texture:
+  private tracerPipeline!: GPURenderPipeline;
+
   protected declare readonly context: GPUCanvasContext;
 
-  public constructor (params: SceneParams, onInitialize?: () => void) {
+  public constructor (
+    params: SceneParams,
+    onInitialize?: () => void,
+    shader = Shader
+  ) {
     super(params);
 
     this.initializeWebGPU()
       .then(
         this.createRenderPipeline.bind(
           this,
-          onInitialize,
-          params.tracer
+          shader,
+          params.tracer,
+          onInitialize
         )
       )
       .catch(error => Events.dispatch(
@@ -59,22 +67,43 @@ export default class CanvasWebGPU extends Canvas
   }
 
   private createRenderPipeline (
-    onInitialize?: () => void,
-    tracer?: string
+    shader: string,
+    tracer?: string,
+    onInitialize?: () => void
   ): void {
     this.clear();
 
     tracer === 'WebGPU'
-      ? this.createTracerPipeline()
-      : this.createImagePipeline();
+      ? this.createTracerPipeline(shader)
+      : this.createImagePipeline(shader);
 
     onInitialize?.();
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  private createTracerPipeline (): void {}
+  private createTracerPipeline (shader: string): void {
+    const shaderModule = this.device.createShaderModule({
+      label: 'Tracer Shader',
+      code: shader
+    });
 
-  private createImagePipeline (): void {
+    this.tracerPipeline = this.device.createRenderPipeline({
+      label: 'Tracer Pipeline',
+      layout: 'auto',
+
+      vertex: {
+        entryPoint: 'mainVert',
+        module: shaderModule
+      },
+
+      fragment: {
+        targets: [{ format: this.format }],
+        entryPoint: 'mainFrag',
+        module: shaderModule
+      }
+    });
+  }
+
+  private createImagePipeline (shader: string): void {
     const { width, height } = Config;
 
     const sampler = this.device.createSampler({
@@ -98,7 +127,7 @@ export default class CanvasWebGPU extends Canvas
 
     const shaderModule = this.device.createShaderModule({
       label: 'Main Shader',
-      code: Shader
+      code: shader
     });
 
     this.imagePipeline = this.device.createRenderPipeline({
@@ -161,6 +190,26 @@ export default class CanvasWebGPU extends Canvas
 
   public override drawImage (pixels?: Uint8ClampedArray): Promise<void> | void {
     if (pixels) return this.setActiveTexture(pixels);
+
+    const commandEncoder = this.device.createCommandEncoder({
+      label: 'Renderer Command Encoder'
+    });
+
+    const pass = commandEncoder.beginRenderPass({
+      colorAttachments: [{
+        view: this.context.getCurrentTexture().createView(),
+        storeOp: 'store',
+        loadOp: 'clear'
+      }]
+    });
+
+    pass.setPipeline(this.tracerPipeline);
+    pass.draw(6);
+    pass.end();
+
+    this.device.queue.submit([
+      commandEncoder.finish()
+    ]);
   }
 
   protected override clear (): void {
