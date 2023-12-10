@@ -13,12 +13,14 @@ section {
   transform: translate(-50%, -50%);
   grid-template-areas: ". ." ". .";
 
+  --mh: calc(var(--height) * 4 + 30px);
+
   @media (width <= 800px) {
     grid-template-areas: "." "." "." ".";
 
     padding:
-      calc(max(100dvh - 990px, 20px) * 0.5)
-      calc(max(100% - 360px, 0px) * 0.5);
+      calc(max(100dvh - var(--mh), 20px) * 0.5)
+      calc(max(100% - var(--width), 0px) * 0.5);
 
     overflow: hidden auto;
     position: relative;

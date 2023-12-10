@@ -12,18 +12,28 @@ export const App = () =>
   let assemblyscript!: HTMLCanvasElement;
 
   const [offscreen, setOffscreen] = createSignal(false);
+  let container: HTMLElement | ((el: HTMLElement) => void) | undefined;
 
-  onMount(() => setOffscreen(
-    new Stage([
-      webgl2,
-      webgpu,
-      typescript,
-      assemblyscript
-    ]).offscreen
-  ));
+  onMount(() => {
+    const { width, height } = Config;
+    const section = container as HTMLElement;
+
+    section.style.setProperty('--width', `${width}px`);
+    section.style.setProperty('--height', `${height}px`);
+    section.style.setProperty('--ratio', `${width} / ${height}`);
+
+    setOffscreen(
+      new Stage([
+        webgl2,
+        webgpu,
+        typescript,
+        assemblyscript
+      ]).offscreen
+    );
+  });
 
   return (
-    <section>
+    <section ref={container}>
       <Stats offscreen={offscreen()}>
         <canvas
           data-tracer="TypeScript"

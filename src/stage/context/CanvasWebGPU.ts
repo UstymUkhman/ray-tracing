@@ -2,7 +2,7 @@ import Config from '@/stage/Config';
 import { Events } from '@/stage/scene';
 import { getRGB } from '@/utils/Color';
 import Canvas from '@/stage/context/Canvas';
-import Shader from '@/shaders/webgpu/main.wgsl';
+import Shader from '@/shaders/webgpu/main.frag.wgsl';
 import type { SceneParams } from '@/stage/scene/types';
 
 export default class CanvasWebGPU extends Canvas

@@ -10,7 +10,7 @@ class Tracer
 {
   private readonly camera: Camera;
   private readonly world: World = new World();
-  private readonly depth : u8  = Config.maxDepth;
+  private readonly depth: u8 = Config.maxDepth;
 
   public constructor ()
   {

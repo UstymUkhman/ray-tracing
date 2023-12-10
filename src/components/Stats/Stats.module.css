@@ -24,7 +24,7 @@
 }
 
 .container, .stats {
-  aspect-ratio: 3 / 2;
+  aspect-ratio: var(--ratio);
   display: flex;
 
   height: 100%;
@@ -34,7 +34,7 @@
     height: auto;
 
     & > canvas {
-      width: min(100vw, 360px);
+      width: min(100vw, var(--width));
     }
   }
 }
