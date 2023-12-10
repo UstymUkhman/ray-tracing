@@ -7,6 +7,8 @@
 #endif
 
 uniform vec2 resolution;
+uniform float height;
+uniform float width;
 
 in  vec2 position;
 in  vec2 coords;
@@ -21,7 +23,7 @@ out vec2 uv;
 void main (void)
 {
   #ifdef CAMERA
-    vec2 res = vec2(config.width, config.height);
+    vec2 res = vec2(width, height);
 
     camera = createCamera(
       vec3(13.0, 2.0, 3.0),

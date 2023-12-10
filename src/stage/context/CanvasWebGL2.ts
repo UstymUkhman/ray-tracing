@@ -122,12 +122,20 @@ export default class CanvasWebGL2 extends CanvasWebGL
   private updateUniforms (spheres: SphereUniform[]): void {
     for (let s = 0, l = spheres.length; s < l; s++)
     {
-      const transform = this.context.getUniformLocation(this.program, `spheres[${s}].transform`);
       const material = this.context.getUniformLocation(this.program, `spheres[${s}].material`);
+      const transform = this.context.getUniformLocation(this.program, `spheres[${s}].transform`);
 
-      this.context.uniform4fv(transform, [...spheres[s].center, spheres[s].radius]);
       this.context.uniform4fv(material, [...spheres[s].material.albedo, spheres[s].material.extra]);
+      this.context.uniform4fv(transform, [...spheres[s].center, spheres[s].radius]);
     }
+
+    const maxDepth = this.context.getUniformLocation(this.program, 'maxDepth');
+    const height = this.context.getUniformLocation(this.program, 'height');
+    const width = this.context.getUniformLocation(this.program, 'width');
+
+    this.context.uniform1ui(maxDepth, Config.maxDepth);
+    this.context.uniform1f(height, Config.height);
+    this.context.uniform1f(width, Config.width);
   }
 
   public override drawImage (pixels?: Uint8ClampedArray): void {

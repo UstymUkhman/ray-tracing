@@ -1,5 +1,4 @@
 #include ./Ray;
-#include ./Config;
 #include ./utils/Vector3;
 
 struct Camera

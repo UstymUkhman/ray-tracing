@@ -13,7 +13,12 @@ in  vec2 uv;
 in  Camera camera;
 out vec4 fragColor;
 
+uniform float width;
+uniform float height;
+
 uniform uint samples;
+uniform uint maxDepth;
+
 uniform sampler2D frame;
 uniform Sphere spheres[SPHERES];
 
@@ -25,9 +30,9 @@ void addSpheres (void)
 
 void main (void)
 {
+  vec2 res = vec2(width, height);
   vec2 mappedUV = vec2(uv.x, 1.0 - uv.y);
   vec3 color = texture(frame, mappedUV).rgb;
-  vec2 res = vec2(config.width, config.height);
 
   addSpheres();
   inputColor(color, samples);
@@ -39,7 +44,7 @@ void main (void)
   float v = (coord.y + random(seed)) / res.y;
 
   Ray ray = getRay(camera, u, v, seed);
-  color += getColor(ray, config.maxDepth, seed);
+  color += getColor(ray, maxDepth, seed);
 
   outputColor(color, samples);
   fragColor = vec4(color, 1.0);
