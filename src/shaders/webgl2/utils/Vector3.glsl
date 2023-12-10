@@ -37,7 +37,9 @@ vec3 randomUnitDisk (in vec2 seed) {
   // Method 2:
   float rand = random(seed * 0.02468);
   float x = rand * 2.0 - 1.0;
-  float y = random(seed * 0.13579, -2.0, 2.0) *
+
+  float y =
+    random(seed * 0.13579, -2.0, 2.0) *
     sqrt(rand * -rand + rand);
 
   return vec3(x, y, 0.0);

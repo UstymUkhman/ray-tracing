@@ -1,4 +1,5 @@
 #include ./Config.wgsl;
+#include ./utils/Vector3.wgsl;
 
 struct VertexOutput {
   @location(0) coords: vec2f,
