@@ -2,6 +2,7 @@ import { Events } from '@/stage/scene';
 import { getRGB } from '@/utils/Color';
 import * as Config from '@/stage/Config';
 import Canvas from '@/stage/context/Canvas';
+import Compute from '@/shaders/webgpu/compute.wgsl';
 import Shader from '@/shaders/webgpu/main.frag.wgsl';
 import type { SceneParams } from '@/stage/scene/types';
 
@@ -17,9 +18,13 @@ export default class CanvasWebGPU extends Canvas
   private imagePipeline!: GPURenderPipeline;
 
   // GPU-Computed Image Texture:
+  private tracerBindGroup!: GPUBindGroup;
+  private computeBindGroup!: GPUBindGroup;
   private tracerPipeline!: GPURenderPipeline;
+  private computePipeline!: GPUComputePipeline;
 
   protected declare readonly context: GPUCanvasContext;
+  private readonly workgroupCount: [number, number] = [0, 0];
 
   public constructor (
     params: SceneParams,
@@ -45,9 +50,11 @@ export default class CanvasWebGPU extends Canvas
   }
 
   private async initializeWebGPU (): Promise<void> {
-    if (!navigator.gpu) throw new Error(
-      'WebGPU is not supported on this browser.'
-    );
+    if (!this.context)
+      throw new Error('Failed to initialize WebGPU context.');
+
+    if (!navigator.gpu)
+      throw new Error('WebGPU is not supported on this browser.');
 
     const gpuAdapter = await navigator.gpu.requestAdapter({
       powerPreference: 'high-performance',
@@ -59,11 +66,23 @@ export default class CanvasWebGPU extends Canvas
     else
       throw new Error('No appropriate GPUAdapter found.');
 
-    if (!this.context) throw new Error('Failed to initialize WebGPU context.');
-
-    this.device = await this.adapter.requestDevice();
+    const requiredFeatures: GPUFeatureName[] = [];
     this.format = navigator.gpu.getPreferredCanvasFormat();
-    this.context.configure({ device: this.device, format: this.format });
+    this.format === 'bgra8unorm' && requiredFeatures.push('bgra8unorm-storage');
+
+    if (!this.adapter.features.has('bgra8unorm-storage')) throw new Error(
+      '"bgra8unorm-storage" is not supported on this GPUAdapter.'
+    );
+
+    this.device = await this.adapter.requestDevice({ requiredFeatures });
+
+    this.context.configure({
+      usage: GPUTextureUsage.RENDER_ATTACHMENT |
+        GPUTextureUsage.STORAGE_BINDING,
+
+      device: this.device,
+      format: this.format
+    });
   }
 
   private createRenderPipeline (
@@ -80,7 +99,69 @@ export default class CanvasWebGPU extends Canvas
     onInitialize?.();
   }
 
+  private createComputePipeline (size = 16): GPUTexture {
+
+    const framebuffer = this.device.createTexture({
+      size: [Config.width, Config.height],
+      label: 'Framebuffer Texture',
+      format: 'rgba16float',
+
+      usage:
+        GPUTextureUsage.RENDER_ATTACHMENT |
+        GPUTextureUsage.STORAGE_BINDING |
+        GPUTextureUsage.TEXTURE_BINDING
+    });
+
+    const computeBindGroupLayout = this.device.createBindGroupLayout({
+      label: 'Compute Bind Group Layout',
+
+      entries: [{
+        binding: 0,
+        visibility: GPUShaderStage.COMPUTE,
+        storageTexture: { format: framebuffer.format }
+      }]
+    });
+
+    const computePipelineLayout = this.device.createPipelineLayout({
+      bindGroupLayouts: [computeBindGroupLayout],
+      label: 'Compute Pipeline Layout'
+    });
+
+    this.computeBindGroup = this.device.createBindGroup({
+      layout: computeBindGroupLayout,
+      label: 'Compute Bind Group',
+
+      entries: [{
+        binding: 0,
+        resource: framebuffer.createView()
+      }]
+    });
+
+    const shaderModule = this.device.createShaderModule({
+      label: 'Compute Shader',
+      code: Compute
+    });
+
+    this.computePipeline = this.device.createComputePipeline({
+      layout: computePipelineLayout,
+      label: 'Compute Pipeline',
+
+      compute: {
+        constants: { size },
+        module: shaderModule,
+        entryPoint: 'mainCompute'
+      }
+    });
+
+    this.workgroupCount[0] = Math.ceil(Config.width / size);
+    this.workgroupCount[1] = Math.ceil(Config.height / size);
+
+    return framebuffer;
+  }
+
   private createTracerPipeline (shader: string): void {
+    const framebuffer = this.createComputePipeline();
+
     const shaderModule = this.device.createShaderModule({
       label: 'Tracer Shader',
       code: shader
@@ -91,28 +172,33 @@ export default class CanvasWebGPU extends Canvas
       layout: 'auto',
 
       vertex: {
-        entryPoint: 'mainVert',
+        entryPoint: 'mainVertex',
         module: shaderModule
       },
 
       fragment: {
         targets: [{ format: this.format }],
-        entryPoint: 'mainFrag',
+        entryPoint: 'mainFragment',
         module: shaderModule
       }
+    });
+
+    this.tracerBindGroup = this.device.createBindGroup({
+      layout: this.tracerPipeline.getBindGroupLayout(0),
+      label: 'Tracer Bind Group',
+
+      entries: [{
+        binding: 0,
+        resource: framebuffer.createView()
+      }, {
+        binding: 1,
+        resource: this.sampler
+      }]
     });
   }
 
   private createImagePipeline (shader: string): void {
     const { width, height } = Config;
-
-    const sampler = this.device.createSampler({
-      addressModeU: 'clamp-to-edge',
-      addressModeV: 'clamp-to-edge',
-
-      minFilter: 'nearest',
-      magFilter: 'nearest'
-    });
 
     this.imageTexture = this.device.createTexture({
       label: 'CPU Computed Image',
@@ -135,13 +221,13 @@ export default class CanvasWebGPU extends Canvas
       layout: 'auto',
 
       vertex: {
-        entryPoint: 'mainVert',
+        entryPoint: 'mainVertex',
         module: shaderModule
       },
 
       fragment: {
         targets: [{ format: this.format }],
-        entryPoint: 'mainFrag',
+        entryPoint: 'mainFragment',
         module: shaderModule
       }
     });
@@ -150,12 +236,13 @@ export default class CanvasWebGPU extends Canvas
       layout: this.imagePipeline.getBindGroupLayout(0),
       entries: [
         { binding: 0, resource: this.imageTexture.createView() },
-        { binding: 1, resource: sampler }
+        { binding: 1, resource: this.sampler }
       ]
     });
   }
 
   private setActiveTexture (data: Uint8ClampedArray): void {
+    const commandEncoder = this.device.createCommandEncoder();
     const { width, height } = Config;
     this.setImageData(data);
 
@@ -165,11 +252,7 @@ export default class CanvasWebGPU extends Canvas
       { width, height }
     );
 
-    const commandEncoder = this.device.createCommandEncoder({
-      label: 'Renderer Command Encoder'
-    });
-
-    const pass = commandEncoder.beginRenderPass({
+    const renderPass = commandEncoder.beginRenderPass({
       colorAttachments: [{
         view: this.context.getCurrentTexture().createView(),
         storeOp: 'store',
@@ -177,11 +260,9 @@ export default class CanvasWebGPU extends Canvas
       }]
     });
 
-    pass.setBindGroup(0, this.imageBindGroup);
-    pass.setPipeline(this.imagePipeline);
-
-    pass.draw(6);
-    pass.end();
+    renderPass.setBindGroup(0, this.imageBindGroup);
+    renderPass.setPipeline(this.imagePipeline);
+    renderPass.draw(6); renderPass.end();
 
     this.device.queue.submit([
       commandEncoder.finish()
@@ -191,11 +272,16 @@ export default class CanvasWebGPU extends Canvas
   public override drawImage (pixels?: Uint8ClampedArray): Promise<void> | void {
     if (pixels) return this.setActiveTexture(pixels);
 
-    const commandEncoder = this.device.createCommandEncoder({
-      label: 'Renderer Command Encoder'
-    });
+    const commandEncoder = this.device.createCommandEncoder();
+    const computePass = commandEncoder.beginComputePass();
 
-    const pass = commandEncoder.beginRenderPass({
+    computePass.setPipeline(this.computePipeline);
+    computePass.setBindGroup(0, this.computeBindGroup);
+    computePass.dispatchWorkgroups(...this.workgroupCount);
+
+    computePass.end();
+
+    const renderPass = commandEncoder.beginRenderPass({
       colorAttachments: [{
         view: this.context.getCurrentTexture().createView(),
         storeOp: 'store',
@@ -203,9 +289,9 @@ export default class CanvasWebGPU extends Canvas
       }]
     });
 
-    pass.setPipeline(this.tracerPipeline);
-    pass.draw(6);
-    pass.end();
+    renderPass.setBindGroup(0, this.tracerBindGroup);
+    renderPass.setPipeline(this.tracerPipeline);
+    renderPass.draw(6); renderPass.end();
 
     this.device.queue.submit([
       commandEncoder.finish()
@@ -234,6 +320,16 @@ export default class CanvasWebGPU extends Canvas
     this.device.queue.submit([
       commandEncoder.finish()
     ]);
+  }
+
+  private get sampler (): GPUSampler {
+    return this.device.createSampler({
+      addressModeU: 'clamp-to-edge',
+      addressModeV: 'clamp-to-edge',
+
+      minFilter: 'linear',
+      magFilter: 'linear'
+    });
   }
 
   public get ready (): boolean {
