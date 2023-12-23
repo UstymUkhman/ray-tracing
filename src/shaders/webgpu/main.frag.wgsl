@@ -4,7 +4,7 @@
 @group(0) @binding(1) var textureSampler: sampler;
 
 @fragment
-fn mainFrag(@location(0) coords: vec2f) -> @location(0) vec4f
+fn mainFragment(@location(0) coords: vec2f) -> @location(0) vec4f
 {
   return textureSample(texture, textureSampler, coords);
 }

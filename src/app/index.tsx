@@ -1,6 +1,6 @@
 import { createSignal, onMount } from 'solid-js';
+import * as Config from '@/stage/Config';
 import { Stats } from '@/components';
-import Config from '@/stage/Config';
 import Stage from '@/stage';
 import '@/app/app.css';
 
