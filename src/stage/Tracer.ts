@@ -1,9 +1,9 @@
 import { floatToInt } from '@/utils/Color';
 import { World } from '@/stage/hittables';
+import * as Config from '@/stage/Config';
 import { toFixed } from '@/utils/Number';
 import Vector3 from '@/utils/Vector3';
 import Camera from '@/stage/Camera';
-import Config from '@/stage/Config';
 import Ray from '@/stage/Ray';
 
 class Tracer

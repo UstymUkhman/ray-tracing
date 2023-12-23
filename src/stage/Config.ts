@@ -1,8 +1,5 @@
-export default
-{
-  maxDepth: 50.0,
-  samples: 500.0,
-  height: 240.0,
-  width: 360.0,
-  log: false
-} as const;
+export const maxDepth = 50;
+export const samples = 500;
+export const height = 240;
+export const width = 360;
+export const log = !!0;

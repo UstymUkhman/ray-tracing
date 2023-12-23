@@ -5,8 +5,8 @@ import {
   CanvasWebGPU
 } from '@/stage/context';
 
-import Config from '@/stage/Config';
 import { Events } from '@/stage/scene';
+import * as Config from '@/stage/Config';
 import type WebWorker from '@/utils/worker';
 
 import { DELTA_UPDATE } from '@/utils/Number';

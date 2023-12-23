@@ -1,7 +1,7 @@
 import type { Format } from '@/stage/types';
 import type { Trace } from '@/stage/types';
 import { CPUScene } from '@/stage/scene';
-import Config from '@/stage/Config';
+import * as Config from '@/stage/Config';
 
 let sample = 0.0;
 let trace: Trace;

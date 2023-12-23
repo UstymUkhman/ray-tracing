@@ -6,8 +6,8 @@ import CanvasWebGL from '@/stage/context/CanvasWebGL';
 import Fragment from '@/shaders/webgl2/main.frag';
 import Vertex from '@/shaders/webgl2/main.vert';
 import type { Vec3 } from '@/utils/Vector3';
+import * as Config from '@/stage/Config';
 import { Events } from '@/stage/scene';
-import Config from '@/stage/Config';
 
 export default class CanvasWebGL2 extends CanvasWebGL
 {

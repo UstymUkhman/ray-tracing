@@ -1,16 +1,16 @@
+import * as Config from '../src/stage/Config';
 import { floatToInt } from './utils/Color';
 import { toFixed } from './utils/Number';
 import Vector3 from './utils/Vector3';
 import { World } from './hittables';
 import Camera from './Camera';
-import Config from './Config';
 import Ray from './Ray';
 
 class Tracer
 {
   private readonly camera: Camera;
   private readonly world: World = new World();
-  private readonly depth: u8 = Config.maxDepth;
+  private readonly depth: u8 = <u8>Config.maxDepth;
 
   public constructor ()
   {
@@ -31,8 +31,8 @@ class Tracer
     const ray = new Ray();
     const depth = this.depth;
 
-    const width = Config.width;
-    const height = Config.height;
+    const width = <u16>Config.width;
+    const height = <u16>Config.height;
 
     const objects =  this.world.objects;
 
