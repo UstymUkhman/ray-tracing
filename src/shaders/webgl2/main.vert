@@ -15,7 +15,7 @@ in  vec2 coords;
 out vec2 uv;
 
 #ifdef CAMERA
-  #include ./Camera;
+  #include Camera;
 
   out Camera camera;
 #endif

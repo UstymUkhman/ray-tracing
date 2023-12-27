@@ -1,4 +1,4 @@
-#include ./Sphere;
+#include Sphere;
 
 struct Hittable
 {

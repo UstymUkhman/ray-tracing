@@ -23,9 +23,9 @@ export default class CanvasWebGL2 extends CanvasWebGL
   private readonly draw = this.drawImage.bind(this, undefined);
   private readonly samplesUniform!: WebGLUniformLocation | null;
 
-  public constructor(params: SceneParams, fragment = Fragment) {
+  public constructor(params: SceneParams, shader = Fragment) {
     if (params.tracer !== 'WebGL2')
-      super(params, fragment, Vertex);
+      super(params, shader, Vertex);
 
     else {
       const world = new World();
@@ -34,7 +34,7 @@ export default class CanvasWebGL2 extends CanvasWebGL
       super(
         params,
 
-        fragment.replace(
+        shader.replace(
           '#version 300 es',
           `#version 300 es\n#define SPHERES ${spheres}u`
         ),

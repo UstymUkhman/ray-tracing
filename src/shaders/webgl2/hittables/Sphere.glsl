@@ -1,4 +1,4 @@
-#include ./Record;
+#include Record;
 
 struct Sphere
 {

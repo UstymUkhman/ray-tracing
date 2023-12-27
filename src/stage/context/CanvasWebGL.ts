@@ -1,6 +1,6 @@
 import type { SceneParams } from '@/stage/scene/types';
-import Fragment from '@/shaders/webgl/main.frag?raw';
-import Vertex from '@/shaders/webgl/main.vert?raw';
+import Fragment from '@/shaders/webgl/main.frag';
+import Vertex from '@/shaders/webgl/main.vert';
 import Canvas from '@/stage/context/Canvas';
 import { getRGB } from '@/utils/Color';
 

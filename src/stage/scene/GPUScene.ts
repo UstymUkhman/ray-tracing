@@ -1,7 +1,6 @@
 import type { GPUCanvas, SceneParams } from '@/stage/scene/types';
 import { CanvasWebGL2, CanvasWebGPU } from '@/stage/context';
-import WebGPUTracer from '@/shaders/webgpu/Tracer.wgsl';
-import WebGLTracer from '@/shaders/webgl2/Tracer.frag';
+import Tracer from '@/shaders/webgl2/Tracer.frag';
 import { Events } from '@/stage/scene';
 
 export default class GPUScene
@@ -18,12 +17,11 @@ export default class GPUScene
       case 'WebGPU':
         return new CanvasWebGPU(
           params,
-          this.onContextReady.bind(this),
-          WebGPUTracer
+          this.onContextReady.bind(this)
         );
 
       default: {
-        const canvas = new CanvasWebGL2(params, WebGLTracer);
+        const canvas = new CanvasWebGL2(params, Tracer);
         canvas.drawImage();
         return canvas;
       }

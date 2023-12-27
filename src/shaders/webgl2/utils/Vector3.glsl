@@ -1,4 +1,4 @@
-#include ./Number;
+#include Number;
 
 bool nearZero (in vec3 vec) {
   return (abs(vec.x) < 1e-8) &&

@@ -6,8 +6,8 @@
   precision highp float;
 #endif
 
-#include ./Camera;
-#include ./utils/Color;
+#include Camera;
+#include utils/Color;
 
 in  vec2 uv;
 in  Camera camera;

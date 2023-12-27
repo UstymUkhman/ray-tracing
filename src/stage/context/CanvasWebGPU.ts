@@ -2,8 +2,8 @@ import { Events } from '@/stage/scene';
 import { getRGB } from '@/utils/Color';
 import * as Config from '@/stage/Config';
 import Canvas from '@/stage/context/Canvas';
-import Compute from '@/shaders/webgpu/compute.wgsl';
-import Shader from '@/shaders/webgpu/main.frag.wgsl';
+import Shader from '@/shaders/webgpu/main.wgsl';
+import Tracer from '@/shaders/webgpu/Tracer.wgsl';
 import type { SceneParams } from '@/stage/scene/types';
 
 export default class CanvasWebGPU extends Canvas
@@ -26,18 +26,13 @@ export default class CanvasWebGPU extends Canvas
   protected declare readonly context: GPUCanvasContext;
   private readonly workgroupCount: [number, number] = [0, 0];
 
-  public constructor (
-    params: SceneParams,
-    onInitialize?: () => void,
-    shader = Shader
-  ) {
+  public constructor (params: SceneParams, onInitialize?: () => void) {
     super(params);
 
     this.initializeWebGPU()
       .then(
         this.createRenderPipeline.bind(
           this,
-          shader,
           params.tracer,
           onInitialize
         )
@@ -85,16 +80,12 @@ export default class CanvasWebGPU extends Canvas
     });
   }
 
-  private createRenderPipeline (
-    shader: string,
-    tracer?: string,
-    onInitialize?: () => void
-  ): void {
+  private createRenderPipeline (tracer?: string, onInitialize?: () => void): void {
     this.clear();
 
     tracer === 'WebGPU'
-      ? this.createTracerPipeline(shader)
-      : this.createImagePipeline(shader);
+      ? this.createTracerPipeline()
+      : this.createImagePipeline();
 
     onInitialize?.();
   }
@@ -138,7 +129,7 @@ export default class CanvasWebGPU extends Canvas
 
     const shaderModule = this.device.createShaderModule({
       label: 'Compute Shader',
-      code: Compute
+      code: Tracer
     });
 
     this.computePipeline = this.device.createComputePipeline({
@@ -158,12 +149,12 @@ export default class CanvasWebGPU extends Canvas
     return framebuffer;
   }
 
-  private createTracerPipeline (shader: string): void {
+  private createTracerPipeline (): void {
     const framebuffer = this.createComputePipeline();
 
     const shaderModule = this.device.createShaderModule({
       label: 'Tracer Shader',
-      code: shader
+      code: Shader
     });
 
     this.tracerPipeline = this.device.createRenderPipeline({
@@ -196,7 +187,7 @@ export default class CanvasWebGPU extends Canvas
     });
   }
 
-  private createImagePipeline (shader: string): void {
+  private createImagePipeline (): void {
     const { width, height } = Config;
 
     this.imageTexture = this.device.createTexture({
@@ -211,8 +202,8 @@ export default class CanvasWebGPU extends Canvas
     });
 
     const shaderModule = this.device.createShaderModule({
-      label: 'Main Shader',
-      code: shader
+      label: 'Image Shader',
+      code: Shader
     });
 
     this.imagePipeline = this.device.createRenderPipeline({

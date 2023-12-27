@@ -1,4 +1,4 @@
-#include ./Number.wgsl;
+#include Number.wgsl;
 
 fn nearZero(vec: vec3f) -> bool {
   return (abs(vec.x) < 1e-8f) &&
