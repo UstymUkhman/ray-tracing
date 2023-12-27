@@ -50,11 +50,11 @@ export default class CanvasWebGPU extends Canvas
   }
 
   private async initializeWebGPU (): Promise<void> {
-    if (!this.context)
-      throw new Error('Failed to initialize WebGPU context.');
-
     if (!navigator.gpu)
       throw new Error('WebGPU is not supported on this browser.');
+
+    if (!this.context)
+      throw new Error('Failed to initialize WebGPU context.');
 
     const gpuAdapter = await navigator.gpu.requestAdapter({
       powerPreference: 'high-performance',
@@ -100,7 +100,6 @@ export default class CanvasWebGPU extends Canvas
   }
 
   private createComputePipeline (size = 16): GPUTexture {
-
     const framebuffer = this.device.createTexture({
       size: [Config.width, Config.height],
       label: 'Framebuffer Texture',

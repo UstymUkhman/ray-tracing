@@ -1,5 +1,4 @@
 #include main.vert.wgsl;
-#include utils/Vector3.wgsl;
 
 @group(0) @binding(0)
 var framebuffer: texture_2d<f32>;
