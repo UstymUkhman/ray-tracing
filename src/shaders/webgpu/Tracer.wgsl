@@ -34,7 +34,7 @@ fn mainCompute(@builtin(global_invocation_id) invocation_id: vec3u)
     let uv = vec2f(invocation_id.xy) / vec2f(textureDimensions(framebuffer).xy);
     let ray = Ray(ORIGIN, LOWER_LEFT_CORNER + HORIZONTAL * uv.x + VERTICAL * uv.y - ORIGIN);
 
-    let color = vec4f(skyColor(ray), 1.0);
+    let color = vec4f(getColor(ray), 1.0);
     textureStore(framebuffer, invocation_id.xy, color);
   }
 }
