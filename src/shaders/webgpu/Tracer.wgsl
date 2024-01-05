@@ -3,6 +3,7 @@ override size: u32;
 
 #include Ray.wgsl;
 #include utils/Color.wgsl;
+#include utils/Vector3.wgsl;
 
 @group(0) @binding(0)
 var framebuffer: texture_storage_2d<rgba16float, write>;
