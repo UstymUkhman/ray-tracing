@@ -20,6 +20,9 @@ vec3 getColor (in Ray ray, uint depth, in vec2 seed)
 
   for (uint d = depth; d > 0u; --d)
   {
+    uint x = depth - d;
+    depthSeed = uvec3(x, d, x * d);
+
     if (hitObject(ray, 0.001, INFINITY))
     {
       Ray scattered;

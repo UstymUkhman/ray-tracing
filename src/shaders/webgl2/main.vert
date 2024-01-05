@@ -15,6 +15,7 @@ in  vec2 coords;
 out vec2 uv;
 
 #ifdef CAMERA
+  #define SIMPLE_RANDOM
   #include Camera;
 
   out Camera camera;

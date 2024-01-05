@@ -35,6 +35,7 @@ void main (void)
   vec3 color = texture(frame, mappedUV).rgb;
 
   addSpheres();
+  initializeRandom();
   inputColor(color, samples);
 
   vec2 coord = mappedUV * res;

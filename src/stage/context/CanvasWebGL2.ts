@@ -19,9 +19,11 @@ export default class CanvasWebGL2 extends CanvasWebGL
   private frameBuffer1!: WebGLFramebuffer;
   private frameBuffer2!: WebGLFramebuffer;
 
+  private randomUniform!: WebGLUniformLocation | null;
+  private samplesUniform!: WebGLUniformLocation | null;
+
   protected declare readonly context: WebGL2RenderingContext;
   private readonly draw = this.drawImage.bind(this, undefined);
-  private readonly samplesUniform!: WebGLUniformLocation | null;
 
   public constructor(params: SceneParams, shader = Fragment) {
     if (params.tracer !== 'WebGL2')
@@ -47,7 +49,6 @@ export default class CanvasWebGL2 extends CanvasWebGL
 
       this.createWorld(world);
       this.createFrameBufferTextures();
-      this.samplesUniform = this.context.getUniformLocation(this.program, 'samples');
     }
   }
 
@@ -100,7 +101,7 @@ export default class CanvasWebGL2 extends CanvasWebGL
     }
 
     world.dispose();
-    this.updateUniforms(spheres);
+    this.createUniforms(spheres);
   }
 
   private createFrameBufferTextures (): void {
@@ -119,7 +120,7 @@ export default class CanvasWebGL2 extends CanvasWebGL
     this.bindFrameBufferTextures(this.frameBuffer2, this.texture2);
   }
 
-  private updateUniforms (spheres: SphereUniform[]): void {
+  private createUniforms (spheres: SphereUniform[]): void {
     for (let s = 0, l = spheres.length; s < l; s++)
     {
       const material = this.context.getUniformLocation(this.program, `spheres[${s}].material`);
@@ -128,6 +129,9 @@ export default class CanvasWebGL2 extends CanvasWebGL
       this.context.uniform4fv(material, [...spheres[s].material.albedo, spheres[s].material.extra]);
       this.context.uniform4fv(transform, [...spheres[s].center, spheres[s].radius]);
     }
+
+    this.samplesUniform = this.context.getUniformLocation(this.program, 'samples');
+    this.randomUniform = this.context.getUniformLocation(this.program, 'rand');
 
     const maxDepth = this.context.getUniformLocation(this.program, 'maxDepth');
     const height = this.context.getUniformLocation(this.program, 'height');
@@ -140,6 +144,13 @@ export default class CanvasWebGL2 extends CanvasWebGL
 
   public override drawImage (pixels?: Uint8ClampedArray): void {
     if (pixels) return super.drawImage(pixels);
+
+    this.context.uniform3ui(
+      this.randomUniform,
+      Math.random() * 0xffffffff,
+      Math.random() * 0xffffffff,
+      Math.random() * 0xffffffff
+    );
 
     this.context.uniform1ui(this.samplesUniform, ++this.samples);
     this.samples < Config.samples && requestAnimationFrame(this.draw);
