@@ -1,6 +1,9 @@
 // Workgroup size:
 override size: u32;
 
+// Spheres amount:
+const SPHERES = 2;
+
 #include Ray.wgsl;
 #include utils/Color.wgsl;
 #include utils/Vector3.wgsl;
@@ -27,11 +30,21 @@ const LOWER_LEFT_CORNER = ORIGIN -
       HORIZONTAL * 0.5 - VERTICAL * 0.5 -
       vec3f(0.0, 0.0, FOCAL_LENGTH);
 
+fn addSpheres() {
+  addObject(Sphere(vec4f(0.0, 0.0, -1.0, 0.5)));
+  addObject(Sphere(vec4f(0.0, -100.5, -1.0, 100.0)));
+
+  /* for (var s = 0u; s < SPHERES; s++) {
+    addObject(Sphere(spheres[s].transform, spheres[s].material));
+  } */
+}
+
 @compute @workgroup_size(size, size)
 fn mainCompute(@builtin(global_invocation_id) globalInvocation: vec3u)
 {
   if (all(globalInvocation.xy < textureDimensions(framebuffer)))
   {
+    addSpheres();
     initializeRandom(globalInvocation);
 
     let uv = vec2f(globalInvocation.xy) / vec2f(textureDimensions(framebuffer).xy);

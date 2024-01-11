@@ -12,7 +12,7 @@ fn sphereHit(
   tMin: f32,
   tMax: f32,
   sphere: Sphere
-) -> f32 // bool
+) -> bool
 {
   let oc = ray.origin - sphere.transform.xyz;
 
@@ -24,7 +24,7 @@ fn sphereHit(
   let d = halfB * halfB - a * c;
 
   if (d < 0.0) {
-    return -1.0; // false;
+    return false;
   }
 
   let sqrtD = sqrt(d);
@@ -34,7 +34,7 @@ fn sphereHit(
     root = (-halfB + sqrtD) / a;
 
     if (root < tMin || root > tMax) {
-      return -1.0; // false;
+      return false;
     }
   }
 
@@ -42,5 +42,5 @@ fn sphereHit(
   record.point = at(ray, root);
   setFaceNormal(ray, (record.point - sphere.transform.xyz) / radius);
 
-  return root; // true;
+  return true;
 }

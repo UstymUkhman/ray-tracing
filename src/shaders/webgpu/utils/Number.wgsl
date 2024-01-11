@@ -32,3 +32,7 @@ fn random() -> f32 {
 fn randomMinMax(mi: f32, ma: f32) -> f32 {
   return random() * (ma - mi) + mi;
 }
+
+fn degToRad(deg: f32) -> f32 {
+  return deg * PI / 180.0;
+}

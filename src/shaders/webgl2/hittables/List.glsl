@@ -19,7 +19,7 @@ bool hitObject (
   bool hit = false;
   float closest = tMax;
 
-  for (uint o = 0u, l = list.length; o < l; ++o) {
+  for (uint o = 0u, l = list.length; o < l; o++) {
     Sphere sphere = list.objects[o];
 
     if (sphereHit(ray, tMin, closest, sphere)) {
