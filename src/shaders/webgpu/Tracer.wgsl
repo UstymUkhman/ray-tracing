@@ -28,14 +28,16 @@ const LOWER_LEFT_CORNER = ORIGIN -
       vec3f(0.0, 0.0, FOCAL_LENGTH);
 
 @compute @workgroup_size(size, size)
-fn mainCompute(@builtin(global_invocation_id) invocation_id: vec3u)
+fn mainCompute(@builtin(global_invocation_id) globalInvocation: vec3u)
 {
-  if (all(invocation_id.xy < textureDimensions(framebuffer)))
+  if (all(globalInvocation.xy < textureDimensions(framebuffer)))
   {
-    let uv = vec2f(invocation_id.xy) / vec2f(textureDimensions(framebuffer).xy);
+    initializeRandom(globalInvocation);
+
+    let uv = vec2f(globalInvocation.xy) / vec2f(textureDimensions(framebuffer).xy);
     let ray = Ray(ORIGIN, LOWER_LEFT_CORNER + HORIZONTAL * uv.x + VERTICAL * uv.y - ORIGIN);
 
     let color = vec4f(getColor(ray), 1.0);
-    textureStore(framebuffer, invocation_id.xy, color);
+    textureStore(framebuffer, globalInvocation.xy, color);
   }
 }

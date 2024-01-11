@@ -4,7 +4,7 @@
 // A psuedo random number generator. Based on WGSL Cornell Box implementation:
 // https://github.com/webgpu/webgpu-samples/blob/main/src/sample/cornell/common.wgsl#L93-L112
 #ifndef SIMPLE_RANDOM
-  uniform uvec3 rand;
+  uniform uvec3 seed;
 
   uvec3 rnd = uvec3(0);
   uvec3 depthSeed = uvec3(1);
@@ -16,7 +16,7 @@
       6521    * 983  * 7 * 2
     );
 
-    rnd = (depthSeed * A) ^ rand;
+    rnd = (depthSeed * A) ^ seed;
   }
 
   float random (in vec2 seed) {

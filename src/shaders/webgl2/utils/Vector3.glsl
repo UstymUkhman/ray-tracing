@@ -31,6 +31,7 @@ vec3 randomUnitDisk (in vec2 seed) {
   /* for ( ; ; ) {
     vec3 rand = randomVec(seed, -1.0, 1.0);
     rand.z = 0.0;
+
     if (lengthSquared(rand) < 1.0) return rand;
   } */
 

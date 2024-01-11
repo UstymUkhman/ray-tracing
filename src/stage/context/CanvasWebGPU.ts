@@ -18,11 +18,13 @@ export default class CanvasWebGPU extends Canvas
   private imagePipeline!: GPURenderPipeline;
 
   // GPU-Computed Image Texture:
+  private uniformBuffer!: GPUBuffer;
   private tracerBindGroup!: GPUBindGroup;
   private computeBindGroup!: GPUBindGroup;
   private tracerPipeline!: GPURenderPipeline;
   private computePipeline!: GPUComputePipeline;
 
+  private readonly seedUniform = new Uint32Array(3);
   protected declare readonly context: GPUCanvasContext;
   private readonly workgroupCount: [number, number] = [0, 0];
 
@@ -102,6 +104,12 @@ export default class CanvasWebGPU extends Canvas
         GPUTextureUsage.TEXTURE_BINDING
     });
 
+    this.uniformBuffer = this.device.createBuffer({
+      label: 'Seed Uniform',
+      size: this.seedUniform.byteLength,
+      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+    });
+
     const computeBindGroupLayout = this.device.createBindGroupLayout({
       label: 'Compute Bind Group Layout',
 
@@ -109,6 +117,10 @@ export default class CanvasWebGPU extends Canvas
         binding: 0,
         visibility: GPUShaderStage.COMPUTE,
         storageTexture: { format: framebuffer.format }
+      }, {
+        binding: 1,
+        buffer: { type: 'uniform' },
+        visibility: GPUShaderStage.COMPUTE
       }]
     });
 
@@ -124,6 +136,9 @@ export default class CanvasWebGPU extends Canvas
       entries: [{
         binding: 0,
         resource: framebuffer.createView()
+      }, {
+        binding: 1,
+        resource: { buffer: this.uniformBuffer }
       }]
     });
 
@@ -264,6 +279,16 @@ export default class CanvasWebGPU extends Canvas
 
     const commandEncoder = this.device.createCommandEncoder();
     const computePass = commandEncoder.beginComputePass();
+
+    this.seedUniform[0] = Math.random() * 0xffffffff;
+    this.seedUniform[1] = Math.random() * 0xffffffff;
+    this.seedUniform[2] = Math.random() * 0xffffffff;
+
+    this.device.queue.writeBuffer(
+      this.uniformBuffer,
+      0,
+      this.seedUniform
+    );
 
     computePass.setPipeline(this.computePipeline);
     computePass.setBindGroup(0, this.computeBindGroup);

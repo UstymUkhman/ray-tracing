@@ -19,7 +19,7 @@ export default class CanvasWebGL2 extends CanvasWebGL
   private frameBuffer1!: WebGLFramebuffer;
   private frameBuffer2!: WebGLFramebuffer;
 
-  private randomUniform!: WebGLUniformLocation | null;
+  private seedUniform!: WebGLUniformLocation | null;
   private samplesUniform!: WebGLUniformLocation | null;
 
   protected declare readonly context: WebGL2RenderingContext;
@@ -130,23 +130,19 @@ export default class CanvasWebGL2 extends CanvasWebGL
       this.context.uniform4fv(transform, [...spheres[s].center, spheres[s].radius]);
     }
 
+    this.context.uniform1ui(this.context.getUniformLocation(this.program, 'maxDepth'), Config.maxDepth);
+    this.context.uniform1f(this.context.getUniformLocation(this.program, 'height'), Config.height);
+    this.context.uniform1f(this.context.getUniformLocation(this.program, 'width'), Config.width);
+
     this.samplesUniform = this.context.getUniformLocation(this.program, 'samples');
-    this.randomUniform = this.context.getUniformLocation(this.program, 'rand');
-
-    const maxDepth = this.context.getUniformLocation(this.program, 'maxDepth');
-    const height = this.context.getUniformLocation(this.program, 'height');
-    const width = this.context.getUniformLocation(this.program, 'width');
-
-    this.context.uniform1ui(maxDepth, Config.maxDepth);
-    this.context.uniform1f(height, Config.height);
-    this.context.uniform1f(width, Config.width);
+    this.seedUniform = this.context.getUniformLocation(this.program, 'seed');
   }
 
   public override drawImage (pixels?: Uint8ClampedArray): void {
     if (pixels) return super.drawImage(pixels);
 
     this.context.uniform3ui(
-      this.randomUniform,
+      this.seedUniform,
       Math.random() * 0xffffffff,
       Math.random() * 0xffffffff,
       Math.random() * 0xffffffff
