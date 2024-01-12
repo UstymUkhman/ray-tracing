@@ -19,3 +19,9 @@ fn getColor(ray: Ray) -> vec3f
 
   return skyColor(ray);
 }
+
+fn outputColor(color: vec3f, samples: u32) -> vec3f {
+  let output = color / f32(samples);
+  // output = sqrt(output);
+  return output;
+}

@@ -2,33 +2,16 @@
 override size: u32;
 
 // Spheres amount:
-const SPHERES = 2;
+const SPHERES = 2u;
 
-#include Ray.wgsl;
+// Samples per pixel:
+const samples = 100u;
+
+#include Camera.wgsl;
 #include utils/Color.wgsl;
-#include utils/Vector3.wgsl;
 
 @group(0) @binding(0)
 var framebuffer: texture_storage_2d<rgba16float, write>;
-
-// Viewport:
-const WIDTH = 360;
-const HEIGHT = 240;
-const RATIO = 16.0 / 9.0;
-
-// Camera:
-const FOCAL_LENGTH = 1.0;
-const ORIGIN = vec3f(0.0);
-
-const VIEWPORT_HEIGHT = 2.0;
-const VIEWPORT_WIDTH = RATIO * VIEWPORT_HEIGHT;
-
-const VERTICAL = vec3(0.0, VIEWPORT_HEIGHT, 0.0);
-const HORIZONTAL = vec3f(VIEWPORT_WIDTH, 0.0, 0.0);
-
-const LOWER_LEFT_CORNER = ORIGIN -
-      HORIZONTAL * 0.5 - VERTICAL * 0.5 -
-      vec3f(0.0, 0.0, FOCAL_LENGTH);
 
 fn addSpheres() {
   addObject(Sphere(vec4f(0.0, 0.0, -1.0, 0.5)));
@@ -42,15 +25,26 @@ fn addSpheres() {
 @compute @workgroup_size(size, size)
 fn mainCompute(@builtin(global_invocation_id) globalInvocation: vec3u)
 {
-  if (all(globalInvocation.xy < textureDimensions(framebuffer)))
+  let res = vec2f(textureDimensions(framebuffer));
+  let coord = vec2f(globalInvocation.xy);
+
+  if (all(coord < res))
   {
     addSpheres();
+    var color = vec3f(0.0);
     initializeRandom(globalInvocation);
+    let camera = createCamera(vec3f(0.0));
 
-    let uv = vec2f(globalInvocation.xy) / vec2f(textureDimensions(framebuffer).xy);
-    let ray = Ray(ORIGIN, LOWER_LEFT_CORNER + HORIZONTAL * uv.x + VERTICAL * uv.y - ORIGIN);
+    for (var s = 0u; s < samples; s++)
+    {
+      let u = (coord.x + random()) / res.x;
+      let v = (coord.y + random()) / res.y;
 
-    let color = vec4f(getColor(ray), 1.0);
-    textureStore(framebuffer, globalInvocation.xy, color);
+      let ray = getRay(camera, u, v);
+      color += getColor(ray);
+    }
+
+    color = outputColor(color, samples);
+    textureStore(framebuffer, globalInvocation.xy, vec4f(color, 1.0));
   }
 }

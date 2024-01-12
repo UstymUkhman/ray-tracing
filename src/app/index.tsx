@@ -37,9 +37,9 @@ export const App = () =>
       <Stats offscreen={offscreen()}>
         <canvas
           data-tracer="TypeScript"
+          data-context="Canvas2D"
           height={Config.height}
           data-processing="CPU"
-          data-context="WebGL2"
           width={Config.width}
           ref={typescript}
         />
@@ -50,7 +50,7 @@ export const App = () =>
           data-tracer="AssemblyScript"
           height={Config.height}
           data-processing="CPU"
-          data-context="WebGL2"
+          data-context="WebGL"
           width={Config.width}
           ref={assemblyscript}
         />
