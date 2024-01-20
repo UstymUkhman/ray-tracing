@@ -1,3 +1,5 @@
+#include ../materials/Material.wgsl;
+
 struct Record
 {
   t: f32,

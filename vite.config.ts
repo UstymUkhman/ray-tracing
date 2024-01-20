@@ -15,7 +15,7 @@ export default (
 
     worker: {
       format: 'es',
-      plugins: [glsl({ compress })]
+      plugins: () => [glsl({ compress })]
     },
 
     plugins: [solid(), glsl({ compress })],

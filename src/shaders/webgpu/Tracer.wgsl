@@ -7,6 +7,9 @@ const SPHERES = 2u;
 // Samples per pixel:
 const samples = 100u;
 
+// Max recursion depth:
+const maxDepth = 50u;
+
 #include Camera.wgsl;
 #include utils/Color.wgsl;
 
@@ -41,7 +44,7 @@ fn mainCompute(@builtin(global_invocation_id) globalInvocation: vec3u)
       let v = (coord.y + random()) / res.y;
 
       let ray = getRay(camera, u, v);
-      color += getColor(ray);
+      color += getColor(ray, maxDepth);
     }
 
     color = outputColor(color, samples);

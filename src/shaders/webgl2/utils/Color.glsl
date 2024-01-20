@@ -18,7 +18,7 @@ vec3 getColor (in Ray ray, uint depth, in vec2 seed)
 {
   vec3 color = WHITE;
 
-  for (uint d = depth; d > 0u; --d)
+  for (uint d = depth; d > 0u; d--)
   {
     uint x = depth - d;
     depthSeed = uvec3(x, d, x * d);
