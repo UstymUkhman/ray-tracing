@@ -2,7 +2,7 @@
 override size: u32;
 
 // Spheres amount:
-const SPHERES = 2u;
+const SPHERES = 4u;
 
 // Samples per pixel:
 const samples = 100u;
@@ -17,8 +17,15 @@ const maxDepth = 50u;
 var framebuffer: texture_storage_2d<rgba16float, write>;
 
 fn addSpheres() {
-  addObject(Sphere(vec4f(0.0, 0.0, -1.0, 0.5)));
-  addObject(Sphere(vec4f(0.0, -100.5, -1.0, 100.0)));
+  let groundMaterial = vec4f(0.8, 0.8, 0.0, -1.0);
+  let centerMaterial = vec4f(0.7, 0.3, 0.3, -1.0);
+  let leftMaterial = vec4f(0.8, 0.8, 0.8, 0.3);
+  let rightMaterial = vec4f(0.8, 0.6, 0.2, 1.0);
+
+  addObject(Sphere(vec4f(0.0, -100.5, -1.0, 100.0), groundMaterial));
+  addObject(Sphere(vec4f(0.0, 0.0, -1.0, 0.5), centerMaterial));
+  addObject(Sphere(vec4f(-1.0, 0.0, -1.0, 0.5), leftMaterial));
+  addObject(Sphere(vec4f(1.0, 0.0, -1.0, 0.5), rightMaterial));
 
   /* for (var s = 0u; s < SPHERES; s++) {
     addObject(Sphere(spheres[s].transform, spheres[s].material));

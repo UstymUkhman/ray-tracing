@@ -1,4 +1,5 @@
 #include ../hittables/List.wgsl;
+#include ../materials/Metal.wgsl;
 #include ../materials/Lambertian.wgsl;
 
 const WHITE = vec3f(1.0, 1.0, 1.0);
@@ -22,10 +23,13 @@ fn getColor(ray: Ray, depth: u32) -> vec3f
     if (hitObject(scatteredRay, 0.001, INFINITY))
     {
       var scattered: Ray;
-      let material = lambertianScatter(vec4f(0.5));
+      var material: Material;
 
-      let t = record.point + randomHemisphere(record.normal);
-      scattered = Ray(record.point, t - record.point);
+      if (record.material.a > -1.0) {
+        material = metalScatter(record.material, scatteredRay);
+      } else {
+        material = lambertianScatter(record.material);
+      }
 
       if (material.scatter) {
         scatteredRay = material.scattered;

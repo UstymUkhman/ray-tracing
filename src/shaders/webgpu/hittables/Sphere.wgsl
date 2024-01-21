@@ -4,7 +4,14 @@ struct Sphere
 {
   // xyz -> center
   //   w -> radius
-  transform: vec4f
+  transform: vec4f,
+
+  // rgb -> albedo color
+  //   a -> extra properties
+  // Like dielectric refraction (> 1.0)
+  // and metal fuzziness (> 0.0 && < 1.0).
+  // [For "lambertian" it always equals -1.0]
+  material: vec4f
 };
 
 fn sphereHit(
@@ -40,6 +47,7 @@ fn sphereHit(
 
   record.t = root;
   record.point = at(ray, root);
+  record.material = sphere.material;
   setFaceNormal(ray, (record.point - sphere.transform.xyz) / radius);
 
   return true;

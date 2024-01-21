@@ -5,6 +5,7 @@ struct Record
   t: f32,
   point: vec3f,
   normal: vec3f,
+  material: vec4f,
   frontFace: bool
 };
 

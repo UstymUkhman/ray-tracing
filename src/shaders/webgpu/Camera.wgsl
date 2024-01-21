@@ -14,7 +14,7 @@ struct Camera
 
 fn createCamera(origin: vec3f) -> Camera
 {
-  let ratio = 16.0 / 9.0;
+  let ratio = 3.0 / 2.0;
   let viewportHeight = 2.0;
   let viewportWidth = ratio * viewportHeight;
   let focalLength = 1.0;
