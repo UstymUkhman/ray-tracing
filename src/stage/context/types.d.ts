@@ -1,3 +1,5 @@
+import type { Vec3 } from '@/utils/Vector3';
+
 type Material = {
   type: number;
   albedo: Vec3;

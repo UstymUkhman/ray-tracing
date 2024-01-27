@@ -49,6 +49,10 @@ fn getColor(ray: Ray, depth: u32) -> vec3f
   return color;
 }
 
+fn inputColor(color: vec3f, samples: u32) -> vec3f {
+  return color * color * f32(samples - 1u);
+}
+
 fn outputColor(color: vec3f, samples: u32) -> vec3f {
   var output = color / f32(samples);
   output = sqrt(output);

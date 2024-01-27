@@ -22,21 +22,18 @@ uniform uint maxDepth;
 uniform sampler2D frame;
 uniform Sphere spheres[SPHERES];
 
-void addSpheres (void)
-{
-  for (uint s = 0u; s < SPHERES; s++)
-    addObject(Sphere(spheres[s].transform, spheres[s].material));
-}
-
 void main (void)
 {
   vec2 res = vec2(width, height);
   vec2 mappedUV = vec2(uv.x, 1.0 - uv.y);
   vec3 color = texture(frame, mappedUV).rgb;
 
-  addSpheres();
   initializeRandom();
   inputColor(color, samples);
+
+  if (list.length == 0u)
+    for (uint s = 0u; s < SPHERES; s++)
+      addObject(Sphere(spheres[s].transform, spheres[s].material));
 
   vec2 coord = mappedUV * res;
   vec2 seed = uv * coord * float(samples);

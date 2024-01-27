@@ -1,7 +1,8 @@
 import { type Material, Lambertian, Metal, Dielectric } from '@/stage/materials';
+import { type Vec3, default as Vector3 } from '@/utils/Vector3';
 import { type Hittable, List, Sphere } from '@/stage/hittables';
+import type { SphereUniform } from '@/stage/context/types';
 import { random } from '@/utils/Number';
-import Vector3 from '@/utils/Vector3';
 
 export default class World
 {
@@ -40,6 +41,39 @@ export default class World
   private addSphere (radius: number, center: Vector3, material: Material): void
   {
     this.list.add(new Sphere(radius, center, material));
+  }
+
+  public createSpheresUniforms (): SphereUniform[]
+  {
+    return this.hittables.map(hittable => {
+      const sphere = hittable as Sphere;
+
+      const material = {
+        albedo: [1.0, 1.0, 1.0] as Vec3,
+        extra: -1.0,
+        type: 0
+      };
+
+      if (sphere.material instanceof Metal) {
+        material.albedo = sphere.material.albedo.get();
+        material.extra = sphere.material.fuzz;
+        material.type = 1;
+      }
+
+      else if (sphere.material instanceof Dielectric) {
+        material.extra = sphere.material.refraction;
+        material.type = 2;
+      }
+
+      else
+        material.albedo = (sphere.material as Lambertian).albedo.get();
+
+      return {
+        center: sphere.center.get(),
+        radius: sphere.radius,
+        material
+      };
+    });
   }
 
   private generateSmallSpheres (): void

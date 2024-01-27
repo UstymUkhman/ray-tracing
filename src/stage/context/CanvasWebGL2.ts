@@ -1,11 +1,9 @@
-import { type Lambertian, Metal, Dielectric } from '@/stage/materials';
 import type { SphereUniform } from '@/stage/context/types';
-import { type Sphere, World } from '@/stage/hittables';
 import type { SceneParams } from '@/stage/scene/types';
 import CanvasWebGL from '@/stage/context/CanvasWebGL';
 import Fragment from '@/shaders/webgl2/main.frag';
 import Vertex from '@/shaders/webgl2/main.vert';
-import type { Vec3 } from '@/utils/Vector3';
+import { World } from '@/stage/hittables';
 import * as Config from '@/stage/Config';
 import { Events } from '@/stage/scene';
 
@@ -47,8 +45,9 @@ export default class CanvasWebGL2 extends CanvasWebGL
         )
       );
 
-      this.createWorld(world);
+      this.createUniforms(world.createSpheresUniforms());
       this.createFrameBufferTextures();
+      world.dispose();
     }
   }
 
@@ -65,43 +64,6 @@ export default class CanvasWebGL2 extends CanvasWebGL
       texture,
       0.0
     );
-  }
-
-  private createWorld (world: World): void {
-    const spheres: SphereUniform[] = [];
-
-    for (let h = 0, l = world.hittables.length; h < l; h++) {
-      const sphere = world.hittables[h] as Sphere;
-
-      const material = {
-        albedo: [1.0, 1.0, 1.0] as Vec3,
-        extra: -1.0,
-        type: 0
-      };
-
-      if (sphere.material instanceof Metal) {
-        material.albedo = sphere.material.albedo.get();
-        material.extra = sphere.material.fuzz;
-        material.type = 1;
-      }
-
-      else if (sphere.material instanceof Dielectric) {
-        material.extra = sphere.material.refraction;
-        material.type = 2;
-      }
-
-      else
-        material.albedo = (sphere.material as Lambertian).albedo.get();
-
-      spheres.push({
-        center: sphere.center.get(),
-        radius: sphere.radius,
-        material
-      });
-    }
-
-    world.dispose();
-    this.createUniforms(spheres);
   }
 
   private createFrameBufferTextures (): void {

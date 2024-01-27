@@ -1,6 +1,7 @@
 import { Events } from '@/stage/scene';
 import { getRGB } from '@/utils/Color';
 import * as Config from '@/stage/Config';
+import { World } from '@/stage/hittables';
 import Canvas from '@/stage/context/Canvas';
 import Shader from '@/shaders/webgpu/main.wgsl';
 import Tracer from '@/shaders/webgpu/Tracer.wgsl';
@@ -93,6 +94,11 @@ export default class CanvasWebGPU extends Canvas
   }
 
   private createComputePipeline (size = 16): GPUTexture {
+    const world = new World();
+    const spheres = 5; // world.hittables.length;
+
+    // this.createUniforms(world.createSpheresUniforms());
+
     const framebuffer = this.device.createTexture({
       size: [Config.width, Config.height],
       label: 'Framebuffer Texture',
@@ -144,7 +150,7 @@ export default class CanvasWebGPU extends Canvas
 
     const shaderModule = this.device.createShaderModule({
       label: 'Compute Shader',
-      code: Tracer
+      code: `const SPHERES = ${spheres}u;\n${Tracer}`
     });
 
     this.computePipeline = this.device.createComputePipeline({
@@ -161,6 +167,7 @@ export default class CanvasWebGPU extends Canvas
     this.workgroupCount[0] = Math.ceil(Config.width / size);
     this.workgroupCount[1] = Math.ceil(Config.height / size);
 
+    world.dispose();
     return framebuffer;
   }
 
