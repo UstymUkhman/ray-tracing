@@ -1,5 +1,6 @@
 #include ../hittables/List.wgsl;
 #include ../materials/Metal.wgsl;
+#include ../materials/Dielectric.wgsl;
 #include ../materials/Lambertian.wgsl;
 
 const WHITE = vec3f(1.0, 1.0, 1.0);
@@ -25,7 +26,9 @@ fn getColor(ray: Ray, depth: u32) -> vec3f
       var scattered: Ray;
       var material: Material;
 
-      if (record.material.a > -1.0) {
+      if (record.material.a > 1.0) {
+        material = dielectricScatter(record.material, scatteredRay);
+      } else if (record.material.a > -1.0) {
         material = metalScatter(record.material, scatteredRay);
       } else {
         material = lambertianScatter(record.material);
