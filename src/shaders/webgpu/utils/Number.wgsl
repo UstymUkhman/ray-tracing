@@ -1,9 +1,6 @@
 const INFINITY = 3.40282346638528859812e+38f;
 const PI       = radians(180.0);
 
-@group(0) @binding(1)
-var<uniform> seed: vec3u;
-
 var<private> rnd: vec3u;
 
 // A psuedo random number generator. Based on WGSL Cornell Box implementation:
@@ -15,7 +12,7 @@ fn initializeRandom(invocation: vec3u) {
     6521    * 983  * 7 * 2
   );
 
-  rnd = (invocation * A) ^ seed;
+  rnd = (invocation * A) ^ tracerUniform.seed;
 }
 
 fn random() -> f32 {

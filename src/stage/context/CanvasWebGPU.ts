@@ -19,13 +19,13 @@ export default class CanvasWebGPU extends Canvas
   private imagePipeline!: GPURenderPipeline;
 
   // GPU-Computed Image Texture:
-  private uniformBuffer!: GPUBuffer;
   private tracerBindGroup!: GPUBindGroup;
   private computeBindGroup!: GPUBindGroup;
+  private tracerUniformBuffer!: GPUBuffer;
   private tracerPipeline!: GPURenderPipeline;
   private computePipeline!: GPUComputePipeline;
 
-  private readonly seedUniform = new Uint32Array(3);
+  private readonly tracerUniform = new Uint32Array(8);
   protected declare readonly context: GPUCanvasContext;
   private readonly workgroupCount: [number, number] = [0, 0];
 
@@ -97,6 +97,8 @@ export default class CanvasWebGPU extends Canvas
     const world = new World();
     const spheres = 5; // world.hittables.length;
 
+    this.tracerUniform[0] = Config.maxDepth;
+
     // this.createUniforms(world.createSpheresUniforms());
 
     const framebuffer = this.device.createTexture({
@@ -110,9 +112,9 @@ export default class CanvasWebGPU extends Canvas
         GPUTextureUsage.TEXTURE_BINDING
     });
 
-    this.uniformBuffer = this.device.createBuffer({
-      label: 'Seed Uniform',
-      size: this.seedUniform.byteLength,
+    this.tracerUniformBuffer = this.device.createBuffer({
+      label: 'Tracer Uniform',
+      size: this.tracerUniform.byteLength,
       usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
     });
 
@@ -144,7 +146,7 @@ export default class CanvasWebGPU extends Canvas
         resource: framebuffer.createView()
       }, {
         binding: 1,
-        resource: { buffer: this.uniformBuffer }
+        resource: { buffer: this.tracerUniformBuffer }
       }]
     });
 
@@ -287,14 +289,16 @@ export default class CanvasWebGPU extends Canvas
     const commandEncoder = this.device.createCommandEncoder();
     const computePass = commandEncoder.beginComputePass();
 
-    this.seedUniform[0] = Math.random() * 0xffffffff;
-    this.seedUniform[1] = Math.random() * 0xffffffff;
-    this.seedUniform[2] = Math.random() * 0xffffffff;
+    this.tracerUniform[1] = 100; // samples
+
+    this.tracerUniform[4] = Math.random() * 0xffffffff; // seed.x
+    this.tracerUniform[5] = Math.random() * 0xffffffff; // seed.y
+    this.tracerUniform[6] = Math.random() * 0xffffffff; // seed.z
 
     this.device.queue.writeBuffer(
-      this.uniformBuffer,
+      this.tracerUniformBuffer,
       0,
-      this.seedUniform
+      this.tracerUniform
     );
 
     computePass.setPipeline(this.computePipeline);
