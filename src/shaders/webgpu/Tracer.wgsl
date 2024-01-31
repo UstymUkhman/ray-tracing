@@ -1,6 +1,9 @@
 // Workgroup size:
 override size: u32;
 
+#include Camera.wgsl;
+#include utils/Color.wgsl;
+
 struct TracerUniform {
   maxDepth: u32,
   samples: u32,
@@ -8,13 +11,16 @@ struct TracerUniform {
 };
 
 @group(0) @binding(0)
-var framebuffer: texture_storage_2d<rgba16float, write>;
+var texture: texture_2d<f32>;
+
+// @group(1) @binding(0)
+// var texture: texture_2d<f32>;
 
 @group(0) @binding(1)
 var<uniform> tracerUniform: TracerUniform;
 
-#include Camera.wgsl;
-#include utils/Color.wgsl;
+@group(0) @binding(2)
+var framebuffer: texture_storage_2d<rgba16float, write>;
 
 fn addSpheres()
 {
@@ -43,7 +49,12 @@ fn mainCompute(@builtin(global_invocation_id) globalInvocation: vec3u)
   if (all(coord < res))
   {
     addSpheres();
-    var color = vec3f(0.0);
+
+    var color = textureLoad(
+      texture,
+      globalInvocation.xy,
+      0
+    ).rgb;
 
     let camera = createCamera(
       vec3f(13.0, 2.0, 3.0),
@@ -56,16 +67,13 @@ fn mainCompute(@builtin(global_invocation_id) globalInvocation: vec3u)
     );
 
     initializeRandom(globalInvocation);
-    // color = inputColor(color, samples);
+    color = inputColor(color, tracerUniform.samples);
 
-    for (var s = 0u; s < tracerUniform.samples; s++)
-    {
-      let u = (coord.x + random()) / res.x;
-      let v = (coord.y + random()) / res.y;
+    let u = (coord.x + random()) / res.x;
+    let v = (coord.y + random()) / res.y;
 
-      let ray = getRay(camera, u, v);
-      color += getColor(ray, tracerUniform.maxDepth);
-    }
+    let ray = getRay(camera, u, v);
+    color += getColor(ray, tracerUniform.maxDepth);
 
     color = outputColor(color, tracerUniform.samples);
     textureStore(framebuffer, globalInvocation.xy, vec4f(color, 1.0));

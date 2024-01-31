@@ -9,6 +9,8 @@ import type { SceneParams } from '@/stage/scene/types';
 
 export default class CanvasWebGPU extends Canvas
 {
+  private samples = 0.0;
+
   private device!: GPUDevice;
   private adapter!: GPUAdapter;
   private format!: GPUTextureFormat;
@@ -19,6 +21,7 @@ export default class CanvasWebGPU extends Canvas
   private imagePipeline!: GPURenderPipeline;
 
   // GPU-Computed Image Texture:
+  private framebuffer!: GPUTexture;
   private tracerBindGroup!: GPUBindGroup;
   private computeBindGroup!: GPUBindGroup;
   private tracerUniformBuffer!: GPUBuffer;
@@ -28,6 +31,7 @@ export default class CanvasWebGPU extends Canvas
   private readonly tracerUniform = new Uint32Array(8);
   protected declare readonly context: GPUCanvasContext;
   private readonly workgroupCount: [number, number] = [0, 0];
+  private readonly draw = this.drawImage.bind(this, undefined);
 
   public constructor (params: SceneParams, onInitialize?: () => void) {
     super(params);
@@ -93,23 +97,31 @@ export default class CanvasWebGPU extends Canvas
     onInitialize?.();
   }
 
-  private createComputePipeline (size = 16): GPUTexture {
+  private createComputePipeline (size = 16): void {
     const world = new World();
     const spheres = 5; // world.hittables.length;
 
     this.tracerUniform[0] = Config.maxDepth;
 
-    // this.createUniforms(world.createSpheresUniforms());
-
-    const framebuffer = this.device.createTexture({
+    this.framebuffer = this.device.createTexture({
       size: [Config.width, Config.height],
       label: 'Framebuffer Texture',
       format: 'rgba16float',
 
       usage:
-        GPUTextureUsage.RENDER_ATTACHMENT |
         GPUTextureUsage.STORAGE_BINDING |
-        GPUTextureUsage.TEXTURE_BINDING
+        GPUTextureUsage.TEXTURE_BINDING |
+        GPUTextureUsage.COPY_SRC
+    });
+
+    this.imageTexture = this.device.createTexture({
+      size: [Config.width, Config.height],
+      label: 'GPU Computed Image',
+      format: 'rgba16float',
+
+      usage:
+        GPUTextureUsage.TEXTURE_BINDING |
+        GPUTextureUsage.COPY_DST
     });
 
     this.tracerUniformBuffer = this.device.createBuffer({
@@ -123,17 +135,31 @@ export default class CanvasWebGPU extends Canvas
 
       entries: [{
         binding: 0,
-        visibility: GPUShaderStage.COMPUTE,
-        storageTexture: { format: framebuffer.format }
+        texture: {},
+        visibility: GPUShaderStage.COMPUTE
       }, {
         binding: 1,
         buffer: { type: 'uniform' },
         visibility: GPUShaderStage.COMPUTE
+      }, {
+        binding: 2,
+        visibility: GPUShaderStage.COMPUTE,
+        storageTexture: { format: this.framebuffer.format }
       }]
     });
 
+    /* const inputBindGroupLayout = this.device.createBindGroupLayout({
+      label: 'Input Bind Group Layout',
+
+      entries: [{
+        binding: 0,
+        texture: {},
+        visibility: GPUShaderStage.COMPUTE
+      }]
+    }); */
+
     const computePipelineLayout = this.device.createPipelineLayout({
-      bindGroupLayouts: [computeBindGroupLayout],
+      bindGroupLayouts: [computeBindGroupLayout /*, inputBindGroupLayout */],
       label: 'Compute Pipeline Layout'
     });
 
@@ -143,10 +169,13 @@ export default class CanvasWebGPU extends Canvas
 
       entries: [{
         binding: 0,
-        resource: framebuffer.createView()
+        resource: this.imageTexture.createView()
       }, {
         binding: 1,
         resource: { buffer: this.tracerUniformBuffer }
+      }, {
+        binding: 2,
+        resource: this.framebuffer.createView()
       }]
     });
 
@@ -170,11 +199,10 @@ export default class CanvasWebGPU extends Canvas
     this.workgroupCount[1] = Math.ceil(Config.height / size);
 
     world.dispose();
-    return framebuffer;
   }
 
   private createTracerPipeline (): void {
-    const framebuffer = this.createComputePipeline();
+    this.createComputePipeline();
 
     const shaderModule = this.device.createShaderModule({
       label: 'Tracer Shader',
@@ -203,7 +231,7 @@ export default class CanvasWebGPU extends Canvas
 
       entries: [{
         binding: 0,
-        resource: framebuffer.createView()
+        resource: this.framebuffer.createView()
       }, {
         binding: 1,
         resource: this.sampler
@@ -212,11 +240,9 @@ export default class CanvasWebGPU extends Canvas
   }
 
   private createImagePipeline (): void {
-    const { width, height } = Config;
-
     this.imageTexture = this.device.createTexture({
+      size: [Config.width, Config.height],
       label: 'CPU Computed Image',
-      size: [width, height],
       format: 'rgba8unorm',
 
       usage:
@@ -286,10 +312,30 @@ export default class CanvasWebGPU extends Canvas
   public override drawImage (pixels?: Uint8ClampedArray): Promise<void> | void {
     if (pixels) return this.setActiveTexture(pixels);
 
+    /* const inputBindGroupLayout = this.device.createBindGroupLayout({
+      label: 'Input Bind Group Layout',
+
+      entries: [{
+        binding: 0,
+        texture: {},
+        visibility: GPUShaderStage.COMPUTE
+      }]
+    });
+
+    const inputBindGroup = this.device.createBindGroup({
+      layout: inputBindGroupLayout,
+      label: 'Input Bind Group',
+
+      entries: [{
+        binding: 0,
+        resource: this.context.getCurrentTexture().createView()
+      }]
+    }); */
+
     const commandEncoder = this.device.createCommandEncoder();
     const computePass = commandEncoder.beginComputePass();
 
-    this.tracerUniform[1] = 100; // samples
+    this.tracerUniform[1] = ++this.samples;
 
     this.tracerUniform[4] = Math.random() * 0xffffffff; // seed.x
     this.tracerUniform[5] = Math.random() * 0xffffffff; // seed.y
@@ -302,10 +348,19 @@ export default class CanvasWebGPU extends Canvas
     );
 
     computePass.setPipeline(this.computePipeline);
+    // computePass.setBindGroup(1, inputBindGroup);
     computePass.setBindGroup(0, this.computeBindGroup);
     computePass.dispatchWorkgroups(...this.workgroupCount);
 
     computePass.end();
+
+    const { width, height } = Config;
+
+    commandEncoder.copyTextureToTexture(
+      { texture: this.framebuffer },
+      { texture: this.imageTexture },
+      { width, height }
+    );
 
     const renderPass = commandEncoder.beginRenderPass({
       colorAttachments: [{
@@ -318,6 +373,9 @@ export default class CanvasWebGPU extends Canvas
     renderPass.setBindGroup(0, this.tracerBindGroup);
     renderPass.setPipeline(this.tracerPipeline);
     renderPass.draw(6); renderPass.end();
+
+    this.samples < Config.samples &&
+      requestAnimationFrame(this.draw);
 
     this.device.queue.submit([
       commandEncoder.finish()
