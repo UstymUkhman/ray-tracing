@@ -92,9 +92,8 @@ export default class CanvasWebGL2 extends CanvasWebGL
       this.context.uniform4fv(transform, [...spheres[s].center, spheres[s].radius]);
     }
 
+    this.context.uniform2f(this.context.getUniformLocation(this.program, 'resolution'), this.width, this.height);
     this.context.uniform1ui(this.context.getUniformLocation(this.program, 'maxDepth'), Config.maxDepth);
-    this.context.uniform1f(this.context.getUniformLocation(this.program, 'height'), Config.height);
-    this.context.uniform1f(this.context.getUniformLocation(this.program, 'width'), Config.width);
 
     this.samplesUniform = this.context.getUniformLocation(this.program, 'samples');
     this.seedUniform = this.context.getUniformLocation(this.program, 'seed');

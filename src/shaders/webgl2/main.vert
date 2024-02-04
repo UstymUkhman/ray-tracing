@@ -7,8 +7,6 @@
 #endif
 
 uniform vec2 resolution;
-uniform float height;
-uniform float width;
 
 in  vec2 position;
 in  vec2 coords;
@@ -24,22 +22,21 @@ out vec2 uv;
 void main (void)
 {
   #ifdef CAMERA
-    vec2 res = vec2(width, height);
-
     camera = createCamera(
       vec3(13.0, 2.0, 3.0),
       vec3(0.0, 0.0, 0.0),
       vec3(0.0, 1.0, 0.0),
-      res,
+      resolution,
       20.0,
       0.1,
       10.0
     );
   #endif
 
-  gl_Position = vec4((
-    position / resolution * 2.0 - 1.0
-  ) * vec2(1.0, -1.0), 0.0, 1.0);
+  gl_Position = vec4(
+    (position * 2.0 - 1.0) *
+    vec2(1.0, -1.0), 0.0, 1.0
+  );
 
   uv = coords;
 }

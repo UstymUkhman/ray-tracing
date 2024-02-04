@@ -42,23 +42,6 @@ export default class CanvasWebGL extends Canvas
     return shader;
   }
 
-  private setBufferData(width = this.width, height = this.height): void {
-    this.context.bufferData(
-      this.context.ARRAY_BUFFER,
-
-      new Float32Array([
-        0.0, 0.0,
-        width, 0.0,
-        0.0, height,
-        0.0, height,
-        width, 0.0,
-        width, height
-      ]),
-
-      this.context.STATIC_DRAW
-    );
-  }
-
   private createProgram(frag: string, vert: string): void {
     const fragment = this.loadShader(frag, this.context.FRAGMENT_SHADER);
     const vertex = this.loadShader(vert, this.context.VERTEX_SHADER);
@@ -96,6 +79,24 @@ export default class CanvasWebGL extends Canvas
     this.context.texParameteri(this.context.TEXTURE_2D, this.context.TEXTURE_MAG_FILTER, this.context.LINEAR);
   }
 
+  private setBufferData(): void {
+    this.context.bufferData(
+      this.context.ARRAY_BUFFER,
+
+      new Float32Array([
+        0.0, 0.0,
+        1.0, 0.0,
+        1.0, 1.0,
+
+        1.0, 1.0,
+        0.0, 1.0,
+        0.0, 0.0
+      ]),
+
+      this.context.STATIC_DRAW
+    );
+  }
+
   protected setActiveTexture (
     data: Uint8ClampedArray | null = this.textureData,
     texture = this.texture
@@ -120,7 +121,7 @@ export default class CanvasWebGL extends Canvas
     const coords = this.context.getAttribLocation(this.program, 'coords');
     this.context.bindBuffer(this.context.ARRAY_BUFFER, this.context.createBuffer());
 
-    this.setBufferData(1.0, 1.0);
+    this.setBufferData();
     this.context.enableVertexAttribArray(coords);
     this.context.vertexAttribPointer(coords, 2.0, this.context.FLOAT, false, 0.0, 0.0);
 
@@ -130,9 +131,6 @@ export default class CanvasWebGL extends Canvas
     this.setBufferData();
     this.context.enableVertexAttribArray(position);
     this.context.vertexAttribPointer(position, 2.0, this.context.FLOAT, false, 0.0, 0.0);
-
-    const resolution = this.context.getUniformLocation(this.program, 'resolution');
-    this.context.uniform2f(resolution, this.width, this.height);
 
     this.texture = this.context.createTexture() as WebGLTexture;
 

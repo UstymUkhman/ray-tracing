@@ -10,13 +10,13 @@ struct VertexOutput {
 fn mainVertex(@builtin(vertex_index) index: u32) -> VertexOutput
 {
   let position = array(
-    vec2f(0.0,  1.0),
-    vec2f(1.0,  1.0),
-    vec2f(0.0,  0.0),
+    vec2f(0.0, 0.0),
+    vec2f(1.0, 0.0),
+    vec2f(1.0, 1.0),
 
-    vec2f(0.0,  0.0),
-    vec2f(1.0,  0.0),
-    vec2f(1.0,  1.0)
+    vec2f(1.0, 1.0),
+    vec2f(0.0, 1.0),
+    vec2f(0.0, 0.0)
   );
 
   var output: VertexOutput;
