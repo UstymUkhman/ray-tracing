@@ -6,6 +6,7 @@ import Canvas from '@/stage/context/Canvas';
 import Shader from '@/shaders/webgpu/main.wgsl';
 import Tracer from '@/shaders/webgpu/Tracer.wgsl';
 import type { SceneParams } from '@/stage/scene/types';
+import type { SphereUniform } from '@/stage/context/types';
 
 export default class CanvasWebGPU extends Canvas
 {
@@ -97,17 +98,12 @@ export default class CanvasWebGPU extends Canvas
   private createComputePipeline (size = 16): void {
     const world = new World();
     this.createImagePipeline(true);
-
     const { width, height } = Config;
-    const spheres = 5; // world.hittables.length;
+    const spheres = world.hittables.length;
 
-    this.tracerUniform[0] = Config.maxDepth;
-
-    this.tracerUniformBuffer = this.device.createBuffer({
-      label: 'Compute Tracer Uniform',
-      size: this.tracerUniform.byteLength,
-      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
-    });
+    const spheresUniformBuffer = this.createUniforms(
+      world.createSpheresUniforms()
+    );
 
     const computeBindGroupLayout = this.device.createBindGroupLayout({
       label: 'Compute Bind Group Layout',
@@ -118,10 +114,14 @@ export default class CanvasWebGPU extends Canvas
         visibility: GPUShaderStage.COMPUTE
       }, {
         binding: 1,
-        buffer: { type: 'storage' },
+        buffer: { type: 'uniform' },
         visibility: GPUShaderStage.COMPUTE
       }, {
         binding: 2,
+        buffer: { type: 'storage' },
+        visibility: GPUShaderStage.COMPUTE
+      }, {
+        binding: 3,
         visibility: GPUShaderStage.COMPUTE,
         storageTexture: { format: this.imageTexture.format }
       }]
@@ -147,16 +147,19 @@ export default class CanvasWebGPU extends Canvas
         resource: { buffer: this.tracerUniformBuffer }
       }, {
         binding: 1,
-        resource: { buffer: colorBuffer }
+        resource: { buffer: spheresUniformBuffer }
       }, {
         binding: 2,
+        resource: { buffer: colorBuffer }
+      }, {
+        binding: 3,
         resource: this.imageTexture.createView()
       }]
     });
 
     const shaderModule = this.device.createShaderModule({
-      label: 'Compute Shader',
-      code: `const SPHERES = ${spheres}u;\n${Tracer}`
+      code: `const SPHERES = ${spheres}u;\n${Tracer}`,
+      label: 'Compute Shader'
     });
 
     this.computePipeline = this.device.createComputePipeline({
@@ -226,34 +229,6 @@ export default class CanvasWebGPU extends Canvas
     });
   }
 
-  private setActiveTexture (data: Uint8ClampedArray): void {
-    const commandEncoder = this.device.createCommandEncoder();
-    const { width, height } = Config;
-    this.setImageData(data);
-
-    this.device.queue.copyExternalImageToTexture(
-      { source: this.image, flipY: true },
-      { texture: this.imageTexture },
-      { width, height }
-    );
-
-    const renderPass = commandEncoder.beginRenderPass({
-      colorAttachments: [{
-        view: this.context.getCurrentTexture().createView(),
-        storeOp: 'store',
-        loadOp: 'clear'
-      }]
-    });
-
-    renderPass.setBindGroup(0, this.imageBindGroup);
-    renderPass.setPipeline(this.imagePipeline);
-    renderPass.draw(6); renderPass.end();
-
-    this.device.queue.submit([
-      commandEncoder.finish()
-    ]);
-  }
-
   public override drawImage (pixels?: Uint8ClampedArray): Promise<void> | void {
     if (pixels) return this.setActiveTexture(pixels);
 
@@ -301,6 +276,73 @@ export default class CanvasWebGPU extends Canvas
       'WebGPU::Stats::Update',
       { sample: this.samples }
     );
+  }
+
+  private createUniforms (spheres: SphereUniform[]): GPUBuffer {
+    this.tracerUniform[0] = Config.maxDepth;
+
+    this.tracerUniformBuffer = this.device.createBuffer({
+      label: 'Compute Tracer Uniform',
+      size: this.tracerUniform.byteLength,
+      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+    });
+
+    const spheresUniform = new Float32Array(spheres.length * 8);
+
+    const spheresUniformBuffer = this.device.createBuffer({
+      size: spheresUniform.byteLength,
+      label: 'Compute Spheres Uniform',
+      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+    });
+
+    for (let s = 0, u = 0, l = spheres.length; s < l; s++, u += 8)
+    {
+      spheresUniform[u + 0] = spheres[s].center[0]; // transform.x
+      spheresUniform[u + 1] = spheres[s].center[1]; // transform.y
+      spheresUniform[u + 2] = spheres[s].center[2]; // transform.z
+      spheresUniform[u + 3] = spheres[s].radius;    // transform.w
+
+      spheresUniform[u + 4] = spheres[s].material.albedo[0]; // material.r
+      spheresUniform[u + 5] = spheres[s].material.albedo[1]; // material.g
+      spheresUniform[u + 6] = spheres[s].material.albedo[2]; // material.b
+      spheresUniform[u + 7] = spheres[s].material.extra;     // material.a
+    }
+
+    this.device.queue.writeBuffer(
+      spheresUniformBuffer,
+      0,
+      spheresUniform
+    );
+
+    return spheresUniformBuffer;
+  }
+
+  private setActiveTexture (data: Uint8ClampedArray): void {
+    const commandEncoder = this.device.createCommandEncoder();
+    const { width, height } = Config;
+    this.setImageData(data);
+
+    this.device.queue.copyExternalImageToTexture(
+      { source: this.image, flipY: true },
+      { texture: this.imageTexture },
+      { width, height }
+    );
+
+    const renderPass = commandEncoder.beginRenderPass({
+      colorAttachments: [{
+        view: this.context.getCurrentTexture().createView(),
+        storeOp: 'store',
+        loadOp: 'clear'
+      }]
+    });
+
+    renderPass.setBindGroup(0, this.imageBindGroup);
+    renderPass.setPipeline(this.imagePipeline);
+    renderPass.draw(6); renderPass.end();
+
+    this.device.queue.submit([
+      commandEncoder.finish()
+    ]);
   }
 
   protected override clear (): void {

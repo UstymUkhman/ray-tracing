@@ -1,11 +1,11 @@
-import type { SphereUniform } from '@/stage/context/types';
-import type { SceneParams } from '@/stage/scene/types';
-import CanvasWebGL from '@/stage/context/CanvasWebGL';
-import Fragment from '@/shaders/webgl2/main.frag';
-import Vertex from '@/shaders/webgl2/main.vert';
-import { World } from '@/stage/hittables';
-import * as Config from '@/stage/Config';
 import { Events } from '@/stage/scene';
+import * as Config from '@/stage/Config';
+import { World } from '@/stage/hittables';
+import Vertex from '@/shaders/webgl2/main.vert';
+import Fragment from '@/shaders/webgl2/main.frag';
+import CanvasWebGL from '@/stage/context/CanvasWebGL';
+import type { SceneParams } from '@/stage/scene/types';
+import type { SphereUniform } from '@/stage/context/types';
 
 export default class CanvasWebGL2 extends CanvasWebGL
 {
