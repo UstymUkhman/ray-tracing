@@ -1,3 +1,5 @@
+import type { CameraUniform } from '@/stage/context/types';
+import * as Config from '@/stage/config/camera';
 import { degToRad } from '@/utils/Number';
 import Vector3 from '@/utils/Vector3';
 import type Ray from '@/stage/Ray';
@@ -6,9 +8,6 @@ export default class Camera
 {
   private readonly u: Vector3;
   private readonly v: Vector3;
-
-  private readonly width: number;
-  private readonly height: number;
 
   private readonly origin: Vector3;
   private readonly vertical: Vector3;
@@ -19,39 +18,30 @@ export default class Camera
   private readonly random = new Vector3();
   private readonly lowerLeftCorner: Vector3;
 
-  public constructor (
-    origin: Vector3,
-    lookAt: Vector3,
-    vUp: Vector3,
-    fov: number,
-    ratio: number,
-    aperture: number,
-    focusDist: number
-  ) {
-    const w = origin.clone.sub(lookAt).normalize;
-    const height = Math.tan(degToRad(fov) * 0.5);
+  public constructor () {
+    const origin = new Vector3(...Config.origin);
+    const height = Math.tan(degToRad(Config.fov) * 0.5) * 2.0;
+    const w = origin.clone.sub(new Vector3(...Config.lookAt)).normalize;
 
-    this.u = vUp.cross(w).normalize;
+    this.u = new Vector3(...Config.vUp).cross(w).normalize;
     this.v = w.clone.cross(this.u);
-
     this.origin = origin;
-    this.height = height * 2.0;
 
-    this.width = ratio * this.height;
-    this.lensRadius = aperture * 0.5;
+    const width = Config.ratio * height;
+    this.lensRadius = Config.aperture * 0.5;
 
     this.horizontal = this.u.clone
-      .multiply(this.width)
-      .multiply(focusDist);
+      .multiply(width)
+      .multiply(Config.focusDist);
 
     this.vertical = this.v.clone
-      .multiply(this.height)
-      .multiply(focusDist);
+      .multiply(height)
+      .multiply(Config.focusDist);
 
     this.lowerLeftCorner = this.origin.clone
       .sub(this.horizontal.clone.divide(2.0))
       .sub(this.vertical.clone.divide(2.0))
-      .sub(w.multiply(focusDist));
+      .sub(w.multiply(Config.focusDist));
   }
 
   public setRay (ray: Ray, s: number, t: number): void {
@@ -66,5 +56,17 @@ export default class Camera
       .sub(this.origin).sub(offset);
 
     ray.origin = offset.add(this.origin);
+  }
+
+  public get uniform (): CameraUniform {
+    return {
+      lowerLeftCorner: this.lowerLeftCorner.get(),
+      horizontal: this.horizontal.get(),
+      vertical: this.vertical.get(),
+      lensRadius: this.lensRadius,
+      origin: this.origin.get(),
+      v: this.v.get(),
+      u: this.u.get()
+    };
   }
 }

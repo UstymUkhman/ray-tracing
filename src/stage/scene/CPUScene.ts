@@ -6,7 +6,7 @@ import {
 } from '@/stage/context';
 
 import { Events } from '@/stage/scene';
-import * as Config from '@/stage/Config';
+import * as Config from '@/stage/config';
 import type WebWorker from '@/utils/worker';
 
 import { DELTA_UPDATE } from '@/utils/Number';

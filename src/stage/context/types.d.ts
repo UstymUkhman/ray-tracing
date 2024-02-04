@@ -11,3 +11,13 @@ export type SphereUniform = {
   radius: number;
   material: Material;
 };
+
+export type CameraUniform = {
+  u: Vec3;
+  v: Vec3;
+  origin: Vec3;
+  vertical: Vec3;
+  horizontal: Vec3;
+  lowerLeftCorner: Vec3;
+  lensRadius: number;
+};

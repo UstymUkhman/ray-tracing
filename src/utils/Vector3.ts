@@ -199,6 +199,6 @@ export default class Vector3
   }
 
   public get (): Vec3 {
-    return [...this.vec];
+    return this.vec;
   }
 }
