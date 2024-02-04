@@ -10,7 +10,6 @@
 #include utils/Color;
 
 in  vec2 uv;
-in  Camera camera;
 out vec4 fragColor;
 
 uniform uint samples;
@@ -18,7 +17,8 @@ uniform uint maxDepth;
 uniform vec2 resolution;
 
 uniform sampler2D frame;
-uniform Sphere spheres[SPHERES];
+uniform Camera    camera;
+uniform Sphere    spheres[SPHERES];
 
 void addSpheres (void)
 {

@@ -1,3 +1,4 @@
+import { width as WIDTH, height as HEIGHT } from '@/stage/config';
 import type { CameraUniform } from '@/stage/context/types';
 import * as Config from '@/stage/config/camera';
 import { degToRad } from '@/utils/Number';
@@ -27,7 +28,7 @@ export default class Camera
     this.v = w.clone.cross(this.u);
     this.origin = origin;
 
-    const width = Config.ratio * height;
+    const width = WIDTH / HEIGHT * height;
     this.lensRadius = Config.aperture * 0.5;
 
     this.horizontal = this.u.clone

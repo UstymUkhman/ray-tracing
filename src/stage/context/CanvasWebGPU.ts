@@ -1,6 +1,7 @@
+import Camera from '@/stage/Camera';
 import { Events } from '@/stage/scene';
 import { getRGB } from '@/utils/Color';
-import * as Config from '@/stage/Config';
+import * as Config from '@/stage/config';
 import { World } from '@/stage/hittables';
 import Canvas from '@/stage/context/Canvas';
 import Shader from '@/shaders/webgpu/main.wgsl';
@@ -101,9 +102,8 @@ export default class CanvasWebGPU extends Canvas
     const { width, height } = Config;
     const spheres = world.hittables.length;
 
-    const spheresUniformBuffer = this.createUniforms(
-      world.createSpheresUniforms()
-    );
+    const [cameraUniformBuffer, spheresUniformBuffer] =
+      this.createUniforms(world.createSpheresUniforms());
 
     const computeBindGroupLayout = this.device.createBindGroupLayout({
       label: 'Compute Bind Group Layout',
@@ -118,10 +118,14 @@ export default class CanvasWebGPU extends Canvas
         visibility: GPUShaderStage.COMPUTE
       }, {
         binding: 2,
-        buffer: { type: 'storage' },
+        buffer: { type: 'uniform' },
         visibility: GPUShaderStage.COMPUTE
       }, {
         binding: 3,
+        buffer: { type: 'storage' },
+        visibility: GPUShaderStage.COMPUTE
+      }, {
+        binding: 4,
         visibility: GPUShaderStage.COMPUTE,
         storageTexture: { format: this.imageTexture.format }
       }]
@@ -144,15 +148,18 @@ export default class CanvasWebGPU extends Canvas
 
       entries: [{
         binding: 0,
-        resource: { buffer: this.tracerUniformBuffer }
+        resource: { buffer: cameraUniformBuffer }
       }, {
         binding: 1,
-        resource: { buffer: spheresUniformBuffer }
+        resource: { buffer: this.tracerUniformBuffer }
       }, {
         binding: 2,
-        resource: { buffer: colorBuffer }
+        resource: { buffer: spheresUniformBuffer }
       }, {
         binding: 3,
+        resource: { buffer: colorBuffer }
+      }, {
+        binding: 4,
         resource: this.imageTexture.createView()
       }]
     });
@@ -278,7 +285,7 @@ export default class CanvasWebGPU extends Canvas
     );
   }
 
-  private createUniforms (spheres: SphereUniform[]): GPUBuffer {
+  private createUniforms (spheres: SphereUniform[]): GPUBuffer[] {
     this.tracerUniform[0] = Config.maxDepth;
 
     this.tracerUniformBuffer = this.device.createBuffer({
@@ -286,6 +293,52 @@ export default class CanvasWebGPU extends Canvas
       size: this.tracerUniform.byteLength,
       usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
     });
+
+    const {
+      u,
+      v,
+      origin,
+      vertical,
+      horizontal,
+      lowerLeftCorner,
+      lensRadius
+    } = new Camera().uniform;
+
+    const cameraUniform = new Float32Array(24);
+
+    const cameraUniformBuffer = this.device.createBuffer({
+      size: cameraUniform.byteLength,
+      label: 'Compute Camera Uniform',
+      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+    });
+
+    cameraUniform[0]  = u[0];
+    cameraUniform[1]  = u[1];
+    cameraUniform[2]  = u[2];
+
+    cameraUniform[4]  = v[0];
+    cameraUniform[5]  = v[1];
+    cameraUniform[6]  = v[2];
+
+    cameraUniform[8]  = origin[0];
+    cameraUniform[9]  = origin[1];
+    cameraUniform[10] = origin[2];
+
+    cameraUniform[12] = vertical[0];
+    cameraUniform[13] = vertical[1];
+    cameraUniform[14] = vertical[2];
+
+    cameraUniform[16] = horizontal[0];
+    cameraUniform[17] = horizontal[1];
+    cameraUniform[18] = horizontal[2];
+
+    cameraUniform[20] = lowerLeftCorner[0];
+    cameraUniform[21] = lowerLeftCorner[1];
+    cameraUniform[22] = lowerLeftCorner[2];
+
+    cameraUniform[23] = lensRadius;
+
+    this.device.queue.writeBuffer(cameraUniformBuffer, 0, cameraUniform);
 
     const spheresUniform = new Float32Array(spheres.length * 8);
 
@@ -308,13 +361,9 @@ export default class CanvasWebGPU extends Canvas
       spheresUniform[u + 7] = spheres[s].material.extra;     // material.a
     }
 
-    this.device.queue.writeBuffer(
-      spheresUniformBuffer,
-      0,
-      spheresUniform
-    );
+    this.device.queue.writeBuffer(spheresUniformBuffer, 0, spheresUniform);
 
-    return spheresUniformBuffer;
+    return [cameraUniformBuffer, spheresUniformBuffer];
   }
 
   private setActiveTexture (data: Uint8ClampedArray): void {

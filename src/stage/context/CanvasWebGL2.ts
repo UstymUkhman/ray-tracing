@@ -1,5 +1,6 @@
+import Camera from '@/stage/Camera';
 import { Events } from '@/stage/scene';
-import * as Config from '@/stage/Config';
+import * as Config from '@/stage/config';
 import { World } from '@/stage/hittables';
 import Vertex from '@/shaders/webgl2/main.vert';
 import Fragment from '@/shaders/webgl2/main.frag';
@@ -39,10 +40,7 @@ export default class CanvasWebGL2 extends CanvasWebGL
           `#version 300 es\n#define SPHERES ${spheres}u`
         ),
 
-        Vertex.replace(
-          '#version 300 es',
-          '#version 300 es\n#define CAMERA'
-        )
+        Vertex
       );
 
       this.createUniforms(world.createSpheresUniforms());
@@ -83,6 +81,24 @@ export default class CanvasWebGL2 extends CanvasWebGL
   }
 
   private createUniforms (spheres: SphereUniform[]): void {
+    this.seedUniform = this.context.getUniformLocation(this.program, 'seed');
+    this.samplesUniform = this.context.getUniformLocation(this.program, 'samples');
+
+    this.context.uniform1ui(this.context.getUniformLocation(this.program, 'maxDepth'), Config.maxDepth);
+    this.context.uniform2f(this.context.getUniformLocation(this.program, 'resolution'), this.width, this.height);
+
+    const { u, v, origin, vertical, horizontal, lowerLeftCorner, lensRadius } = new Camera().uniform;
+
+    this.context.uniform3fv(this.context.getUniformLocation(this.program, 'camera.lowerLeftCorner'), lowerLeftCorner);
+    this.context.uniform1f (this.context.getUniformLocation(this.program, 'camera.lensRadius'), lensRadius);
+
+    this.context.uniform3fv(this.context.getUniformLocation(this.program, 'camera.horizontal'), horizontal);
+    this.context.uniform3fv(this.context.getUniformLocation(this.program, 'camera.vertical'), vertical);
+    this.context.uniform3fv(this.context.getUniformLocation(this.program, 'camera.origin'), origin);
+
+    this.context.uniform3fv(this.context.getUniformLocation(this.program, 'camera.v'), v);
+    this.context.uniform3fv(this.context.getUniformLocation(this.program, 'camera.u'), u);
+
     for (let s = 0, l = spheres.length; s < l; s++)
     {
       const material = this.context.getUniformLocation(this.program, `spheres[${s}].material`);
@@ -91,12 +107,6 @@ export default class CanvasWebGL2 extends CanvasWebGL
       this.context.uniform4fv(material, [...spheres[s].material.albedo, spheres[s].material.extra]);
       this.context.uniform4fv(transform, [...spheres[s].center, spheres[s].radius]);
     }
-
-    this.context.uniform2f(this.context.getUniformLocation(this.program, 'resolution'), this.width, this.height);
-    this.context.uniform1ui(this.context.getUniformLocation(this.program, 'maxDepth'), Config.maxDepth);
-
-    this.samplesUniform = this.context.getUniformLocation(this.program, 'samples');
-    this.seedUniform = this.context.getUniformLocation(this.program, 'seed');
   }
 
   public override drawImage (pixels?: Uint8ClampedArray): void {

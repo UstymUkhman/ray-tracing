@@ -1,6 +1,6 @@
 import { floatToInt } from '@/utils/Color';
 import { World } from '@/stage/hittables';
-import * as Config from '@/stage/Config';
+import * as Config from '@/stage/config';
 import { toFixed } from '@/utils/Number';
 import Vector3 from '@/utils/Vector3';
 import Camera from '@/stage/Camera';
@@ -8,28 +8,13 @@ import Ray from '@/stage/Ray';
 
 class Tracer
 {
-  private readonly camera: Camera;
   private readonly world = new World();
   private readonly color = new Vector3();
+  private readonly camera = new Camera();
 
   private readonly width  = Config.width;
   private readonly height = Config.height;
   private readonly depth  = Config.maxDepth;
-
-  public constructor ()
-  {
-    const ratio = this.width / this.height;
-
-    this.camera = new Camera(
-      new Vector3(13.0, 2.0, 3.0),
-      new Vector3(0.0, 0.0, 0.0),
-      new Vector3(0.0, 1.0, 0.0),
-      20.0,
-      ratio,
-      0.1,
-      10.0
-    );
-  }
 
   public createPPMImage (pixels: Float32Array): Float32Array {
     const ray = new Ray();

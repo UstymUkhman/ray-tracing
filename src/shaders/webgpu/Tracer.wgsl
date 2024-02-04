@@ -11,15 +11,18 @@ struct TracerUniform {
 };
 
 @group(0) @binding(0)
-var<uniform> tracerUniform: TracerUniform;
+var<uniform> cameraUniform: Camera;
 
 @group(0) @binding(1)
-var<uniform> spheres: array<Sphere, SPHERES>;
+var<uniform> tracerUniform: TracerUniform;
 
 @group(0) @binding(2)
-var<storage, read_write> colorBuffer: array<vec3f>;
+var<uniform> spheres: array<Sphere, SPHERES>;
 
 @group(0) @binding(3)
+var<storage, read_write> colorBuffer: array<vec3f>;
+
+@group(0) @binding(4)
 var framebuffer: texture_storage_2d<rgba16float, write>;
 
 fn addSpheres()
@@ -42,23 +45,13 @@ fn mainCompute(@builtin(global_invocation_id) globalInvocation: vec3u)
     let bufferIndex = u32(coord.x + coord.y * res.x);
     var color = colorBuffer[bufferIndex];
 
-    let camera = createCamera(
-      vec3f(13.0, 2.0, 3.0),
-      vec3f(0.0, 0.0, 0.0),
-      vec3f(0.0, 1.0, 0.0),
-      res,
-      20.0,
-      0.1,
-      10.0
-    );
-
     initializeRandom(globalInvocation);
     color = inputColor(color, tracerUniform.samples);
 
     let u = (coord.x + random()) / res.x;
     let v = (coord.y + random()) / res.y;
 
-    let ray = getRay(camera, u, v);
+    let ray = getRay(cameraUniform, u, v);
     color += getColor(ray, tracerUniform.maxDepth);
 
     colorBuffer[bufferIndex] = outputColor(color, tracerUniform.samples);
