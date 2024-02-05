@@ -23,11 +23,11 @@ export default class CanvasWebGPU extends Canvas
   private imagePipeline!: GPURenderPipeline;
 
   // GPU-Computed Image Texture:
+  private tracerBuffer!: GPUBuffer;
   private computeBindGroup!: GPUBindGroup;
-  private tracerUniformBuffer!: GPUBuffer;
   private computePipeline!: GPUComputePipeline;
 
-  private readonly tracerUniform = new Uint32Array(8);
+  private readonly tracer = new Uint32Array(8.0);
   protected declare readonly context: GPUCanvasContext;
   private readonly workgroupCount: [number, number] = [0, 0];
   private readonly draw = this.drawImage.bind(this, undefined);
@@ -96,14 +96,14 @@ export default class CanvasWebGPU extends Canvas
     onInitialize?.();
   }
 
-  private createComputePipeline (size = 16): void {
+  private createComputePipeline (): void {
     const world = new World();
     this.createImagePipeline(true);
     const { width, height } = Config;
     const spheres = world.hittables.length;
 
-    const [cameraUniformBuffer, spheresUniformBuffer] =
-      this.createUniforms(world.createSpheresUniforms());
+    const size = 16 - +(this.device.limits.maxComputeInvocationsPerWorkgroup < 256) * 8;
+    const [cameraBuffer, spheresBuffer] = this.createBuffers(world.createSpheresUniforms());
 
     const computeBindGroupLayout = this.device.createBindGroupLayout({
       label: 'Compute Bind Group Layout',
@@ -114,12 +114,12 @@ export default class CanvasWebGPU extends Canvas
         visibility: GPUShaderStage.COMPUTE
       }, {
         binding: 1,
-        buffer: { type: 'uniform' },
-        visibility: GPUShaderStage.COMPUTE
+        visibility: GPUShaderStage.COMPUTE,
+        buffer: { type: 'read-only-storage' }
       }, {
         binding: 2,
-        buffer: { type: 'uniform' },
-        visibility: GPUShaderStage.COMPUTE
+        visibility: GPUShaderStage.COMPUTE,
+        buffer: { type: 'read-only-storage' }
       }, {
         binding: 3,
         buffer: { type: 'storage' },
@@ -148,13 +148,13 @@ export default class CanvasWebGPU extends Canvas
 
       entries: [{
         binding: 0,
-        resource: { buffer: cameraUniformBuffer }
+        resource: { buffer: this.tracerBuffer }
       }, {
         binding: 1,
-        resource: { buffer: this.tracerUniformBuffer }
+        resource: { buffer: cameraBuffer }
       }, {
         binding: 2,
-        resource: { buffer: spheresUniformBuffer }
+        resource: { buffer: spheresBuffer }
       }, {
         binding: 3,
         resource: { buffer: colorBuffer }
@@ -242,16 +242,16 @@ export default class CanvasWebGPU extends Canvas
     const commandEncoder = this.device.createCommandEncoder();
     const computePass = commandEncoder.beginComputePass();
 
-    this.tracerUniform[1] = ++this.samples;
+    this.tracer[1] = ++this.samples;
 
-    this.tracerUniform[4] = Math.random() * 0xffffffff; // seed.x
-    this.tracerUniform[5] = Math.random() * 0xffffffff; // seed.y
-    this.tracerUniform[6] = Math.random() * 0xffffffff; // seed.z
+    this.tracer[4] = Math.random() * 0xffffffff; // seed.x
+    this.tracer[5] = Math.random() * 0xffffffff; // seed.y
+    this.tracer[6] = Math.random() * 0xffffffff; // seed.z
 
     this.device.queue.writeBuffer(
-      this.tracerUniformBuffer,
+      this.tracerBuffer,
       0,
-      this.tracerUniform
+      this.tracer
     );
 
     computePass.setPipeline(this.computePipeline);
@@ -285,13 +285,13 @@ export default class CanvasWebGPU extends Canvas
     );
   }
 
-  private createUniforms (spheres: SphereUniform[]): GPUBuffer[] {
-    this.tracerUniform[0] = Config.maxDepth;
+  private createBuffers (uniforms: SphereUniform[]): GPUBuffer[] {
+    this.tracer[0] = Config.maxDepth;
 
-    this.tracerUniformBuffer = this.device.createBuffer({
+    this.tracerBuffer = this.device.createBuffer({
+      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
       label: 'Compute Tracer Uniform',
-      size: this.tracerUniform.byteLength,
-      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+      size: this.tracer.byteLength
     });
 
     const {
@@ -304,66 +304,64 @@ export default class CanvasWebGPU extends Canvas
       lensRadius
     } = new Camera().uniform;
 
-    const cameraUniform = new Float32Array(24);
+    const camera = new Float32Array(24);
 
-    const cameraUniformBuffer = this.device.createBuffer({
-      size: cameraUniform.byteLength,
-      label: 'Compute Camera Uniform',
-      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+    const cameraBuffer = this.device.createBuffer({
+      usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+      label: 'Compute Camera Storage Buffer',
+      size: camera.byteLength
     });
 
-    cameraUniform[0]  = u[0];
-    cameraUniform[1]  = u[1];
-    cameraUniform[2]  = u[2];
+    camera[0]  = u[0];
+    camera[1]  = u[1];
+    camera[2]  = u[2];
 
-    cameraUniform[4]  = v[0];
-    cameraUniform[5]  = v[1];
-    cameraUniform[6]  = v[2];
+    camera[4]  = v[0];
+    camera[5]  = v[1];
+    camera[6]  = v[2];
 
-    cameraUniform[8]  = origin[0];
-    cameraUniform[9]  = origin[1];
-    cameraUniform[10] = origin[2];
+    camera[8]  = origin[0];
+    camera[9]  = origin[1];
+    camera[10] = origin[2];
 
-    cameraUniform[12] = vertical[0];
-    cameraUniform[13] = vertical[1];
-    cameraUniform[14] = vertical[2];
+    camera[12] = vertical[0];
+    camera[13] = vertical[1];
+    camera[14] = vertical[2];
 
-    cameraUniform[16] = horizontal[0];
-    cameraUniform[17] = horizontal[1];
-    cameraUniform[18] = horizontal[2];
+    camera[16] = horizontal[0];
+    camera[17] = horizontal[1];
+    camera[18] = horizontal[2];
 
-    cameraUniform[20] = lowerLeftCorner[0];
-    cameraUniform[21] = lowerLeftCorner[1];
-    cameraUniform[22] = lowerLeftCorner[2];
+    camera[20] = lowerLeftCorner[0];
+    camera[21] = lowerLeftCorner[1];
+    camera[22] = lowerLeftCorner[2];
 
-    cameraUniform[23] = lensRadius;
+    camera[23] = lensRadius;
 
-    this.device.queue.writeBuffer(cameraUniformBuffer, 0, cameraUniform);
+    this.device.queue.writeBuffer(cameraBuffer, 0, camera);
+    const spheres = new Float32Array(uniforms.length * 8);
 
-    const spheresUniform = new Float32Array(spheres.length * 8);
-
-    const spheresUniformBuffer = this.device.createBuffer({
-      size: spheresUniform.byteLength,
-      label: 'Compute Spheres Uniform',
-      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+    const spheresBuffer = this.device.createBuffer({
+      usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+      label: 'Compute Spheres Storage Buffer',
+      size: spheres.byteLength
     });
 
-    for (let s = 0, u = 0, l = spheres.length; s < l; s++, u += 8)
+    for (let s = 0, u = 0, l = uniforms.length; s < l; s++, u += 8)
     {
-      spheresUniform[u + 0] = spheres[s].center[0]; // transform.x
-      spheresUniform[u + 1] = spheres[s].center[1]; // transform.y
-      spheresUniform[u + 2] = spheres[s].center[2]; // transform.z
-      spheresUniform[u + 3] = spheres[s].radius;    // transform.w
+      spheres[u + 0] = uniforms[s].center[0]; // transform.x
+      spheres[u + 1] = uniforms[s].center[1]; // transform.y
+      spheres[u + 2] = uniforms[s].center[2]; // transform.z
+      spheres[u + 3] = uniforms[s].radius;    // transform.w
 
-      spheresUniform[u + 4] = spheres[s].material.albedo[0]; // material.r
-      spheresUniform[u + 5] = spheres[s].material.albedo[1]; // material.g
-      spheresUniform[u + 6] = spheres[s].material.albedo[2]; // material.b
-      spheresUniform[u + 7] = spheres[s].material.extra;     // material.a
+      spheres[u + 4] = uniforms[s].material.albedo[0]; // material.r
+      spheres[u + 5] = uniforms[s].material.albedo[1]; // material.g
+      spheres[u + 6] = uniforms[s].material.albedo[2]; // material.b
+      spheres[u + 7] = uniforms[s].material.extra;     // material.a
     }
 
-    this.device.queue.writeBuffer(spheresUniformBuffer, 0, spheresUniform);
-
-    return [cameraUniformBuffer, spheresUniformBuffer];
+    this.device.queue.writeBuffer(spheresBuffer, 0, spheres);
+    return [cameraBuffer, spheresBuffer];
   }
 
   private setActiveTexture (data: Uint8ClampedArray): void {

@@ -6,32 +6,27 @@
   precision highp float;
 #endif
 
-#include Camera;
-#include utils/Color;
-
 in  vec2 uv;
 out vec4 fragColor;
 
 uniform uint samples;
 uniform uint maxDepth;
 uniform vec2 resolution;
-
 uniform sampler2D frame;
-uniform Camera    camera;
-uniform Sphere    spheres[SPHERES];
 
-void addSpheres (void)
-{
-  for (uint s = 0u; s < SPHERES; s++)
-    addObject(Sphere(spheres[s].transform, spheres[s].material));
-}
+#include Camera;
+uniform Camera camera;
+
+#include hittables/Sphere;
+uniform Sphere spheres[SPHERES];
+
+#include utils/Color;
 
 void main (void)
 {
   vec2 mappedUV = vec2(uv.x, 1.0 - uv.y);
   vec3 color = texture(frame, mappedUV).rgb;
 
-  addSpheres();
   initializeRandom();
   inputColor(color, samples);
 

@@ -12,7 +12,7 @@ fn initializeRandom(invocation: vec3u) {
     6521    * 983  * 7 * 2
   );
 
-  rnd = (invocation * A) ^ tracerUniform.seed;
+  rnd = (invocation * A) ^ tracer.seed;
 }
 
 fn random() -> f32 {

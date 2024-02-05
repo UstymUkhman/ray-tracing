@@ -4,33 +4,26 @@ override size: u32;
 #include Camera.wgsl;
 #include utils/Color.wgsl;
 
-struct TracerUniform {
+struct Tracer {
   maxDepth: u32,
   samples: u32,
   seed: vec3u
 };
 
 @group(0) @binding(0)
-var<uniform> cameraUniform: Camera;
+var<uniform> tracer: Tracer;
 
 @group(0) @binding(1)
-var<uniform> tracerUniform: TracerUniform;
+var<storage, read> camera: Camera;
 
 @group(0) @binding(2)
-var<uniform> spheres: array<Sphere, SPHERES>;
+var<storage, read> spheres: array<Sphere, SPHERES>;
 
 @group(0) @binding(3)
 var<storage, read_write> colorBuffer: array<vec3f>;
 
 @group(0) @binding(4)
 var framebuffer: texture_storage_2d<rgba16float, write>;
-
-fn addSpheres()
-{
-  for (var s = 0u; s < SPHERES; s++) {
-    addObject(Sphere(spheres[s].transform, spheres[s].material));
-  }
-}
 
 @compute @workgroup_size(size, size)
 fn mainCompute(@builtin(global_invocation_id) globalInvocation: vec3u)
@@ -40,21 +33,19 @@ fn mainCompute(@builtin(global_invocation_id) globalInvocation: vec3u)
 
   if (all(coord < res))
   {
-    addSpheres();
-
     let bufferIndex = u32(coord.x + coord.y * res.x);
     var color = colorBuffer[bufferIndex];
 
     initializeRandom(globalInvocation);
-    color = inputColor(color, tracerUniform.samples);
+    color = inputColor(color, tracer.samples);
 
     let u = (coord.x + random()) / res.x;
     let v = (coord.y + random()) / res.y;
 
-    let ray = getRay(cameraUniform, u, v);
-    color += getColor(ray, tracerUniform.maxDepth);
+    let ray = getRay(camera, u, v);
+    color += getColor(ray, tracer.maxDepth);
 
-    colorBuffer[bufferIndex] = outputColor(color, tracerUniform.samples);
+    colorBuffer[bufferIndex] = outputColor(color, tracer.samples);
 
     // Use of "framebuffer" as a storage texture could be avoided (to save some memory), but then
     // it won't be possible to reuse the "Image Pipeline" since it's fragment shader will require
